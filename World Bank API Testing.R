@@ -8,8 +8,34 @@ library(dplyr)
 
 # Function to take url and transform it into one with all the results on one page
 
-test1 <- "https://api.worldbank.org/v2/indicators?format=json"
-test2 <- "https://api.worldbank.org/v2/country?format=json"
+url_all_results <- function(original_url) {
+  
+  
+# Append "?format=json" if url doesn't already have it
+  if(!grepl("\\?", original_url)) {
+    
+    original_url <- paste0(original_url, "?format=json")
+    
+  }
+  
+  
+  total_results <- original_url %>% fromJSON %>% .[[1]] %>% .$total
+  
+  url_with_all_results <- paste0(original_url, "&per_page=", total_results)
+  
+  return(url_with_all_results)
+}
+
+
+
+# Tests
+original_url <- "https://api.worldbank.org/v2/country"
+original_url <- "https://api.worldbank.org/v2/country?format=json"
+
+
+url_all_results(original_url) %>% fromJSON
+  
+
 
 
 
