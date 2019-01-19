@@ -51,7 +51,7 @@ show_countries <- function() {
   countries <- countries_url %>% fromJSON(.)
   
   countries <- data.frame(countries[[2]]$iso2Code, countries[[2]]$name, stringsAsFactors = FALSE)
-  colnames(countries) <- c("Country", "iso2Code")
+  colnames(countries) <- c("iso2Code", "Country")
   
   return(countries)
 }
@@ -88,17 +88,49 @@ get_inflation_data(country)
 
 
 
-
-
+country <- "AUsdf"
+country <- "San Marino"
+p <- c(10, 10, 10, 10)
+date <- c(Sys.time()-(60 * 60 * 24 * 365 * 10), Sys.time()-(60 * 60 * 24 * 365 * 8), Sys.time()-(60 * 60 * 24 * 365 * 6), Sys.time()-(60 * 60 * 24 * 365 * 6.5))
 
 #----- Function that uses inflation data to in/deflate prices -----#
 
 inflate <- function(price, country, from_date, to_date)
 
-# From inspection of WB's values for AU 2017 data, it appears they mean FY rather than calendar year (although the numbers aren't exactly conclusive)
+  # From inspection of WB's values for AU 2017 data, it appears they mean FY rather than calendar year (although the numbers aren't exactly conclusive)
+  # 
+  
+  # Check that the selected country is valid, error if it isn't
+  countries <- show_countries()
 
-
-
+  iso2Code_country <- which(countries$iso2Code %in% country)
+  
+  # If an iso2Code wasn't provided, check that a country name wasn't
+  if (iso2Code_country %>% length == 0) { 
+    
+    name_of_country <- which(countries$Country %in% country)
+    
+  }
+  
+  if(length(iso2Code_country) == 0 & length(name_of_country) == 0) {
+    stop("Please provide a valid country name or iso2Code\n Run show_countries() for a comprehensive list")
+  }
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
 
 #----- END -----#
 
