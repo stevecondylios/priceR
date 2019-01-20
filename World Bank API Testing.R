@@ -10,14 +10,12 @@ library(dplyr)
 
 url_all_results <- function(original_url) {
   
-  
 # Append "?format=json" if url doesn't already have it
   if(!grepl("\\?", original_url)) {
     
     original_url <- paste0(original_url, "?format=json")
     
   }
-  
   
   total_results <- original_url %>% fromJSON %>% .[[1]] %>% .$total
   
@@ -56,8 +54,6 @@ show_countries <- function() {
   return(countries)
 }
 
-
-# Test
 show_countries()
 
 #----- END -----#
@@ -89,36 +85,64 @@ get_inflation_data(country)
 
 
 country <- "AUsdf"
+country <- "AU"
 country <- "San Marino"
-p <- c(10, 10, 10, 10)
-date <- c(Sys.time()-(60 * 60 * 24 * 365 * 10), Sys.time()-(60 * 60 * 24 * 365 * 8), Sys.time()-(60 * 60 * 24 * 365 * 6), Sys.time()-(60 * 60 * 24 * 365 * 6.5))
+test_prices <- c(10, 10, 10, 10)
+test_dates <- c(Sys.time()-(60 * 60 * 24 * 365 * 10), Sys.time()-(60 * 60 * 24 * 365 * 8), Sys.time()-(60 * 60 * 24 * 365 * 6), Sys.time()-(60 * 60 * 24 * 365 * 6.5))
 
 #----- Function that uses inflation data to in/deflate prices -----#
 
 inflate <- function(price, country, from_date, to_date)
-
-  # From inspection of WB's values for AU 2017 data, it appears they mean FY rather than calendar year (although the numbers aren't exactly conclusive)
-  # 
+  # Later, it would be great to include a parameter for 'extrapolate = TRUE' - this could project for earlier and later dates, rather than returning NA
   
-  # Check that the selected country is valid, error if it isn't
+  # Validating that there are as many dates as prices (or just one date)
+  if(length(price) != (length(from_date) | 1)) {
+    stop("from_date must be a single date or a vector of dates of the same length as the price ")
+  }
+  
+  
+  # If no to_date is provided, assume we converting into present day dollars
+  if(missing(to_date)) {
+    to_date <- rep(Sys.Date, length(price))
+  }
+  
+  # From inspection of WB's values for AU 2017 data, it appears they mean FY rather than calendar year (although the numbers aren't exactly conclusive)
+  
+  #----- Check that the selected country is valid, error if it isn't -----#
   countries <- show_countries()
 
-  iso2Code_country <- which(countries$iso2Code %in% country)
+  iso2Code <- which(countries$iso2Code %in% country)
   
   # If an iso2Code wasn't provided, check that a country name wasn't
-  if (iso2Code_country %>% length == 0) { 
+  name_of_country <- c()
+  if (iso2Code %>% length == 0) { 
     
     name_of_country <- which(countries$Country %in% country)
     
   }
   
-  if(length(iso2Code_country) == 0 & length(name_of_country) == 0) {
+  if(length(iso2Code) == 0 & length(name_of_country) == 0) {
     stop("Please provide a valid country name or iso2Code\n Run show_countries() for a comprehensive list")
   }
   
+  # If it was a country name provided, grab the iso2Code
+  if(length(name_of_country) > 0) {
+    country <- which(countries$Country %in% country) %>% countries[., "iso2Code"]
+  }
+  
+  #----- END - Check that the selected country is valid, error if it isn't -----#
   
   
+  # Get inflation data
+  inflation_data <- get_inflation_data(country)
   
+  
+  # A price from after the last period will return itself
+  # A price from the last period will return itself
+  # A price from the second last period will return itself inflated by the last period
+  # Process: Identify which period the date is from, inflate by all later years
+  
+  years <- from_date
   
   
   
