@@ -94,14 +94,24 @@ test_dates <- c(Sys.time()-(60 * 60 * 24 * 365 * 10), Sys.time()-(60 * 60 * 24 *
 
 inflate <- function(price, country, from_date, to_date)
   # Later, it would be great to include a parameter for 'extrapolate = TRUE' - this could project for earlier and later dates, rather than returning NA
+  library(lubridate)
+  library(dplyr)
   
-  # Validating that there are as many dates as prices (or just one date)
+
+  # Declare a function that will accept any number of inflation values and produce one multiplier
+  make_multiplier <- function(inflation_values) {
+    multiplier <- inflation_values %>% {. / 100} %>% {. + 1} %>% prod(.)
+  }
+
+
+  
+  # Validate that there are as many dates as prices (or just one date)
   if(length(price) != (length(from_date) | 1)) {
     stop("from_date must be a single date or a vector of dates of the same length as the price ")
   }
   
   
-  # If no to_date is provided, assume we converting into present day dollars
+  # If no to_date is provided, assume conversion into present day dollars is intended
   if(missing(to_date)) {
     to_date <- rep(Sys.Date, length(price))
   }
@@ -142,6 +152,7 @@ inflate <- function(price, country, from_date, to_date)
   # A price from the second last period will return itself inflated by the last period
   # Process: Identify which period the date is from, inflate by all later years
   
+  year_of_to_date <- year(to_date)
   years <- from_date
   
   
