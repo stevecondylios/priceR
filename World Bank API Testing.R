@@ -99,7 +99,7 @@ retrieve_inflation_data <- function(country) {
   
   country_input_type <- country_input_type(country_for_country_input_type, countries)
   
-  if(country_input_type == "invalid") { stop("Invalid country input - please see select valid country from show_countries()") }
+  if(country_input_type == "invalid") { stop(paste0('"', country, '"', " is not a valid country input - select a valid country from show_countries()")) }
   
   if(country_input_type == "country_name") {
     
@@ -124,9 +124,16 @@ retrieve_inflation_data(country)
 country <- "Australia"
 retrieve_inflation_data(country)
 
+country <- "AustraTESTlia"
+retrieve_inflation_data(country)
 
 
-#----- END -----#
+#----- END ----- Function to retrieve inflation data given iso2Code OR country_name -----#
+
+
+
+
+
 
 
 
