@@ -2,9 +2,9 @@ Package: priceR
 Type: Package
 Title: Regular Expressions for Prices and Currencies
 Version: 0.1.0
-Author: Steve Condylios
+Author: Steve Condylios [aut, cre] (<https://orcid.org/0000-0003-0599-844X>)
 Maintainer: Steve Condylios <steve.condylios@gmail.com>
-Description: Functions to make extracting numeric price data from text fields fast and easy.
+Description: A fast and convenient tool for extracting, preprocessing and standardising prices and currencies.
 License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true

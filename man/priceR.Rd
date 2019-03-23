@@ -6,7 +6,7 @@
 \alias{priceR-package}
 \title{priceR: Regular Expressions for Prices and Currencies}
 \description{
-Applying regular expressions to text data to extract prices and currencies in numeric class, allowing for faster and easier analysis
+Functions to aid in the analysis of price and currency data by expediting data preprocessing. This includes extraction of relevant data (e.g. from text fields), conversion into numeric class, cleaning, and standardisation as appropriate.
 }
 \details{
 It has the goal of providing a quick and practical way of extracting numeric price and currency data from text fields, thus allowing faster and easier analysis of ostensibly numeric data.

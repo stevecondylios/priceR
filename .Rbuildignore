@@ -1,2 +1,9 @@
 ^.*\.Rproj$
 ^\.Rproj\.user$
+.Rproj.user
+.Rhistory
+.RData
+.Ruserdata
+.DS_Store
+.git
+.gitignore

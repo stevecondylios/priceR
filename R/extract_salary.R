@@ -24,73 +24,87 @@
 #'
 #' @examples
 #'
-#' # Provide salary string(s) to 'extract_salary' and it will do the rest
-#' extract_salary("$160,000 per annum") # 160000
+#' # Provide a salary string and 'extract_salary' and will extract the salary and return it
+#' extract_salary("$160,000 per annum")
+#' # 160000
 #'
 #'
-#'
-#' # If a range is present, the average will be taken by default,
-#' # otherwise specify 'min' or 'max' with salary_range_handling parameter
+#' # If a range is present, the average will be taken by default
 #' extract_salary("$160,000 - $180000.00 per annum")
+#' # 170000
 #'
+#'
+#' # Take the 'min' or 'max' of a salary range by setting salary_range_handling parameter accordingly
+#' extract_salary("$160,000 - $180000.00 per annum", salary_range_handling = "min")
+#' # 160000
 #'
 #'
 #' # Extract salaries from character string(s)
-#' annual_salaries <- c("$160,000 - $180000.00 per annum", "$160000.00 - $180000.00 per annum",
-#'                      "$145000 - $155000.00 per annum", "$70000.00 - $90000 per annum",
+#' annual_salaries <- c("$160,000 - $180000.00 per annum",
+#'                      "$160000.00 - $180000.00 per annum",
+#'                      "$145000 - $155000.00 per annum",
+#'                      "$70000.00 - $90000 per annum",
 #'                      "$70000.00 - $90000.00 per annum plus 15.4% super",
 #'                      "$80000.00 per annum plus 15.4% super",
-#'                      "60,000 - 80,000", "$78,686 to $89,463 pa, plus 15.4% superannuation",
+#'                      "60,000 - 80,000",
+#'                      "$78,686 to $89,463 pa, plus 15.4% superannuation",
 #'                      "80k - 100k")
 #'
 #' extract_salary(annual_salaries)
+#' # 170000 170000 150000  80000  53338  40008  70000  56055  90000
 #'
 #'
-#'
-#' # Extract (and annualise) daily rates
+#' # Automatically detect, extract, and annualise daily rates
 #' daily_rates <- c("$200 daily", "$400 - $600 per day", "Day rate negotiable dependent on experience")
 #' extract_salary(daily_rates)
+#' # 48000 120000     NA
 #'
 #'
-#'
-#' # Extract (and annualise) hourly rates
+#' # Automatically detect, extract, and annualise hourly rates
 #' hourly_rates <- c("$80 - $100+ per hour", "APS6/EL1 hourly rate contract")
 #' extract_salary(hourly_rates)
-#'
-#'
+#' # 172800   6720
+#' # Note 6720 is undesirable. Setting the lower and upper bounds sensibly avoids this
 #'
 #'
 #' salaries <- c(annual_salaries, daily_rates, hourly_rates)
 #'
 #'
-#' # Improving accuracy by using lower and upper bound
-#' # If the salary falls outside of these bounds, NA will be returned
-#' # (acting as a catch-all for unrealistically low/high salaries)
+#' # Setting lower and upper bounds provides a catch-all to remove unrealistic results
+#' # Out of bounds values will be converted to NA
 #' extract_salary(salaries, exclude_below = 20000, exclude_above = 600000)
+#' # 170000 170000 150000  80000  53338  40008  70000  56055  90000  48000 120000     NA 172800     NA
 #'
 #'
-#'
-#' # Where a salary range is found, extract the upper bound
-#' extract_salary(salaries, salary_range_handling = "max")
-#'
-#'
-#'
-#'
-#' # Where a salary range is found, extract the lower bound
-#' extract_salary(salaries, salary_range_handling = "min")
-#'
-#'
-#'
-#' # Change number of work weeks in year (from default value of 48) - this
-#' # will only affect salaries identified as Weekly
-#' extract_salary(salaries, working_weeks_per_year = 50)
+#' # extract_salary automatically annualises hourly and daily rates
+#' # It does so by making assumptions about the number of working weeks in a year,
+#' # days per workweek, and hours per workday
+#' # And the assumed number of hours per workday can be changed from the default (8)
+#' # The assumed number of workdays per workweek can be changed from the default (5)
+#' # The assumed number of working weeks in year can be changed from the default (48)
+#' # E.g.
+#' extract_salary(salaries, hours_per_workday = 7, days_per_workweek = 4, working_weeks_per_year = 46)
+#' # 170000 170000 150000  80000  53338  40008  70000  56055  90000  36800  92000     NA 115920   4508
 #'
 #'
+#' # To see which salaries were detected as hourly or weekly, set include_periodicity to TRUE
+#' extract_salary(salaries, include_periodicity = TRUE)
 #'
-#' # Convert daily and hourly rates into annual with default assumptions for hours per workday,
-#' # days per workweek, and working weeks per year
-#' extract_salary(salaries, hours_per_workday = 8, days_per_workweek = 5, working_weeks_per_year = 48)
-#'
+#' # salary periodicity
+#' # 1  170000      Annual
+#' # 2  170000      Annual
+#' # 3  150000      Annual
+#' # 4   80000      Annual
+#' # 5   53338      Annual
+#' # 6   40008      Annual
+#' # 7   70000      Annual
+#' # 8   56055      Annual
+#' # 9   90000      Annual
+#' # 10  48000       Daily
+#' # 11 120000       Daily
+#' # 12     NA       Daily
+#' # 13 172800      Hourly
+#' # 14   6720      Hourly
 #'
 #'
 library(dplyr)
