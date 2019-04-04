@@ -142,7 +142,7 @@ convert_to_iso2Code(country_input_type_string, country)
 retrieve_inflation_data <- function(country, countries_dataframe) {
   
   if(missing(countries_dataframe)) { 
-    cat("Retrieving list of available countries")
+    cat("Validating iso2Code for", country, "\n")
     countries_dataframe <- show_countries() 
     }
   
@@ -150,7 +150,7 @@ retrieve_inflation_data <- function(country, countries_dataframe) {
   country_input_type_string <- country_input_type(country, countries_dataframe)
   country <- convert_to_iso2Code(country_input_type_string, country)
   
-  
+  cat("Retrieving inflation data for", country)
   inflation_url <- paste0("https://api.worldbank.org/countries/", country, "/indicators/FP.CPI.TOTL.ZG")
   
   inflation_url <- inflation_url %>% url_all_results
@@ -214,6 +214,8 @@ retrieve_inflation_data(country)
 
 
 
+country <- "Australia"
+inflation_data <- retrieve_inflation_data(country)
 
 
 
@@ -221,7 +223,7 @@ retrieve_inflation_data(country)
 
 #----- Function that uses inflation data to in/deflate prices -----#
 
-inflate <- function(price, country, from_date, to_date) {
+adjust_for_inflation <- function(price, country, from_date, to_date, inflation_data) {
   # Later, it would be great to include a parameter for 'extrapolate = TRUE' - this could project for earlier and later dates, rather than returning NA
   library(lubridate)
   library(dplyr)
