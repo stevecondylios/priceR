@@ -73,13 +73,13 @@ country_input_type <- function(country_input, countries_dataframe) {
   # and if not, return 'invalid' 
   
   if (which(countries_dataframe$iso2Code %in% country_input) %>% length > 0) {
-    country_input_type <- "iso2Code"
+    country_input_type_string <- "iso2Code"
   } else if (which(countries_dataframe$country_name %in% country_input) %>% length > 0) {
-    country_input_type <- "country_name"
+    country_input_type_string <- "country_name"
   } else { 
-    country_input_type <- "invalid"
+    country_input_type_string <- "invalid"
     }
-  return(country_input_type)
+  return(country_input_type_string)
 }
 
 country_input_type("AU", countries_dataframe)
@@ -210,19 +210,6 @@ retrieve_inflation_data(country)
 
 
 
-
-
-
-
-
-
-country <- "Australia"
-inflation_data <- retrieve_inflation_data(country)
-
-
-
-
-
 #----- Function that uses inflation data to in/deflate prices -----#
 
 adjust_for_inflation <- function(price, from, country, to, inflation_data) {
@@ -271,25 +258,22 @@ adjust_for_inflation <- function(price, from, country, to, inflation_data) {
   
   # Determine country input type
   countries_dataframe <- show_countries()
-  country_input_type <- country_input_type(country, countries_dataframe)
+  country_input_type_string <- country_input_type(country, countries_dataframe)
+  country <- convert_to_iso2Code(country_input_type_string, country)
+  
+  
+  name_of_country <- which(countries_dataframe$country_name %in% country)
   
   
   
   
-  if(country_input_type = "iso2Code") { 
-    name_of_country <- which(countries$country_name %in% country)
-    }
-  
-  
-  
-  
-  iso2Code <- which(countries$iso2Code %in% country)
+  iso2Code <- which(countries_dataframe$iso2Code %in% country)
   
   # If an iso2Code wasn't provided, check that a country name wasn't
   name_of_country <- c()
   if (iso2Code %>% length == 0) { 
     
-    name_of_country <- which(countries$country_name %in% country)
+    name_of_country <- which(countries_dataframe$country_name %in% country)
     
   }
   
@@ -299,7 +283,7 @@ adjust_for_inflation <- function(price, from, country, to, inflation_data) {
   
   # If it was a country name provided, grab the iso2Code
   if(length(name_of_country) > 0) {
-    country <- which(countries$country_name %in% country) %>% countries[., "iso2Code"]
+    country <- which(countries_dataframe$country_name %in% country) %>% countries_dataframe[., "iso2Code"]
   }
   
   #----- END - Check that the selected country is valid, error if it isn't -----#
