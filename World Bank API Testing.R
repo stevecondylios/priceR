@@ -62,7 +62,7 @@ show_countries() %>% head(20)
 
 #----- Helper function: determine country input type (i.e. whether it's iso2Code or country name) -----#
 
-countries <- show_countries()
+countries_dataframe <- show_countries()
 
 country_input_type <- function(country_input, countries_dataframe) {
   
@@ -89,23 +89,57 @@ country_input_type("AustraTYPOlia", countries)
 
 
 
-#----- Function to retrieve inflation data given iso2Code OR country_name -----#
+#----- Convert any country input into iso2Code type -----#
+# Accepts the type of country input and the country, and returns the relevant iso2Code
 
-retrieve_inflation_data <- function(country) {
+countries_dataframe <- show_countries()
+
+convert_to_iso2Code <- function(country_input_type_string, country) {
   
-  country_for_country_input_type <- country
+  if(country_input_type_string == "iso2Code") { country <- country }
   
-  countries <- show_countries()
+  if(country_input_type_string == "invalid") { stop(paste0('"', country, '"', " is not a valid country input - select a valid country from show_countries()")) }
   
-  country_input_type <- country_input_type(country_for_country_input_type, countries)
-  
-  if(country_input_type == "invalid") { stop(paste0('"', country, '"', " is not a valid country input - select a valid country from show_countries()")) }
-  
-  if(country_input_type == "country_name") {
+  if(country_input_type_string == "country_name") {
     
-    index_of_country_in_countries <- which(countries$country_name %in% country)
-    country <- countries$iso2Code[index_of_country_in_countries]
+    index_of_country_in_countries <- which(countries_dataframe$country_name %in% country)
+    country <- countries_dataframe$iso2Code[index_of_country_in_countries]
   }
+
+  return(country)
+}
+
+
+# Tests
+country <- "AU"
+country_input_type_string <- country_input_type(country, countries_dataframe)
+ensure_iso2Code_as_input(country_input_type_string, country)
+
+country <- "Australia"
+country_input_type_string <- country_input_type(country, countries_dataframe)
+ensure_iso2Code_as_input(country_input_type_string, country)
+
+country <- "AustrTESTalia"
+country_input_type_string <- country_input_type(country, countries_dataframe)
+ensure_iso2Code_as_input(country_input_type_string, country)
+
+
+
+
+
+#----- END ----- Determine what to do based on country input type -----#
+
+
+
+
+
+
+
+
+
+#----- Function to retrieve inflation data given iso2Code OR country_name -----#
+# NOTE: this accepts only iso2Code
+retrieve_inflation_data <- function(country) {
   
   inflation_url <- paste0("https://api.worldbank.org/countries/", country, "/indicators/FP.CPI.TOTL.ZG")
   
@@ -137,15 +171,47 @@ retrieve_inflation_data(country)
 
 
 
-country <- "AUsdf"
-country <- "AU"
-country <- "San Marino"
-test_prices <- c(10, 10, 10, 10)
-test_dates <- c(Sys.time()-(60 * 60 * 24 * 365 * 10), Sys.time()-(60 * 60 * 24 * 365 * 8), Sys.time()-(60 * 60 * 24 * 365 * 6), Sys.Date()- (60 * 60 * 24 * 365 * 6))
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 #----- Function that uses inflation data to in/deflate prices -----#
 
-inflate <- function(price, country, from_date, to_date)
+inflate <- function(price, country, from_date, to_date) {
   # Later, it would be great to include a parameter for 'extrapolate = TRUE' - this could project for earlier and later dates, rather than returning NA
   library(lubridate)
   library(dplyr)
@@ -174,17 +240,38 @@ inflate <- function(price, country, from_date, to_date)
   
   # If no to_date is provided, assume conversion into present day dollars is intended
   if(missing(to_date)) {
-    to_date <- rep(Sys.Date, length(price))
+    to_date <- rep(Sys.Date(), length(price))
   }
   
   # From inspection of WB's values for AU 2017 data, it appears they mean FY rather than calendar year (although the numbers aren't exactly conclusive)
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
   
   #----- Check that the selected country is valid, error if it isn't -----#
 
 
   
   
-  # PLACEHOLDER - determine country input type
+  # Determine country input type
+  country_input_type <- country_input_type(country, countries)
+  
+  
+  
+  
+  if(country_input_type = "iso2Code") { 
+    name_of_country <- which(countries$country_name %in% country)
+    }
+  
   
   
   
@@ -210,14 +297,21 @@ inflate <- function(price, country, from_date, to_date)
   #----- END - Check that the selected country is valid, error if it isn't -----#
   
   
+  
+  
+  
+  
+  
+  
   # Get inflation data
   inflation_data <- retrieve_inflation_data(country)
-  
   
   # A price from after the last period will return itself
   # A price from the last period will return itself
   # A price from the second last period will return itself inflated by the last period
   # Process: Identify which period the date is from, inflate by all later years
+  
+  if(missing(to_date)) { to_date <- today() }
   
   year_of_to_date <- year(to_date)
   years <- from_date
@@ -226,15 +320,61 @@ inflate <- function(price, country, from_date, to_date)
   
   
   
-  
-  
-  
-  
-  
+}
   
   
 
+
 #----- END -----#
+
+
+
+# Tests
+# inflate <- function(price, country, from_date, to_date)
+
+price <- 10
+country <- "AU"
+from_date <- today() - 200
+inflate(price, country, from_date)
+
+
+inflate()
+
+
+
+
+country <- "AUsdf"
+country <- "AU"
+country <- "San Marino"
+test_prices <- c(10, 10, 10, 10)
+test_dates <- c(Sys.time()-(60 * 60 * 24 * 365 * 10), Sys.time()-(60 * 60 * 24 * 365 * 8), Sys.time()-(60 * 60 * 24 * 365 * 6), Sys.Date()- (60 * 60 * 24 * 365 * 6))
+test_dates <- c(Sys.time()-(60 * 60 * 24 * 365 * 6), Sys.Date()- (60 * 60 * 24 * 365 * 6))
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
