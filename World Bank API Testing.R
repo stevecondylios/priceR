@@ -1,5 +1,7 @@
 
 
+# A versatile function for converting past (nominal) values into current (real) values
+
 
 library(jsonlite)
 library(dplyr)
@@ -223,13 +225,25 @@ inflation_data <- retrieve_inflation_data(country)
 
 #----- Function that uses inflation data to in/deflate prices -----#
 
-adjust_for_inflation <- function(price, country, from_date, to_date, inflation_data) {
+adjust_for_inflation <- function(price, from, country, to, inflation_data) {
   # Later, it would be great to include a parameter for 'extrapolate = TRUE' - this could project for earlier and later dates, rather than returning NA
   library(lubridate)
   library(dplyr)
   
-
-  # Declare a function that will accept any number of inflation values and produce one multiplier
+  # If no to_date is provided, assume conversion into present day dollars is intended
+  if(missing(to_date)) {
+    to_date <- rep(Sys.Date(), length(price))
+  }
+  
+  
+  # 'from' and 'to' parameters
+  from_date <- from
+  to_date <- to
+  
+  if(is.integer(to_date)) { to_date_format <- "year" }else{ to_date_format <- "date" }
+  
+  
+  # Declare a function that will accept any number of inflation values and produce one multiplier by which to multiply the later value 
   make_multiplier <- function(inflation_values) {
     multiplier <- inflation_values %>% {. / 100} %>% {. + 1} %>% prod(.)
     return(multiplier)
@@ -239,7 +253,7 @@ adjust_for_inflation <- function(price, country, from_date, to_date, inflation_d
   make_multiplier(c(1.23))
   make_multiplier(1.324)
   make_multiplier(c(1.23, 2.3))
-  make_multiplier(c())
+
   
   
 
@@ -250,32 +264,14 @@ adjust_for_inflation <- function(price, country, from_date, to_date, inflation_d
   }
   
   
-  # If no to_date is provided, assume conversion into present day dollars is intended
-  if(missing(to_date)) {
-    to_date <- rep(Sys.Date(), length(price))
-  }
-  
-  # From inspection of WB's values for AU 2017 data, it appears they mean FY rather than calendar year (although the numbers aren't exactly conclusive)
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  #----- Check that the selected country is valid, error if it isn't -----#
 
+  
 
   
   
   # Determine country input type
-  country_input_type <- country_input_type(country, countries)
+  countries_dataframe <- show_countries()
+  country_input_type <- country_input_type(country, countries_dataframe)
   
   
   
@@ -298,7 +294,7 @@ adjust_for_inflation <- function(price, country, from_date, to_date, inflation_d
   }
   
   if(length(iso2Code) == 0 & length(name_of_country) == 0) {
-    stop("Please provide a valid country name or iso2Code\n Run show_countries() for a comprehensive list")
+    stop("Please provide a valid country name or iso2Code\n Run show_countries() for an exhaustive list")
   }
   
   # If it was a country name provided, grab the iso2Code
@@ -350,119 +346,19 @@ from_date <- today() - 200
 inflate(price, country, from_date)
 
 
-inflate()
 
 
 
 
-country <- "AUsdf"
+
+
 country <- "AU"
-country <- "San Marino"
 test_prices <- c(10, 10, 10, 10)
 test_dates <- c(Sys.time()-(60 * 60 * 24 * 365 * 10), Sys.time()-(60 * 60 * 24 * 365 * 8), Sys.time()-(60 * 60 * 24 * 365 * 6), Sys.Date()- (60 * 60 * 24 * 365 * 6))
 test_dates <- c(Sys.time()-(60 * 60 * 24 * 365 * 6), Sys.Date()- (60 * 60 * 24 * 365 * 6))
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-#----- Function to convert prices into present day dollars -----#
-
-get_real <- function(price, country, from_date) {
-  
-  to_date <- Sys.Date()
-  
-  price <- inflate(price, country, from_date, to_date)
-  
-  return(price)
-}
-
-
-#----- END -----#
-
-
-
-
-
-
-
-
-
-# Testing out the World Bank API
-
-url <- "https://api.worldbank.org/v2/country/br?format=json"
-fromJSON(url)
-
-list_of_all_countries <- "https://api.worldbank.org/v2/country"
-list_of_all_countries %>% paste0(., "?format=json") %>% fromJSON()
-list_of_all_countries %>% paste0(., "?format=json") %>% fromJSON() %>% .[[2]] %>% .$name
-
-
-list_of_indicators <- "https://api.worldbank.org/v2/indicators"
-indicators <- list_of_indicators %>% paste0(., "?format=json", "&per_page=15650") %>% fromJSON %>% .[[2]] 
-
-indicators$topics %>% .[1:20]
-
-
-countries_url <- "https://api.worldbank.org/v2/country?format=json" %>% url_all_results(.)
-countries <- countries_url %>% fromJSON(.)
-
-countries <- as.data.frame(countries[[2]]$iso2Code, countries[[2]]$name, stringsAsFactors = FALSE)
-
-
-
-# Inflation code 
-inf_code <- "FP.CPI.TOTL.ZG"
-# which is from: https://api.worldbank.org/v2/indicators?format=json&per_page=15650
-
-
-# Example
-# From: http://blogs.worldbank.org/opendata/the-top-5-ways-to-access-world-bank-data
-example <- "http://api.worldbank.org/countries/BGD/indicators/NY.GDP.MKTP.KD.ZG?per_page=11&date=2000:2010"
-
-
-
-# Inflation example:
-# https://api.worldbank.org/countries/AU/indicators/FP.CPI.TOTL.ZG
-
-
-# Inflation example with all results
-
-country <- 
-url <- "https://api.worldbank.org/countries/AU/indicators/FP.CPI.TOTL.ZG"
-
-
-
-
-
-
-
-
+adjust_for_inflation(test_prices, test_dates) 
 
 
 
