@@ -187,7 +187,7 @@ retrieve_inflation_data(country)
 
 #----- Function that uses inflation data to in/deflate prices -----#
 
-adjust_for_inflation <- function(price, year, country, to, inflation_dataframe, extrapolate, periodicity, countries_dataframe) {
+adjust_for_inflation <- function(price, from_date, country, to_date, inflation_dataframe, extrapolate, periodicity, countries_dataframe, extrapolation_averaging_period, extrapolation_rate) {
   # Later, it would be great to include a parameter for 'extrapolate = TRUE' - this could project for earlier and later dates, rather than returning NA
   library(lubridate)
   library(dplyr)
@@ -199,16 +199,15 @@ adjust_for_inflation <- function(price, year, country, to, inflation_dataframe, 
   # Note: extrapolation_n has to be set later as it requires inflation_dataframe first
   
   # If no to_date is provided, assume conversion into present day dollars is intended
-  if(missing(to)) {
+  if(missing(to_date)) {
     to_date <- rep(Sys.Date(), length(price)) %>% substr(., 1, 4) %>% as.integer
-  } else { to_date <- to %>% substr(., 1, 4) %>% as.integer }
+  } else { to_date <- to_date %>% substr(., 1, 4) %>% as.integer }
   
   if(missing(inflation_dataframe)) { inflation_dataframe <- retrieve_inflation_data(country) }
+  inflation_dataframe <- inflation_dataframe %>% .[[2]] %>% .[ , c("value", "date")]
+  inflation_dataframe$date <- inflation_dataframe$date %>% as.integer
   
-  
-  # 'from' 
-  from_date <- year
-
+  from_date <- substr(from_date, 1, 4) %>% as.integer # Ensure to / from are just years (for now)
   
   if(is.integer(to_date)) { to_date_format <- "year" }else{ to_date_format <- "date" }
   
@@ -248,79 +247,69 @@ adjust_for_inflation <- function(price, year, country, to, inflation_dataframe, 
   
   
   #----- Extrapolation logic -----#
-  # Require method to be specified before any extrapolation
-  # If one method specified, use for both start/end. Otherwise use whatever is specified (i.e. if two methods are specified)
-  # If "rate" is specified, require 
+  # This will alter the inflation_dataframe object with theoretical values matching those specified by the user
   
   
-  
-  
-  # if(missing(extrapolation_method)) { extrapolation_method <- "none" } else {
-  #   
+  # 
+  # if(missing(extrapolation_method)) {
+  # 
+  #   stop("Please specifiy 'extrapolation_method' (either 'rate' or 'average')")
+  # 
+  #   } else {
+  # 
   #   if(length(extrapolation_method) == 1) {
+  # 
   #     extrapolation_method <- c(extrapolation_method, extrapolation_method)
-  #     
+  # 
   #     if(extrapolation_method[1] == "rate") {
-  #       # do something
+  # 
+  #       if(missing(extrapolation_rate)) { stop("Please specify 'extrapolation_rate'") }
+  # 
+  # 
+  # 
   #     } else if(extrapolation_method[1] == "average") {
   #       # do something
   #     } else { stop ("'extrapolation_method' value/s can be 'rate', 'average', c('rate', 'average'), or c('average', 'rate')") }
-  #     
-  #     
-  #     
+  # 
+  # 
+  # 
   #   } else if(length(extrapolation_method) == 2) {
-  #     
-  #     
-  #     
-  #     
+  # 
+  # 
+  # 
+  # 
   #   } # End if length == 2
-  #   
-  #   
   # 
-  #   
-  #   
+  # 
+  # 
+  # 
+  # 
   # } # End outermost else
-  # 
-  
+
+
   
   
   
 
   
   
-  
-  #----- Calculating real prices -----#
-  # Logic
-  # A price from after the last period will return itself
-  # A price from the last period will return itself
-  # A price from the second last period will return itself inflated by the last period
-  # Process: Identify which period the date is from, inflate by all later years
+
+
+
   
 
-  inflation_dataframe <- inflation_dataframe %>% .[[2]] %>% .[ , c("value", "date")]
-  inflation_dataframe$date <- inflation_dataframe$date %>% as.integer
-  
-  # Ensure to / from are just years (for now)
-  from_date <- substr(from_date, 1, 4) %>% as.integer
-  
-  
-  # Steps 
-  # 1. Determine range (min / max)
-  # 2. Get inflation values for range
-  # 3. Make multiplier
-  # 4. Apply multiplier
-  
-  
-  
   
   
   # Get relevant inflation values and create multiplier
-  inflation_values <- inflation_dataframe[inflation_dataframe$date >= from_date & inflation_dataframe$date <= to_date, "value"] %>% as.numeric
-  multipliers <- make_multiplier(inflation_values)
+  flate <- function(inflation_dataframe, from_date, to_date) {
+    inflation_values <- inflation_dataframe[inflation_dataframe$date >= from_date & inflation_dataframe$date <= to_date, "value"] %>% as.numeric
+    make_multiplier(inflation_values)
+  }
   
-  price * multipliers
+  multipliers <- flate(inflation_dataframe = inflation_dataframe, from_date = from_date, to_date = to_date)
+  real_price <- price * multipliers
   
-  
+  real_price %>% return
 }
   
   
@@ -335,10 +324,17 @@ adjust_for_inflation <- function(price, year, country, to, inflation_dataframe, 
 
 price <- 10
 country <- "AU"
-from_date <- today() - (365 *28)
-adjust_for_inflation(price, from_date, country, inflation_dataframe = inflation_dataframe, countries_dataframe = countries_dataframe, to = 2017)
+from_date <- today() - (365 * 28)
+
+inflation_dataframe <- inflation_dataframe_backup #dwd
+
+adjust_for_inflation(price, from_date, country, to = 2017, 
+                     inflation_dataframe = inflation_dataframe, countries_dataframe = countries_dataframe)
 
 
+adjust_for_inflation(price, from_date, country, to = 2018, 
+                     inflation_dataframe = inflation_dataframe, countries_dataframe = countries_dataframe,
+                     extrapolation_method = "average", averaging_period = 3)
 
 
 
