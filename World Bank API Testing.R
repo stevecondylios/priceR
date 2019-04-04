@@ -21,7 +21,7 @@ url_all_results <- function(original_url) {
   
   url_with_all_results <- paste0(original_url, "&per_page=", total_results)
   
-  return(url_with_all_results)
+  url_with_all_results %>% return
   
 }
 
@@ -80,9 +80,9 @@ country_input_type <- function(country_input, countries_dataframe) {
   return(country_input_type)
 }
 
-country_input_type("AU", countries)
-country_input_type("Australia", countries)
-country_input_type("AustraTYPOlia", countries)
+country_input_type("AU", countries_dataframe)
+country_input_type("Australia", countries_dataframe)
+country_input_type("AustraTYPOlia", countries_dataframe)
 
 #--- END ----- Helper function: determine country input type (i.e. whether it's iso2Code or country name) -----#
 
@@ -113,15 +113,15 @@ convert_to_iso2Code <- function(country_input_type_string, country) {
 # Tests
 country <- "AU"
 country_input_type_string <- country_input_type(country, countries_dataframe)
-ensure_iso2Code_as_input(country_input_type_string, country)
+convert_to_iso2Code(country_input_type_string, country)
 
 country <- "Australia"
 country_input_type_string <- country_input_type(country, countries_dataframe)
-ensure_iso2Code_as_input(country_input_type_string, country)
+convert_to_iso2Code(country_input_type_string, country)
 
 country <- "AustrTESTalia"
 country_input_type_string <- country_input_type(country, countries_dataframe)
-ensure_iso2Code_as_input(country_input_type_string, country)
+convert_to_iso2Code(country_input_type_string, country)
 
 
 
@@ -139,7 +139,17 @@ ensure_iso2Code_as_input(country_input_type_string, country)
 
 #----- Function to retrieve inflation data given iso2Code OR country_name -----#
 # NOTE: this accepts only iso2Code
-retrieve_inflation_data <- function(country) {
+retrieve_inflation_data <- function(country, countries_dataframe) {
+  
+  if(missing(countries_dataframe)) { 
+    cat("Retrieving list of available countries")
+    countries_dataframe <- show_countries() 
+    }
+  
+  # Ensure we have an iso2Code
+  country_input_type_string <- country_input_type(country, countries_dataframe)
+  country <- convert_to_iso2Code(country_input_type_string, country)
+  
   
   inflation_url <- paste0("https://api.worldbank.org/countries/", country, "/indicators/FP.CPI.TOTL.ZG")
   
