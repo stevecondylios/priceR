@@ -152,7 +152,7 @@ retrieve_inflation_data <- function(country, countries_dataframe) {
   country_input_type_string <- country_input_type(country, countries_dataframe)
   country <- convert_to_iso2Code(country_input_type_string, country)
   
-  cat("Retrieving inflation data for", country)
+  cat("Retrieving inflation data for", country, "\n")
   inflation_url <- paste0("https://api.worldbank.org/countries/", country, "/indicators/FP.CPI.TOTL.ZG")
   
   inflation_url <- inflation_url %>% url_all_results
@@ -185,50 +185,37 @@ retrieve_inflation_data(country)
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 #----- Function that uses inflation data to in/deflate prices -----#
 
-adjust_for_inflation <- function(price, from, country, to, inflation_data) {
+adjust_for_inflation <- function(price, year, country, to, inflation_dataframe, extrapolate, periodicity, countries_dataframe) {
   # Later, it would be great to include a parameter for 'extrapolate = TRUE' - this could project for earlier and later dates, rather than returning NA
   library(lubridate)
   library(dplyr)
   
+  
+  #----- Deal with missing parameters and define functions -----#
+  
+  if(missing(extrapolate)) { extrapolate <- FALSE }
+  # Note: extrapolation_n has to be set later as it requires inflation_dataframe first
+  
   # If no to_date is provided, assume conversion into present day dollars is intended
-  if(missing(to_date)) {
-    to_date <- rep(Sys.Date(), length(price))
-  }
+  if(missing(to)) {
+    to_date <- rep(Sys.Date(), length(price)) %>% substr(., 1, 4) %>% as.integer
+  } else { to_date <- to %>% substr(., 1, 4) %>% as.integer }
+  
+  if(missing(inflation_dataframe)) { inflation_dataframe <- retrieve_inflation_data(country) }
   
   
-  # 'from' and 'to' parameters
-  from_date <- from
-  to_date <- to
+  # 'from' 
+  from_date <- year
+
   
   if(is.integer(to_date)) { to_date_format <- "year" }else{ to_date_format <- "date" }
   
+  # Validate that there are as many dates as prices (or just one date)
+  if(length(price) != (length(from_date) | 1)) {
+    stop("from_date must be a date or a vector of dates of the same length as the price(s)")
+  }
   
   # Declare a function that will accept any number of inflation values and produce one multiplier by which to multiply the later value 
   make_multiplier <- function(inflation_values) {
@@ -239,77 +226,99 @@ adjust_for_inflation <- function(price, from, country, to, inflation_data) {
   # Testing
   make_multiplier(c(1.23))
   make_multiplier(1.324)
+  
   make_multiplier(c(1.23, 2.3))
 
   
   
 
-  
-  # Validate that there are as many dates as prices (or just one date)
-  if(length(price) != (length(from_date) | 1)) {
-    stop("from_date must be a date or a vector of dates of the same length as the price(s)")
-  }
-  
-  
-
-  
-
-  
-  
+  if(missing(countries_dataframe)) {
+  message("Retreiving countries")
   # Determine country input type
   countries_dataframe <- show_countries()
+  }
+  
   country_input_type_string <- country_input_type(country, countries_dataframe)
   country <- convert_to_iso2Code(country_input_type_string, country)
+  # 'country' is iso2Code from here on 
   
-  
-  name_of_country <- which(countries_dataframe$country_name %in% country)
-  
-  
-  
-  
-  iso2Code <- which(countries_dataframe$iso2Code %in% country)
-  
-  # If an iso2Code wasn't provided, check that a country name wasn't
-  name_of_country <- c()
-  if (iso2Code %>% length == 0) { 
-    
-    name_of_country <- which(countries_dataframe$country_name %in% country)
-    
-  }
-  
-  if(length(iso2Code) == 0 & length(name_of_country) == 0) {
-    stop("Please provide a valid country name or iso2Code\n Run show_countries() for an exhaustive list")
-  }
-  
-  # If it was a country name provided, grab the iso2Code
-  if(length(name_of_country) > 0) {
-    country <- which(countries_dataframe$country_name %in% country) %>% countries_dataframe[., "iso2Code"]
-  }
-  
-  #----- END - Check that the selected country is valid, error if it isn't -----#
+  name_of_country <- which(countries_dataframe$iso2Code %in% country) %>% countries_dataframe$country_name[.]
   
   
   
   
+  #----- Extrapolation logic -----#
+  # Require method to be specified before any extrapolation
+  # If one method specified, use for both start/end. Otherwise use whatever is specified (i.e. if two methods are specified)
+  # If "rate" is specified, require 
   
   
   
   
-  # Get inflation data
-  inflation_data <- retrieve_inflation_data(country)
+  # if(missing(extrapolation_method)) { extrapolation_method <- "none" } else {
+  #   
+  #   if(length(extrapolation_method) == 1) {
+  #     extrapolation_method <- c(extrapolation_method, extrapolation_method)
+  #     
+  #     if(extrapolation_method[1] == "rate") {
+  #       # do something
+  #     } else if(extrapolation_method[1] == "average") {
+  #       # do something
+  #     } else { stop ("'extrapolation_method' value/s can be 'rate', 'average', c('rate', 'average'), or c('average', 'rate')") }
+  #     
+  #     
+  #     
+  #   } else if(length(extrapolation_method) == 2) {
+  #     
+  #     
+  #     
+  #     
+  #   } # End if length == 2
+  #   
+  #   
+  # 
+  #   
+  #   
+  # } # End outermost else
+  # 
   
+  
+  
+  
+
+  
+  
+  
+  #----- Calculating real prices -----#
+  # Logic
   # A price from after the last period will return itself
   # A price from the last period will return itself
   # A price from the second last period will return itself inflated by the last period
   # Process: Identify which period the date is from, inflate by all later years
   
-  if(missing(to_date)) { to_date <- today() }
+
+  inflation_dataframe <- inflation_dataframe %>% .[[2]] %>% .[ , c("value", "date")]
+  inflation_dataframe$date <- inflation_dataframe$date %>% as.integer
   
-  year_of_to_date <- year(to_date)
-  years <- from_date
+  # Ensure to / from are just years (for now)
+  from_date <- substr(from_date, 1, 4) %>% as.integer
+  
+  
+  # Steps 
+  # 1. Determine range (min / max)
+  # 2. Get inflation values for range
+  # 3. Make multiplier
+  # 4. Apply multiplier
   
   
   
+  
+  
+  # Get relevant inflation values and create multiplier
+  inflation_values <- inflation_dataframe[inflation_dataframe$date >= from_date & inflation_dataframe$date <= to_date, "value"] %>% as.numeric
+  multipliers <- make_multiplier(inflation_values)
+  
+  price * multipliers
   
   
 }
@@ -326,8 +335,8 @@ adjust_for_inflation <- function(price, from, country, to, inflation_data) {
 
 price <- 10
 country <- "AU"
-from_date <- today() - 200
-inflate(price, country, from_date)
+from_date <- today() - (365 *28)
+adjust_for_inflation(price, from_date, country, inflation_dataframe = inflation_dataframe, countries_dataframe = countries_dataframe, to = 2017)
 
 
 
