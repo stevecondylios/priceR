@@ -245,17 +245,7 @@ adjust_for_inflation <- function(price, from_date, country, to_date, inflation_d
     stop("from_date must be a date or a vector of dates of the same length as the price(s)")
   }
   
-  # Declare a function that will accept any number of inflation values and produce one multiplier by which to multiply the later value 
-  make_multiplier <- function(inflation_values) {
-    if(from_date < to_date) {
-      multiplier <- inflation_values %>% {. / 100} %>% {. + 1} %>% prod(.)
-    } else if (from_date > to_date) {
-      multiplier <- inflation_values %>% {. / 100} %>% {. + 1} %>% { 1 / prod(.) }
-    } else if (from_date == to_date) {
-      multiplier <- 1
-    }
-    return(multiplier)
-  }
+
 
   
 
@@ -359,9 +349,7 @@ adjust_for_inflation <- function(price, from_date, country, to_date, inflation_d
   } # End outermost else for extrapolating past
   
   
-  
-  
-  
+
 
   # If dates are outside of avaiable data and no extrapolation is set
   if(to_date > max(available_inflation_data$date) & !extrapolate_future) { 
@@ -376,12 +364,53 @@ adjust_for_inflation <- function(price, from_date, country, to_date, inflation_d
   
   
 
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  # This function takes a single from value and single to value and creates a multiplier
+  # Note that we don't pass inflation_dataframe object to this as it confuses mapply/sapply and they 
+  # Don't understand what to do with it 
+  make_multiplier <- function(from, to) {
+    # Note dilligent use of inequalities (rightly) prevent current year's inflation being applied 
+    inflation_dataframe %>% dplyr::filter(date >= from_date & date < to_date | date <= from_date & date > to_date ) %>% 
+      .$value %>% {. / 100} %>% {. + 1} %>% { ifelse(from_date < to_date, prod(.), { 1 / prod(.) }) }
+  }
+  
+  price_dataframe <- data.frame(price, from_date, to_date, stringsAsFactors = FALSE)
+  
 
+  mapply(make_multiplier, from = from_date, to = to_date)
+    
+  make_multiplier(from = from_date, to = to_date)
 
+  
+  
+  
+  
+  
+  
+  
+  
+  
 
   # Get relevant inflation values and create multiplier
   flate <- function(inflation_dataframe, from_date, to_date) {
+    
+    
+    
     inflation_values <- inflation_dataframe %>% filter(date <= from_date & date >= to_date | date >= from_date & date <= to_date) %>% .$value
+    
+    inflation_
+    
+    
     make_multiplier(inflation_values)
   }
   
