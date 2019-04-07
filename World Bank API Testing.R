@@ -202,25 +202,30 @@ adjust_for_inflation <- function(price, from_date, country, to_date, inflation_d
   
   #----- Deal with missing parameters and define functions -----#
   
-  if(missing(extrapolate_future_method)) { extrapolate_future <- FALSE }
-  if(missing(extrapolate_past_method)) { extrapolate_past <- FALSE } 
+  if(missing(extrapolate_future_method)) { extrapolate_future <- FALSE } else { extrapolate_future <- TRUE }
+  if(missing(extrapolate_past_method)) { extrapolate_past <- FALSE } else { extrapolate_past <- TRUE }
   
   if(extrapolate_future) {
     if(missing(extrapolate_future_method)) { stop("'extrapolate_future_method' must be specified (it can take values 'average' or 'rate')") }
     if(!extrapolate_future_method %in% c("average", "rate")) { stop("'extrapolate_future_method' must be either 'average' or 'rate'")}
-    if(extrapolate_future_method == 'average') { if(missing(future_averaging_period)) { stop("Please specify how many years' average to use when extrapolating forward ('future_averaging_period'
-                                                                                             can take any positive integer or 'all' to use an average of all available years' data")}}
-    if(extrapolate_future_method == 'rate') { if(missing(future_rate)) { stop("Please specify the assumed rate of inflation for future periods")}}
+    if(extrapolate_future_method == 'average') { if(missing(future_averaging_period)) { 
+      stop("Please specify how many years' average to use when extrapolating forward ('future_averaging_period'
+           can take any positive integer or 'all' to use an average of all available years' data")}}
+    if(extrapolate_future_method == 'rate') { 
+      if(missing(future_rate)) { stop("Please specify the assumed rate of inflation for future periods (i.e. using 'future_rate' parameter)")}
+      }
     
   }
   
   if(extrapolate_past) {
     if(missing(extrapolate_past_method)) { stop("'extrapolate_past_method' must be specified (it can take values 'average' or 'rate')") }
     if(!extrapolate_past_method %in% c("average", "rate")) { stop("'extrapolate_past_method' must be either 'average' or 'rate'")}
-    if(extrapolate_past_method == 'average') { if(missing(past_averaging_period)) { stop("Please specify how many years' average to use when extrapolating forward ('past_averaging_period'
-                                                                                             can take any positive integer or 'all' to use an average of all available years' data")}}
-    if(extrapolate_past_method == 'rate') { if(missing(past_rate)) { stop("Please specify the assumed rate of inflation for past periods")}}
-    
+    if(extrapolate_past_method == 'average') { if(missing(past_averaging_period)) { 
+    stop("Please specify how many years' average to use when extrapolating forward ('past_averaging_period'
+         can take any positive integer or 'all' to use an average of all available years' data")}}
+    if(extrapolate_past_method == 'rate') { 
+      if(missing(past_rate)) { stop("Please specify the assumed rate of inflation for past periods (i.e. using 'past_rate' parameter)")}
+    }
   }
   
   
@@ -230,13 +235,10 @@ adjust_for_inflation <- function(price, from_date, country, to_date, inflation_d
     to_date <- rep(Sys.Date(), length(price)) %>% substr(., 1, 4) %>% as.integer
   } else { to_date <- to_date %>% substr(., 1, 4) %>% as.integer }
   
-  if(missing(inflation_dataframe)) { inflation_dataframe <- retrieve_inflation_data(country) }
-  inflation_dataframe <- inflation_dataframe %>% .[[2]] %>% .[ , c("value", "date")]
-  inflation_dataframe$date <- inflation_dataframe$date %>% as.integer
-  
+
   from_date <- substr(from_date, 1, 4) %>% as.integer # Ensure to / from are just years (for now)
+  to_date <- substr(to_date, 1, 4) %>% as.integer # Ensure to / from are just years (for now)
   
-  if(is.integer(to_date)) { to_date_format <- "year" }else{ to_date_format <- "date" }
   
   # Validate that there are as many dates as prices (or just one date)
   if(length(price) != (length(from_date) | 1)) {
@@ -245,17 +247,16 @@ adjust_for_inflation <- function(price, from_date, country, to_date, inflation_d
   
   # Declare a function that will accept any number of inflation values and produce one multiplier by which to multiply the later value 
   make_multiplier <- function(inflation_values) {
-    multiplier <- inflation_values %>% {. / 100} %>% {. + 1} %>% prod(.)
+    if(from_date < to_date) {
+      multiplier <- inflation_values %>% {. / 100} %>% {. + 1} %>% prod(.)
+    } else if (from_date > to_date) {
+      multiplier <- inflation_values %>% {. / 100} %>% {. + 1} %>% { 1 / prod(.) }
+    } else if (from_date == to_date) {
+      multiplier <- 1
+    }
     return(multiplier)
   }
 
-  # Testing
-  make_multiplier(c(1.23))
-  make_multiplier(1.324)
-  
-  make_multiplier(c(1.23, 2.3))
-
-  
   
 
   if(missing(countries_dataframe)) {
@@ -271,88 +272,116 @@ adjust_for_inflation <- function(price, from_date, country, to_date, inflation_d
   name_of_country <- which(countries_dataframe$iso2Code %in% country) %>% countries_dataframe$country_name[.]
   
   
-  available_inflation_data <- inflation_dataframe %>% na.omit
+
   
-  if(to_date > max(available_inflation_data$date)) { 
-    stop(paste0("'to_date' (", to_date, ") is later than the latest available data (", 
-                max(available_inflation_data$date), "). Use an earlier 'to_date' or set an 'extrapolation_method'"))
-  }
-  
-  if(from_date < min(available_inflation_data$date)) { 
-    stop(paste0("'from_date' (", from_date, ") is earlier than the earliest available data (", 
-                min(available_inflation_data$date), "). Use a later 'from_date' or set an 'extrapolation_method'"))
-    }
+  if(missing(inflation_dataframe)) { inflation_dataframe <- retrieve_inflation_data(country) }
+  inflation_dataframe <- inflation_dataframe %>% .[[2]] %>% .[ , c("value", "date")]
+  inflation_dataframe$date <- inflation_dataframe$date %>% as.integer
+  inflation_dataframe$value <- inflation_dataframe$value %>% as.numeric
   
   
   
   
   
   #----- Extrapolation logic -----#
-  # This will alter the inflation_dataframe object with theoretical values matching those specified by the user
-  # extrapolation_methods <- list("average", "rate", c("average", "average"), c("average", "rate"), c("rate", "rate"), c("rate", "average"))
+
   
+  available_inflation_data <- inflation_dataframe %>% na.omit
+  max_year_requested <- max(to_date)
+  max_year_available_without_extrapolation <- max(available_inflation_data$date)
   
-  # (price, from_date, country, to_date, inflation_dataframe, countries_dataframe, 
-  #   extrapolate_future, extrapolate_future_method, future_average, future_rate, 
-  #   extrapolate_past, extrapolate_past_method, past_average, past_rate, periodicity)
-  # 
-  
-  
-  
-  
-  if(extrapolate_future) {
+  if(extrapolate_future & (max_year_requested > max_year_available_without_extrapolation)) {
+
+    if(extrapolate_future_method == 'average'){
+      
+      # Take one more than requested as we are looking for a rate (difference between years)
+      number_of_years_to_use_for_average <- min(future_averaging_period, nrow(available_inflation_data))
+      
+      years_to_extrapolate <- seq(max_year_available_without_extrapolation + 1, max_year_requested, 1)
+      average_inflation <- available_inflation_data[1:number_of_years_to_use_for_average, "value"] %>% as.numeric %>% mean
+      
+      extrapolated_dataframe <- data.frame(value=rep(average_inflation, length(years_to_extrapolate)), years_to_extrapolate, stringsAsFactors = FALSE) %>% map_df(rev) %>% as.data.frame
+      colnames(extrapolated_dataframe) <- c("value", "date")
+      
+      inflation_dataframe <- rbind(extrapolated_dataframe, available_inflation_data)
+      
+    } # End future / average
     
-    if(extrapolate_future_method == "average")
+    if(extrapolate_future_method == 'rate'){
+      
+      years_to_extrapolate <- seq(max_year_available_without_extrapolation + 1, max_year_requested, 1)
+      average_inflation <- future_rate
+      
+      extrapolated_dataframe <- data.frame(value=rep(average_inflation, length(years_to_extrapolate)), years_to_extrapolate, stringsAsFactors = FALSE) %>% map_df(rev) %>% as.data.frame
+      colnames(extrapolated_dataframe) <- c("value", "date")
+      
+      inflation_dataframe <- rbind(extrapolated_dataframe, available_inflation_data)
+      
+    } # End future / rate
     
-
-    } else {
-
-    if(length(extrapolation_method) == 1) {
-
-      extrapolation_method <- c(extrapolation_method, extrapolation_method)
-
-      if(extrapolation_method[1] == "rate") {
-
-        if(missing(extrapolation_rate)) { stop("Please specify 'extrapolation_rate'") }
-
-
-
-      } else if(extrapolation_method[1] == "average") {
-        # do something
-      } else { stop ("'extrapolation_method' value/s can be 'rate', 'average', c('rate', 'average'), or c('average', 'rate')") }
-
-
-
-    } else if(length(extrapolation_method) == 2) {
-
-
-
-
-    } # End if length == 2
-
-
-
-
-
-  } # End outermost else
-
+  } # End outermost else for extrapolating future
 
   
   
   
+  
+  min_year_requested <- min(to_date) # Note that this is still the 'to_date'; taking whatever values are provided into a date in the past
+  min_year_available_without_extrapolation <- min(available_inflation_data$date)
 
+  if(extrapolate_past & (min_year_requested < min_year_available_without_extrapolation)) {
+    
+    if(extrapolate_past_method == 'average'){
+      
+      # Take one more than requested as we are looking for a rate (difference between years)
+      number_of_years_to_use_for_average <- min(past_averaging_period, nrow(available_inflation_data))
+      
+      years_to_extrapolate <- seq(min_year_available_without_extrapolation - 1, min_year_requested, - 1) # Note these are in reverse
+      average_inflation <- available_inflation_data[(nrow(available_inflation_data)-number_of_years_to_use_for_average + 1):nrow(available_inflation_data), "value"] %>% as.numeric %>% mean
+      
+      extrapolated_dataframe <- data.frame(value=rep(average_inflation, length(years_to_extrapolate)), years_to_extrapolate, stringsAsFactors = FALSE) 
+      colnames(extrapolated_dataframe) <- c("value", "date")
+      
+      inflation_dataframe <- rbind(available_inflation_data, extrapolated_dataframe)
+      
+    } # End past / average
+    
+    if(extrapolate_past_method == 'rate'){
+      
+      average_inflation <- past_rate
+      
+      extrapolated_dataframe <- data.frame(value=rep(average_inflation, length(years_to_extrapolate)), years_to_extrapolate, stringsAsFactors = FALSE)
+      colnames(extrapolated_dataframe) <- c("value", "date")
+      
+      inflation_dataframe <- rbind(extrapolated_dataframe, available_inflation_data)
+      
+    } # End past / rate
+    
+  } # End outermost else for extrapolating past
+  
+  
+  
+  
+  
+
+  # If dates are outside of avaiable data and no extrapolation is set
+  if(to_date > max(available_inflation_data$date) & !extrapolate_future) { 
+    stop(paste0("'to_date' (", to_date, ") is later than the latest available data (", 
+                max(available_inflation_data$date), "). Use an earlier 'to_date' or set 'extrapolate_future' to TRUE"))
+  }
+  
+  if(to_date < min(available_inflation_data$date) & !extrapolate_past) { 
+    stop(paste0("'to_date' (", from_date, ") is earlier than the earliest available data (", 
+                min(available_inflation_data$date), "). Use a later 'to_date' or set an 'extrapolate_paste to TRUE'"))
+  }
   
   
 
 
 
-  
 
-  
-  
   # Get relevant inflation values and create multiplier
   flate <- function(inflation_dataframe, from_date, to_date) {
-    inflation_values <- inflation_dataframe[inflation_dataframe$date >= from_date & inflation_dataframe$date <= to_date, "value"] %>% as.numeric
+    inflation_values <- inflation_dataframe %>% filter(date <= from_date & date >= to_date | date >= from_date & date <= to_date) %>% .$value
     make_multiplier(inflation_values)
   }
   
@@ -362,7 +391,11 @@ adjust_for_inflation <- function(price, from_date, country, to_date, inflation_d
   real_price %>% return
 }
   
-  
+
+
+
+
+ 
 
 
 #----- END -----#
@@ -370,7 +403,9 @@ adjust_for_inflation <- function(price, from_date, country, to_date, inflation_d
 
 
 # Tests
-# function(price, from_date, country, to_date, inflation_dataframe, extrapolate, periodicity, countries_dataframe, extrapolation_averaging_period, extrapolation_rate)
+# (price, from_date, country, to_date, inflation_dataframe, countries_dataframe, 
+# extrapolate_future_method, future_averaging_period, future_rate, 
+# extrapolate_past_method, past_averaging_period, past_rate, periodicity)
 
 price <- 10
 country <- "AU"
@@ -378,37 +413,63 @@ from_date <- today() - (365 * 28)
 
 inflation_dataframe <- inflation_dataframe_backup #dwd
 
-adjust_for_inflation(price, from_date, country, to = 2017, 
+adjust_for_inflation(price, from_date, country, to_date = 2017, 
                      inflation_dataframe = inflation_dataframe, countries_dataframe = countries_dataframe)
 
 
-adjust_for_inflation(price, from_date, country, to = 2030, 
+adjust_for_inflation(price, from_date, country, to_date = 2030, 
                      inflation_dataframe = inflation_dataframe, countries_dataframe = countries_dataframe)
 # Error in adjust_for_inflation(price, from_date, country, to = 2030, inflation_dataframe = inflation_dataframe,  : 
 # 'to_date' (2030) is later than the latest available data (2017). Use an earlier 'to_date' or set an 'extrapolation_method'
 
 
-adjust_for_inflation(price, from_date, country, to = 2018, 
+adjust_for_inflation(price, from_date, country, to_date = 2030, 
                      inflation_dataframe = inflation_dataframe, countries_dataframe = countries_dataframe,
-                     extrapolation_method = "average", extrapolation_averaging_period = 3)
+                     extrapolate_future_method = "average")
 
 
 
-adjust_for_inflation(price, from_date, country, to = 2018, 
+adjust_for_inflation(price, from_date, country, to_date = 2030, 
                      inflation_dataframe = inflation_dataframe, countries_dataframe = countries_dataframe,
-                     extrapolation_method = "rate", averaging_period = 3)
+                     extrapolate_future_method = "average", future_averaging_period = 3)
 
-adjust_for_inflation(price, from_date, country, to = 2018, 
+adjust_for_inflation(price, from_date, country, to_date = 2030, 
                      inflation_dataframe = inflation_dataframe, countries_dataframe = countries_dataframe,
-                     extrapolation_method = "average", averaging_period = 3)
+                     extrapolate_future_method = "rate", future_averaging_period = 3)
+# Error in adjust_for_inflation(price, from_date, country, to = 2030, inflation_dataframe = inflation_dataframe,  : 
+# Please specify the assumed rate of inflation for future periods (i.e. using 'future_rate' parameter)
 
-adjust_for_inflation(price, from_date, country, to = 2018, 
+adjust_for_inflation(price, from_date, country, to_date = 2030, 
                      inflation_dataframe = inflation_dataframe, countries_dataframe = countries_dataframe,
-                     extrapolation_method = "average", averaging_period = 3)
+                     extrapolate_future_method = "rate", future_rate = 3)
 
-adjust_for_inflation(price, from_date, country, to = 2018, 
+
+adjust_for_inflation(price, from_date, country, to_date = 2030, 
                      inflation_dataframe = inflation_dataframe, countries_dataframe = countries_dataframe,
-                     extrapolation_method = "average", averaging_period = 3)
+                     extrapolate_future_method = "average", future_averaging_period = 3)
+
+
+#----- Testing past -----#
+
+adjust_for_inflation(price, from_date, country, to_date = 1930, 
+                     inflation_dataframe = inflation_dataframe, countries_dataframe = countries_dataframe,
+                     extrapolate_past_method = "average", past_averaging_period = 3)
+
+
+adjust_for_inflation(price, from_date = "1991-04-14", country, to_date = 1930, 
+                     inflation_dataframe = inflation_dataframe, countries_dataframe = countries_dataframe,
+                     extrapolate_past_method = "rate", past_rate = 2.5)
+
+adjust_for_inflation(price, from_date = 1990, country, to_date = 1930, 
+                     inflation_dataframe = inflation_dataframe, countries_dataframe = countries_dataframe,
+                     extrapolate_past_method = "rate", past_rate = 2.5)
+
+adjust_for_inflation(price, from_date = 1970, country, to_date = 1930, 
+                     inflation_dataframe = inflation_dataframe, countries_dataframe = countries_dataframe,
+                     extrapolate_past_method = "rate", past_rate = 2.5)
+
+
+
 
 
 
