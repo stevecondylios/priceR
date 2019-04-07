@@ -241,7 +241,7 @@ adjust_for_inflation <- function(price, from_date, country, to_date, inflation_d
   
   
   # Validate that there are as many dates as prices (or just one date)
-  if(length(price) != (length(from_date) | 1)) {
+  if(!(length(price) == length(from_date) | length(price) == 1)) {
     stop("from_date must be a date or a vector of dates of the same length as the price(s)")
   }
   
@@ -416,6 +416,14 @@ inflation_dataframe <- inflation_dataframe_backup #dwd
 adjust_for_inflation(price, from_date, country, to_date = 2017, 
                      inflation_dataframe = inflation_dataframe, countries_dataframe = countries_dataframe)
 
+adjust_for_inflation(price, from_date, country, to_date = 2019, 
+                     inflation_dataframe = inflation_dataframe, countries_dataframe = countries_dataframe,
+                     extrapolate_future_method = "average", future_averaging_period = 3)
+
+# Omitting to_date (assumes current)
+adjust_for_inflation(price, from_date, country, 
+                     inflation_dataframe = inflation_dataframe, countries_dataframe = countries_dataframe,
+                     extrapolate_future_method = "average", future_averaging_period = 3)
 
 adjust_for_inflation(price, from_date, country, to_date = 2030, 
                      inflation_dataframe = inflation_dataframe, countries_dataframe = countries_dataframe)
@@ -468,19 +476,41 @@ adjust_for_inflation(price, from_date = 1970, country, to_date = 1930,
                      inflation_dataframe = inflation_dataframe, countries_dataframe = countries_dataframe,
                      extrapolate_past_method = "rate", past_rate = 2.5)
 
+# Testing weird date formats 
+adjust_for_inflation(price, from_date = "2009-04-09 13:09:39 AEST", country, to_date = 1930, 
+                     inflation_dataframe = inflation_dataframe, countries_dataframe = countries_dataframe,
+                     extrapolate_past_method = "rate", past_rate = 2.5)
 
 
-
-
+#----- Testing vectorisation -----#
 
 
 country <- "AU"
 test_prices <- c(10, 10, 10, 10)
-test_dates <- c(Sys.time()-(60 * 60 * 24 * 365 * 10), Sys.time()-(60 * 60 * 24 * 365 * 8), Sys.time()-(60 * 60 * 24 * 365 * 6), Sys.Date()- (60 * 60 * 24 * 365 * 6))
-test_dates <- c(Sys.time()-(60 * 60 * 24 * 365 * 6), Sys.Date()- (60 * 60 * 24 * 365 * 6))
+test_dates <- c(Sys.Date()-(365 * 10), Sys.Date()-(365 * 6), Sys.Date()-(365 * 4), Sys.Date()-(365 * 7))
 
 
-adjust_for_inflation(test_prices, test_dates) 
+
+adjust_for_inflation(price = test_prices, from_date = test_dates, to_date = 2017, country = country,
+                     inflation_dataframe = inflation_dataframe, countries_dataframe = countries_dataframe) 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
