@@ -10,7 +10,7 @@
 
 library(jsonlite)
 library(dplyr)
-
+library(purrr)
 
 
 #----- Function to take url and transform it into one with all the results on one page -----#
@@ -378,27 +378,58 @@ adjust_for_inflation <- function(price, from_date, country, to_date, inflation_d
   # This function takes a single from value and single to value and creates a multiplier
   # Note that we don't pass inflation_dataframe object to this as it confuses mapply/sapply and they 
   # Don't understand what to do with it 
-  make_multiplier <- function(from, to) {
+  make_multiplier <- function(from_date, to_date) {
     # Note dilligent use of inequalities (rightly) prevent current year's inflation being applied 
+    # if(length(to_date) == 1) { to_date <- rep(to_date, length(price))}
+    # if(length(from_date) == 1) { from_date <- rep(from_date, length(price))}
     inflation_dataframe %>% dplyr::filter(date >= from_date & date < to_date | date <= from_date & date > to_date ) %>% 
-      .$value %>% {. / 100} %>% {. + 1} %>% { ifelse(from_date < to_date, prod(.), { 1 / prod(.) }) }
+      .$value %>% prod(.) # {. / 100} %>% {. + 1} %>% { ifelse(from_date < to_date, prod(.), { 1 / prod(.) }) }
   }
+  
+  mapply(make_multiplier, from = from_date, to = to_date)
+  map2(from_date, to_date, make_multiplier)
   
   price_dataframe <- data.frame(price, from_date, to_date, stringsAsFactors = FALSE)
   
 
-  mapply(make_multiplier, from = from_date, to = to_date)
-    
+ 
   make_multiplier(from = from_date, to = to_date)
 
   
   
   
+  test_funct <- function(sep_wid, sep_len) {
+    iris %>% filter(Sepal.Width > sep_wid & Sepal.Length < sep_len) %>% .$Petal.Width %>% sum
+  }
+  
+  test_funct(4, 6)
+  sep_wid_vector <- c(4, 3.5, 3)
+  sep_len_vector <- c(6, 6, 6.5)
+
+  mapply(test_funct, sep_wid_vector, sep_len_vector)
+  map2(sep_wid_vector, sep_len_vector, test_funct) %>% unlist
   
   
   
   
   
+  
+  
+  
+  
+  
+  
+  sep_wid_vector <- c(4, 3.5, 3)
+  sep_len_vector <- c(6, 6, 6.5)
+  
+  test_funct(4, 6)
+  test_funct(3.5, 6)
+  test_funct(3, 6.5)
+  test_funct(sep_wid_vector, sep_len_vector)
+  
+  lapply()
+  
+  mapply(test_funct, sep_wid_vector, sep_len_vector)
   
 
   # Get relevant inflation values and create multiplier
@@ -515,8 +546,9 @@ adjust_for_inflation(price, from_date = "2009-04-09 13:09:39 AEST", country, to_
 
 
 country <- "AU"
-test_prices <- c(10, 10, 10, 10)
-test_dates <- c(Sys.Date()-(365 * 10), Sys.Date()-(365 * 6), Sys.Date()-(365 * 4), Sys.Date()-(365 * 7))
+price <- c(10, 10, 10, 10)
+from_date <- c(Sys.Date()-(365 * 10), Sys.Date()-(365 * 6), Sys.Date()-(365 * 4), Sys.Date()-(365 * 7))
+
 
 
 
