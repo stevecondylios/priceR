@@ -1,5 +1,7 @@
 
 
+#' @export
+
 # A versatile function for converting past (nominal) values into current (real) values
 # function_name aims to provide a stable, reliable, and easy to use function
 # for quickly converting nominal prices into real prices
@@ -11,7 +13,6 @@
 library(jsonlite)
 library(dplyr)
 library(lubridate)
-library(dplyr)
 
 
 #----- Function to take url and transform it into one with all the results on one page -----#
@@ -33,20 +34,6 @@ url_all_results <- function(original_url) {
 
 }
 
-
-
-# Tests
-original_url <- "https://api.worldbank.org/v2/country?format=json"
-total_results <- original_url %>% fromJSON %>% .[[1]] %>% .$total
-
-original_url <- "https://api.worldbank.org/v2/country?format=json"
-data_from_WB_API <- url_all_results(original_url) %>% fromJSON # Should have more than 50 rows
-data_from_WB_API[[2]] %>% nrow
-
-
-original_url <- "https://api.worldbank.org/v2/country?format=json"
-data_from_WB_API <- url_all_results(original_url) %>% fromJSON # Should have more than 50 rows
-data_from_WB_API
 
 #----- END -----#
 
@@ -111,7 +98,7 @@ convert_to_iso2Code <- function(country_input_type_string, country) {
 
   if(country_input_type_string == "iso2Code") { country <- country }
 
-  if(country_input_type_string == "invalid") { stop(paste0('"', country, '"', " is not a valid country input - select a valid country from show_countries()")) }
+  if(country_input_type_string == "invalid") { stop(paste0("'", country, "'", " is not a valid country input - select a valid country from show_countries()")) }
 
   if(country_input_type_string == "country_name") {
 
