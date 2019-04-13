@@ -52,7 +52,8 @@
 #'
 #' extract_salary(annual_salaries)
 #' # 170000 170000 150000  80000  53338  40008  70000  56055  90000
-#'
+#' # Note the fifth, sixth, and eighth elements are averages including '15' (undesirable)
+#' # Using exclude_below parameter avoids this (see below)
 #'
 #' # Automatically detect, extract, and annualise daily rates
 #' daily_rates <- c("$200 daily", "$400 - $600 per day", "Day rate negotiable dependent on experience")
@@ -64,7 +65,7 @@
 #' hourly_rates <- c("$80 - $100+ per hour", "APS6/EL1 hourly rate contract")
 #' extract_salary(hourly_rates)
 #' # 172800   6720
-#' # Note 6720 is undesirable. Setting the lower and upper bounds sensibly avoids this
+#' # Note 6720 is undesirable. Setting the exclude_below and exclude_above sensibly avoids this
 #'
 #'
 #' salaries <- c(annual_salaries, daily_rates, hourly_rates)
@@ -73,7 +74,7 @@
 #' # Setting lower and upper bounds provides a catch-all to remove unrealistic results
 #' # Out of bounds values will be converted to NA
 #' extract_salary(salaries, exclude_below = 20000, exclude_above = 600000)
-#' # 170000 170000 150000  80000  53338  40008  70000  56055  90000  48000 120000     NA 172800     NA
+#' # 170000 170000 150000  80000  80000  80000  70000  84074  90000  48000 120000     NA 172800     NA
 #'
 #'
 #' # extract_salary automatically annualises hourly and daily rates
@@ -83,28 +84,29 @@
 #' # The assumed number of workdays per workweek can be changed from the default (5)
 #' # The assumed number of working weeks in year can be changed from the default (48)
 #' # E.g.
-#' extract_salary(salaries, hours_per_workday = 7, days_per_workweek = 4, working_weeks_per_year = 46)
-#' # 170000 170000 150000  80000  53338  40008  70000  56055  90000  36800  92000     NA 115920   4508
+#' extract_salary(salaries, hours_per_workday = 7, days_per_workweek = 4,
+#'                working_weeks_per_year = 46, exclude_below = 20000)
+#' # 170000 170000 150000  80000  53338  40008  70000  56055  90000  36800  92000     NA 115920     NA
 #'
 #'
 #' # To see which salaries were detected as hourly or weekly, set include_periodicity to TRUE
-#' extract_salary(salaries, include_periodicity = TRUE)
+#' extract_salary(salaries, include_periodicity = TRUE, exclude_below = 20000)
 #'
 #' # salary periodicity
 #' # 1  170000      Annual
 #' # 2  170000      Annual
 #' # 3  150000      Annual
 #' # 4   80000      Annual
-#' # 5   53338      Annual
-#' # 6   40008      Annual
+#' # 5   80000      Annual
+#' # 6   80000      Annual
 #' # 7   70000      Annual
-#' # 8   56055      Annual
+#' # 8   84074      Annual
 #' # 9   90000      Annual
 #' # 10  48000       Daily
 #' # 11 120000       Daily
 #' # 12     NA       Daily
 #' # 13 172800      Hourly
-#' # 14   6720      Hourly
+#' # 14     NA      Hourly
 #'
 #'
 library(dplyr)
@@ -125,7 +127,8 @@ extract_salary <- function(salary_text, exclude_below, exclude_above, salary_ran
   if(!salary_range_handling %in% c("average", "max", "min")) { stop("salary_range_handling parameter must be either \"average\", \"min\", or \"max\"") }
 
   # Clean
-  salary <- salary_text %>% gsub(",", "", .) %>% str_replace_all(., "\\d+\\.\\d+", function(x) { as.integer(x) }) %>% gsub("(\\d+)k", "\\1000", .)  %>% gsub("(\\d+)K", "\\1000", .) # Sub out commas, round decimals, and convert k to 000
+  salary <- salary_text %>% gsub(",", "", .) %>% str_replace_all(., "\\d+\\.\\d+", function(x) { as.integer(x) }) %>%
+    gsub("(\\d+)k", "\\1000", .)  %>% gsub("(\\d+)K", "\\1000", .) # Sub out commas, round decimals, and convert k to 000
 
 
   # Identify hourly, daily or annual
@@ -144,29 +147,36 @@ extract_salary <- function(salary_text, exclude_below, exclude_above, salary_ran
 
   # For every number regex'd out, these will convert into annual
   hourly_to_annual <- function(hourly_pay) {
-    hourly_pay %>% as.numeric %>% {. * hours_per_workday * days_per_workweek * working_weeks_per_year} %>% round %>% { ifelse(. > exclude_above, "", .) } %>% { ifelse(. < exclude_below, "", .) }
+    hourly_pay %>% as.numeric %>% {. * hours_per_workday * days_per_workweek * working_weeks_per_year} %>%
+      round %>% { ifelse(. > exclude_above, "", .) } %>% { ifelse(. < exclude_below, "", .) }
   }
 
   salary[temp$period == "Hourly"] <- salary[temp$period == "Hourly"] %>% gsubfn("(\\d+)", ~ { hourly_to_annual(x) }, . , backref = -1) %>% unlist
 
   daily_to_annual <- function(daily_pay) {
-    daily_pay %>% as.numeric %>% {. * days_per_workweek * working_weeks_per_year} %>% round %>% { ifelse(. > exclude_above, "", .) } %>% { ifelse(. < exclude_below, "", .) }
+    daily_pay %>% as.numeric %>% {. * days_per_workweek * working_weeks_per_year} %>%
+      round %>% { ifelse(. > exclude_above, "", .) } %>% { ifelse(. < exclude_below, "", .) }
   }
 
   salary[temp$period == "Daily"] <- salary[temp$period == "Daily"]  %>% gsubfn("(\\d+)", ~ { daily_to_annual(x) }, . , backref = -1) %>% unlist
 
+
   # Define 3 functions
   extract_average <- function(salary) {
-    salary %>% str_extract_all(. , "\\d+") %>% lapply(., function(x) { mean(as.numeric(x)) } ) %>% unlist %>% {ifelse(. == -Inf, NA_character_, .) }
+    salary %>% str_extract_all(. , "\\d+") %>% lapply(., function(x) { x[as.numeric(x) >= exclude_below] } ) %>%
+      lapply(., function(x) { x[as.numeric(x) <= exclude_above] } ) %>% lapply(., function(x) { mean(as.numeric(x)) } ) %>% unlist %>% {ifelse(. == -Inf, NA_character_, .) }
   }
 
   extract_max <- function(salary) {
-    salary %>% str_extract_all(. , "\\d+") %>% lapply(., function(x) { max(as.numeric(x)) } ) %>% unlist %>% {ifelse(. == -Inf, NA_character_, .) }
+    salary %>% str_extract_all(. , "\\d+") %>% lapply(., function(x) { x[as.numeric(x) >= exclude_below] } ) %>%
+      lapply(., function(x) { x[as.numeric(x) <= exclude_above] } )%>% lapply(., function(x) { max(as.numeric(x)) } ) %>% unlist %>% {ifelse(. == -Inf, NA_character_, .) }
   }
 
   extract_min <- function(salary) {
-    salary %>% str_extract_all(. , "\\d+") %>% lapply(., function(x) { min(as.numeric(x)) } ) %>% unlist %>% {ifelse(. == -Inf, NA_character_, .) }
+    salary %>% str_extract_all(. , "\\d+") %>% lapply(., function(x) { x[as.numeric(x) >= exclude_below] } ) %>%
+      lapply(., function(x) { x[as.numeric(x) <= exclude_above] } ) %>% lapply(., function(x) { min(as.numeric(x)) } ) %>% unlist %>% {ifelse(. == -Inf, NA_character_, .) }
   }
+
 
   switch(salary_range_handling,
          "average"=suppressWarnings({salary <- salary %>% extract_average %>% as.numeric}),
@@ -186,6 +196,5 @@ extract_salary <- function(salary_text, exclude_below, exclude_above, salary_ran
 
   return(annualised_salaries)
 }
-
 
 
