@@ -5,6 +5,9 @@ library(lubridate)
 library(purrr)
 # options(digits = 22)
 
+# Assign these variables once
+inflation_dataframe <- retrieve_inflation_data(country)
+countries_dataframe <- show_countries()
 
 
 
@@ -102,8 +105,6 @@ test_that("Inflation data is retrieved as expected", {
 ###########################################
 
 country <- "Australia"
-inflation_dataframe <- retrieve_inflation_data(country)
-countries_dataframe <- show_countries()
 price <- 10
 from_date <- today() - (365 * 28)
 
@@ -319,26 +320,41 @@ test_that("adjust_for_inflation() can handle a vector of price inputs and a vect
 
 
 
-
-
-
-
-
 country <- "AU"
 price <- c(10, 10, 10, 10)
-from_date <- c(Sys.Date()-(365 * 10), Sys.Date()-(365 * 6), Sys.Date()-(365 * 4), Sys.Date()-(365 * 7))
+from_date <- c(2009, 2013, 2015, 2012)
 to_date <- c(1997, 2008, 2007, 2017)
 
-test_that("adjust_for_inflation() can handle a vector of price inputs and a vector of from dates",
+test_that("adjust_for_inflation() can handle a vector of price inputs, from dates and to dates",
           {adjust_for_inflation(price = price, from_date = from_date, to_date = to_date, country = country,
                                 inflation_dataframe = inflation_dataframe, countries_dataframe = countries_dataframe) %>%
-              expect_equal(c(11.88555858310627044716, 10.79435783221975242441, 10.28046193730850887960, 10.98463863006799279276))
+              expect_equal(c(7.159303882195446000480,  8.864734299516909388217,  8.165776642674712704206, 10.984638630067992792760))
           }
 )
 
 
+from_date <- c(2009, 2013, 2015, 2012)
+to_date <- c(1997, 2008, 2007, 2017)
+test_that("vector inputs return same results as element inputs done separately",
+          {
+            first <- adjust_for_inflation(price = price[1], from_date = from_date[1], to_date = to_date[1], country = country,
+                                          inflation_dataframe = inflation_dataframe, countries_dataframe = countries_dataframe)
+
+            second <- adjust_for_inflation(price = price[2], from_date = from_date[2], to_date = to_date[2], country = country,
+                                          inflation_dataframe = inflation_dataframe, countries_dataframe = countries_dataframe)
+
+            third <- adjust_for_inflation(price = price[3], from_date = from_date[3], to_date = to_date[3], country = country,
+                                          inflation_dataframe = inflation_dataframe, countries_dataframe = countries_dataframe)
+
+            fourth <- adjust_for_inflation(price = price[4], from_date = from_date[4], to_date = to_date[4], country = country,
+                                          inflation_dataframe = inflation_dataframe, countries_dataframe = countries_dataframe)
 
 
+            adjust_for_inflation(price = price, from_date = from_date, to_date = to_date, country = country,
+                                inflation_dataframe = inflation_dataframe, countries_dataframe = countries_dataframe) %>%
+              expect_equal(c(first, second, third, fourth))
+          }
+)
 
 
 

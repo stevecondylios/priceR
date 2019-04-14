@@ -316,13 +316,13 @@ adjust_for_inflation <- function(price, from_date, country, to_date, inflation_d
 
 
   # If dates are outside of avaiable data and no extrapolation is set
-  if(to_date > max(available_inflation_data$date) & !extrapolate_future) {
-    stop(paste0("'to_date' (", to_date, ") is later than the latest available data (",
+  if(max(to_date) > max(available_inflation_data$date) & !extrapolate_future) {
+    stop(paste0("'to_date' (", to_date, ") is/contains a later date than the latest available data (",
                 max(available_inflation_data$date), ").\nTry setting 'extrapolate_future' to TRUE or using an earlier 'to_date'"))
   }
 
-  if(to_date < min(available_inflation_data$date) & !extrapolate_past) {
-    stop(paste0("'to_date' (", from_date, ") is earlier than the earliest available data (",
+  if(min(to_date) < min(available_inflation_data$date) & !extrapolate_past) {
+    stop(paste0("'to_date' (", from_date, ") is/contains an earlier date than the earliest available data (",
                 min(available_inflation_data$date), ").\nTry setting 'extrapolate_past' to TRUE or using a later 'to_date'"))
   }
 
