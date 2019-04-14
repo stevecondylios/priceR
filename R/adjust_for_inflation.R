@@ -13,6 +13,7 @@
 library(jsonlite)
 library(dplyr)
 library(lubridate)
+library(purrr)
 
 
 #----- Function to take url and transform it into one with all the results on one page -----#
@@ -27,7 +28,7 @@ url_all_results <- function(original_url) {
   }
 
   total_results <- original_url %>% fromJSON %>% .[[1]] %>% .$total
-  cat("Generating URL to request all", total_results, "results")
+  cat("Generating URL to request all", total_results, "results\n")
   url_with_all_results <- paste0(original_url, "&per_page=", total_results)
 
   url_with_all_results %>% return
@@ -35,7 +36,7 @@ url_all_results <- function(original_url) {
 }
 
 
-#----- END -----#
+
 
 
 
@@ -57,7 +58,7 @@ show_countries <- function() {
 
 show_countries() %>% head(20)
 
-#----- END -----#
+
 
 
 #----- Helper function: determine country input type (i.e. whether it's iso2Code or country name) -----#
@@ -79,12 +80,6 @@ country_input_type <- function(country_input, countries_dataframe) {
     }
   return(country_input_type_string)
 }
-
-country_input_type("AU", countries_dataframe)
-country_input_type("Australia", countries_dataframe)
-country_input_type("AustraTYPOlia", countries_dataframe)
-
-#--- END ----- Helper function: determine country input type (i.e. whether it's iso2Code or country name) -----#
 
 
 
@@ -110,24 +105,6 @@ convert_to_iso2Code <- function(country_input_type_string, country) {
 }
 
 
-# Tests
-country <- "AU"
-country_input_type_string <- country_input_type(country, countries_dataframe)
-convert_to_iso2Code(country_input_type_string, country)
-
-country <- "Australia"
-country_input_type_string <- country_input_type(country, countries_dataframe)
-convert_to_iso2Code(country_input_type_string, country)
-
-country <- "AustrTESTalia"
-country_input_type_string <- country_input_type(country, countries_dataframe)
-convert_to_iso2Code(country_input_type_string, country)
-
-
-
-
-
-#----- END ----- Determine what to do based on country input type -----#
 
 
 
@@ -161,18 +138,6 @@ retrieve_inflation_data <- function(country, countries_dataframe) {
 }
 
 
-# Test
-country <- "AU"
-retrieve_inflation_data(country)
-
-country <- "Australia"
-retrieve_inflation_data(country)
-
-country <- "AustraTESTlia"
-retrieve_inflation_data(country)
-
-
-#----- END ----- Function to retrieve inflation data given iso2Code OR country_name -----#
 
 
 
@@ -268,7 +233,7 @@ adjust_for_inflation <- function(price, from_date, country, to_date, inflation_d
 
   #----- Extrapolation logic -----#
 
-
+  # Extrapolating future
   available_inflation_data <- inflation_dataframe %>% na.omit
   max_year_requested <- max(to_date)
   max_year_available_without_extrapolation <- max(available_inflation_data$date)
@@ -307,9 +272,14 @@ adjust_for_inflation <- function(price, from_date, country, to_date, inflation_d
 
 
 
-
+  # Extrapolating past
   min_year_requested <- min(to_date) # Note that this is still the 'to_date'; taking whatever values are provided into a date in the past
   min_year_available_without_extrapolation <- min(available_inflation_data$date)
+
+  if(extrapolate_past & (min_year_requested >= min_year_available_without_extrapolation)) {
+    warning(paste0("Past extrapolation not required as data available for ", country, " back to ", min_year_available_without_extrapolation))
+    }
+
 
   if(extrapolate_past & (min_year_requested < min_year_available_without_extrapolation)) {
 
@@ -330,12 +300,13 @@ adjust_for_inflation <- function(price, from_date, country, to_date, inflation_d
 
     if(extrapolate_past_method == 'rate'){
 
+      years_to_extrapolate <- seq(min_year_available_without_extrapolation - 1, min_year_requested, -1)
       average_inflation <- past_rate
 
       extrapolated_dataframe <- data.frame(value=rep(average_inflation, length(years_to_extrapolate)), years_to_extrapolate, stringsAsFactors = FALSE)
       colnames(extrapolated_dataframe) <- c("value", "date")
 
-      inflation_dataframe <- rbind(extrapolated_dataframe, available_inflation_data)
+      inflation_dataframe <- rbind(available_inflation_data, extrapolated_dataframe)
 
     } # End past / rate
 
@@ -347,12 +318,12 @@ adjust_for_inflation <- function(price, from_date, country, to_date, inflation_d
   # If dates are outside of avaiable data and no extrapolation is set
   if(to_date > max(available_inflation_data$date) & !extrapolate_future) {
     stop(paste0("'to_date' (", to_date, ") is later than the latest available data (",
-                max(available_inflation_data$date), "). Use an earlier 'to_date' or set 'extrapolate_future' to TRUE"))
+                max(available_inflation_data$date), ").\nTry setting 'extrapolate_future' to TRUE or using an earlier 'to_date'"))
   }
 
   if(to_date < min(available_inflation_data$date) & !extrapolate_past) {
     stop(paste0("'to_date' (", from_date, ") is earlier than the earliest available data (",
-                min(available_inflation_data$date), "). Use a later 'to_date' or set an 'extrapolate_paste to TRUE'"))
+                min(available_inflation_data$date), ").\nTry setting 'extrapolate_past' to TRUE or using a later 'to_date'"))
   }
 
 
