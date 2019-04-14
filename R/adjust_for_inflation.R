@@ -1,22 +1,32 @@
 
-
+#' Generate a World Bank API URL that will return all results for a given indicator in JSON format
+#'
+#' `url_all_results` automatically converts any World Bank API URL into one that includes all results and returns JSON format
+#' @name url_all_results
+#'
+#' @usage url_all_results(original_url)
+#'
+#' @param original_url A World Bank API URL. E.g. "https://api.worldbank.org/v2/country".
+#'
+#' @import dplyr
+#' @import stringr
+#' @import jsonlite
+#'
 #' @export
-
-# A versatile function for converting past (nominal) values into current (real) values
-# function_name aims to provide a stable, reliable, and easy to use function
-# for quickly converting nominal prices into real prices
-# It aims to ensure the user specifies methodologies and parameters, rather than
-# making assumptions, but does so while maintaining good UX by prompting the
-# user to provide more information
-
-
+#'
+#' @examples
+#'
+#' # Provide a World Bank API URL and `url_all_results` will convert it into one with all results for that indicator
+#'   original_url <- "https://api.worldbank.org/v2/country" # Note: no ?format=json on url
+#'   url_all_results(original_url)
+#' # "https://api.worldbank.org/v2/country?format=json&per_page=304"
+#'
+#'
+#'
 library(jsonlite)
 library(dplyr)
 library(lubridate)
 library(purrr)
-
-
-#----- Function to take url and transform it into one with all the results on one page -----#
 
 url_all_results <- function(original_url) {
 
@@ -42,8 +52,38 @@ url_all_results <- function(original_url) {
 
 
 
-
-#----- Function to show user available country codes -----#
+#'  Show available country codes
+#'
+#' `show_countries` calls the World Bank API and retreives a list of available countries and regions
+#' @name show_countries
+#'
+#' @usage show_countries()
+#'
+#' @import dplyr
+#' @import stringr
+#' @import gsubfn
+#' @import jsonlite
+#'
+#' @export
+#'
+#' @examples
+#'
+#' # Simply call show_countries() to receive a dataframe of all countries (and regions) and their iso2Code
+#' show_countries()
+#'     iso2Code         country_name
+#' 1         AW                Aruba
+#' 2         AF          Afghanistan
+#' 3         A9               Africa
+#' 4         AO               Angola
+#' Etc. Etc.
+#'
+#' # Assign so as to save on API calls (recommended)
+#' countries_dataframe <- show_countries()
+#'
+library(jsonlite)
+library(dplyr)
+library(lubridate)
+library(purrr)
 
 show_countries <- function() {
 
@@ -56,14 +96,46 @@ show_countries <- function() {
   return(countries)
 }
 
-show_countries() %>% head(20)
 
 
 
 
-#----- Helper function: determine country input type (i.e. whether it's iso2Code or country name) -----#
 
-countries_dataframe <- show_countries()
+#' Determines whether country input is a country name or iso2Code
+#'
+#' Determines whether a string is a country name, an iso2Code, or invalid (not a World Bank API country/region)
+#' @name country_input_type
+#'
+#' @usage country_input_type(country_input, countries_dataframe)
+#'
+#' @param country_input A country/region the user wishes to validate (string) E.g. "Australia".
+#' @param countries_dataframe A dataframe containing available iso2Code and country_name (see show_countries()).
+#'
+#' @import dplyr
+#' @import stringr
+#' @import gsubfn
+#' @import jsonlite
+#'
+#' @export
+#'
+#' @examples
+#'
+#'   country <- "Australia"
+#'   country_input_type(country, countries_dataframe)
+#' # [1] "country_name"
+#'
+#'   country <- "AU"
+#'   country_input_type(country, countries_dataframe)
+#' # [1] "iso2Code"
+#'
+#'   country <- "something incorrect"
+#'   country_input_type(country, countries_dataframe)
+#' # [1] "invalid"
+#'
+library(jsonlite)
+library(dplyr)
+library(lubridate)
+library(purrr)
 
 country_input_type <- function(country_input, countries_dataframe) {
 
@@ -84,10 +156,64 @@ country_input_type <- function(country_input, countries_dataframe) {
 
 
 
-#----- Convert any country input into iso2Code type -----#
-# Accepts the type of country input and the country, and returns the relevant iso2Code
 
-countries_dataframe <- show_countries()
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+#' Convert any country input into its iso2Code
+#'
+#' `convert_to_iso2Code` accepts the type of country input and the country, and returns the relevant iso2Code
+#' @name convert_to_iso2Code
+#'
+#' @usage convert_to_iso2Code(country_input_type_string, country)
+#'
+#' @param country_input_type_string Either "country_name" or "iso2Code" - use country_input_type(country, countries_dataframe) to determine or assign manually.
+#' @param country A country/region name or iso2Code.
+#'
+#' @import dplyr
+#' @import stringr
+#' @import gsubfn
+#' @input jsonlite
+#'
+#' @export
+#'
+#' @examples
+#'
+#' # Provide a salary string and 'extract_salary' and will extract the salary and return it
+#' country <- "Australia"
+#' country_input_type_string <- "country_name"
+#' convert_to_iso2Code(country_input_type_string, country)
+#' # [1] "AU"
+#'
+#' country <- "AU"
+#' country_input_type_string <- "iso2Code"
+#' convert_to_iso2Code(country_input_type_string, country)
+#' # [1] "AU"
+#'
+#'
+library(jsonlite)
+library(dplyr)
+library(lubridate)
+library(purrr)
 
 convert_to_iso2Code <- function(country_input_type_string, country) {
 
@@ -114,8 +240,61 @@ convert_to_iso2Code <- function(country_input_type_string, country) {
 
 
 
-#----- Function to retrieve inflation data given iso2Code OR country_name -----#
-# NOTE: this accepts only iso2Code
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+#' Retrieve historical inflation data
+#'
+#' Retrieve inflation data for any country/region (using iso2Code or country_name)
+#' @name retrieve_inflation_data
+#'
+#' @usage retrieve_inflation_data(country)
+#'
+#' @param country A country_name or iso2code (see show_countries() for complete list of available inputs).
+#'
+#' @import dplyr
+#' @import stringr
+#' @import gsubfn
+#' @import jsonlite
+#'
+#' @export
+#'
+#' @examples
+#'
+#' # Retrieve inflation data for any country (or iso2Code)
+#' country <- "AU"
+#' retrieve_inflation_data(country)
+#'
+#' country <- "Australia"
+#' retrieve_inflation_data(country)
+#'
+#'      indicator.id                       indicator.value country.id country.value              value decimal date
+#' 1  FP.CPI.TOTL.ZG Inflation, consumer prices (annual %)         AU     Australia               <NA>       1 2018
+#' 2  FP.CPI.TOTL.ZG Inflation, consumer prices (annual %)         AU     Australia   1.94864740944522       1 2017
+#' 3  FP.CPI.TOTL.ZG Inflation, consumer prices (annual %)         AU     Australia   1.27699094497328       1 2016
+#' 4  FP.CPI.TOTL.ZG Inflation, consumer prices (annual %)         AU     Australia   1.50836672165921       1 2015
+#' Etc. Etc.
+#'
+#'
+library(jsonlite)
+library(dplyr)
+library(lubridate)
+library(purrr)
+
+
 retrieve_inflation_data <- function(country, countries_dataframe) {
 
   if(missing(countries_dataframe)) {
@@ -148,11 +327,66 @@ retrieve_inflation_data <- function(country, countries_dataframe) {
 
 
 
-#----- Function that uses inflation data to in/deflate prices -----#
+#' Convert nominal prices into real prices
+#'
+#' Inflate/deflate prices from any year to any year, using World Bank inflation data and assumptions only where necessary.
+#' Typically used for converting past (nominal) values into current (real) values. This uses World Bank inflation data where available,
+#' but allows for both historical and future assumptions in extrapolation.
+#' @name extract_salary
+#'
+#' @usage extract_salary(salary_text, exclude_below, exclude_above, salary_range_handling,
+#' include_periodicity, hours_per_workday, days_per_workweek, working_weeks_per_year)
+#'
+#' @param price A price (or prices).
+#' @param from_date A date(s) from which the prices will be converted.
+#' @param country A country or region in whose currency the prices are denominated.
+#' @param to_date A date(s) to which the prices will be converted.
+#' @param inflation_dataframe The R object (list) representing the JSON retreived by calling retrieve_inflation_data().
+#' @param countries_dataframe The R object (data.frame) representing the JSOn retreived by calling show_countries().
+#' @param extrapolate_future_method The extrapolation method that shall be used if extrapolation into the future is required. Options are 'average' or 'rate'.
+#' @param future_averaging_period The number of recent periods to average in order to extrapolate forward (if 'average' is method being used).
+#' @param future_rate An assumed rate of inflation to use for extrapolating forward (if 'rate' is method being used).
+#' @param extrapolate_past_method The extrapolation method that shall be used if extrapolation from the earliest available data to some even earlier period is required.
+#' @param past_averaging_period The number of periods back from the earliest available inflation data for a given country to average in order to extrapolate into the past (if 'average' is method being used).
+#' @param past_rate An assumed rate of inflation to use for extrapolating from the earliest available data to some even earlier period (if 'rate' is method being used).
+#'
+#'
+#' @import dplyr
+#' @import stringr
+#' @import gsubfn
+#' @import jsonlite
+#' @import purrr
+#'
+#' @export
+#'
+#' @examples
+#'
+#' # Assign these variables once
+#' country <- "AU"
+#' inflation_dataframe <- retrieve_inflation_data(country)
+#' countries_dataframe <- show_countries()
+#'
+#' # Convert $100 from 2005 into 2017 dollars
+#'
+#' adjust_for_inflation(100, 2005, country, to_date = 2017,
+#' inflation_dataframe = inflation_dataframe,
+#' countries_dataframe = countries_dataframe)
+#'
+#' [1] 134.96287 # i.e. $100 in 2005 had the same purchasing power as $134.96 in 2017
+#'
+#'
+library(jsonlite)
+library(dplyr)
+library(lubridate)
+library(purrr)
+
+
+
+
 
 adjust_for_inflation <- function(price, from_date, country, to_date, inflation_dataframe, countries_dataframe,
                                  extrapolate_future_method, future_averaging_period, future_rate,
-                                 extrapolate_past_method, past_averaging_period, past_rate, periodicity) {
+                                 extrapolate_past_method, past_averaging_period, past_rate) {
   # Later, it would be great to include a parameter for 'extrapolate = TRUE' - this could project for earlier and later dates, rather than returning NA
   library(lubridate)
   library(dplyr)
@@ -204,9 +438,6 @@ adjust_for_inflation <- function(price, from_date, country, to_date, inflation_d
   }
 
 
-
-
-
   if(missing(countries_dataframe)) {
   message("Retreiving countries")
   # Determine country input type
@@ -220,14 +451,10 @@ adjust_for_inflation <- function(price, from_date, country, to_date, inflation_d
   name_of_country <- which(countries_dataframe$iso2Code %in% country) %>% countries_dataframe$country_name[.]
 
 
-
-
   if(missing(inflation_dataframe)) { inflation_dataframe <- retrieve_inflation_data(country) }
   inflation_dataframe <- inflation_dataframe %>% .[[2]] %>% .[ , c("value", "date")]
   inflation_dataframe$date <- inflation_dataframe$date %>% as.integer
   inflation_dataframe$value <- inflation_dataframe$value %>% as.numeric
-
-
 
 
 
@@ -328,17 +555,6 @@ adjust_for_inflation <- function(price, from_date, country, to_date, inflation_d
 
 
 
-
-
-
-
-
-
-
-
-
-
-
   # This function takes a single from value and single to value and creates a multiplier
   # Note that we don't pass inflation_dataframe object to this as it confuses mapply/sapply and they
   # Don't understand what to do with it
@@ -361,126 +577,6 @@ adjust_for_inflation <- function(price, from_date, country, to_date, inflation_d
 
   real_price %>% return
 }
-
-
-
-
-
-
-
-
-
-
-#----- END -----#
-
-
-
-# Tests
-# (price, from_date, country, to_date, inflation_dataframe, countries_dataframe,
-# extrapolate_future_method, future_averaging_period, future_rate,
-# extrapolate_past_method, past_averaging_period, past_rate, periodicity)
-
-price <- 10
-country <- "AU"
-from_date <- today() - (365 * 28)
-
-inflation_dataframe <- inflation_dataframe_backup #dwd
-
-adjust_for_inflation(price, from_date, country, to_date = 2017,
-                     inflation_dataframe = inflation_dataframe, countries_dataframe = countries_dataframe)
-
-adjust_for_inflation(price, from_date, country, to_date = 2019,
-                     inflation_dataframe = inflation_dataframe, countries_dataframe = countries_dataframe,
-                     extrapolate_future_method = "average", future_averaging_period = 3)
-
-# Omitting to_date (assumes current)
-adjust_for_inflation(price, from_date, country,
-                     inflation_dataframe = inflation_dataframe, countries_dataframe = countries_dataframe,
-                     extrapolate_future_method = "average", future_averaging_period = 3)
-
-adjust_for_inflation(price, from_date, country, to_date = 2030,
-                     inflation_dataframe = inflation_dataframe, countries_dataframe = countries_dataframe)
-# Error in adjust_for_inflation(price, from_date, country, to = 2030, inflation_dataframe = inflation_dataframe,  :
-# 'to_date' (2030) is later than the latest available data (2017). Use an earlier 'to_date' or set an 'extrapolation_method'
-
-
-adjust_for_inflation(price, from_date, country, to_date = 2030,
-                     inflation_dataframe = inflation_dataframe, countries_dataframe = countries_dataframe,
-                     extrapolate_future_method = "average")
-
-
-
-adjust_for_inflation(price, from_date, country, to_date = 2030,
-                     inflation_dataframe = inflation_dataframe, countries_dataframe = countries_dataframe,
-                     extrapolate_future_method = "average", future_averaging_period = 3)
-
-adjust_for_inflation(price, from_date, country, to_date = 2030,
-                     inflation_dataframe = inflation_dataframe, countries_dataframe = countries_dataframe,
-                     extrapolate_future_method = "rate", future_averaging_period = 3)
-# Error in adjust_for_inflation(price, from_date, country, to = 2030, inflation_dataframe = inflation_dataframe,  :
-# Please specify the assumed rate of inflation for future periods (i.e. using 'future_rate' parameter)
-
-adjust_for_inflation(price, from_date, country, to_date = 2030,
-                     inflation_dataframe = inflation_dataframe, countries_dataframe = countries_dataframe,
-                     extrapolate_future_method = "rate", future_rate = 3)
-
-
-adjust_for_inflation(price, from_date, country, to_date = 2030,
-                     inflation_dataframe = inflation_dataframe, countries_dataframe = countries_dataframe,
-                     extrapolate_future_method = "average", future_averaging_period = 3)
-
-
-#----- Testing past -----#
-
-adjust_for_inflation(price, from_date, country, to_date = 1930,
-                     inflation_dataframe = inflation_dataframe, countries_dataframe = countries_dataframe,
-                     extrapolate_past_method = "average", past_averaging_period = 3)
-
-
-adjust_for_inflation(price, from_date = "1991-04-14", country, to_date = 1930,
-                     inflation_dataframe = inflation_dataframe, countries_dataframe = countries_dataframe,
-                     extrapolate_past_method = "rate", past_rate = 2.5)
-
-adjust_for_inflation(price, from_date = 1990, country, to_date = 1930,
-                     inflation_dataframe = inflation_dataframe, countries_dataframe = countries_dataframe,
-                     extrapolate_past_method = "rate", past_rate = 2.5)
-
-adjust_for_inflation(price, from_date = 1970, country, to_date = 1930,
-                     inflation_dataframe = inflation_dataframe, countries_dataframe = countries_dataframe,
-                     extrapolate_past_method = "rate", past_rate = 2.5)
-
-# Testing weird date formats
-adjust_for_inflation(price, from_date = "2009-04-09 13:09:39 AEST", country, to_date = 1930,
-                     inflation_dataframe = inflation_dataframe, countries_dataframe = countries_dataframe,
-                     extrapolate_past_method = "rate", past_rate = 2.5)
-
-
-#----- Testing vectorisation -----#
-
-
-country <- "AU"
-price <- c(10, 10, 10, 10)
-from_date <- c(Sys.Date()-(365 * 10), Sys.Date()-(365 * 6), Sys.Date()-(365 * 4), Sys.Date()-(365 * 7))
-
-inflation_dataframe <- inflation_dataframe_backup #dwd
-
-
-adjust_for_inflation(price = test_prices, from_date = from_date, to_date = 2017, country = country,
-                     inflation_dataframe = inflation_dataframe, countries_dataframe = countries_dataframe)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 

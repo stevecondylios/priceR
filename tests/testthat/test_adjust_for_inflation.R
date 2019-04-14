@@ -6,6 +6,7 @@ library(purrr)
 # options(digits = 22)
 
 # Assign these variables once
+country <- "AU"
 inflation_dataframe <- retrieve_inflation_data(country)
 countries_dataframe <- show_countries()
 
@@ -64,13 +65,13 @@ test_that("iso2Code is identified as such and kept as iso2Code", {
   convert_to_iso2Code(country_input_type_string, country) %>% expect_equal("AU")
 })
 
-test_that("country_name is identified as such and kept as iso2Code", {
+test_that("country_name is identified as such and converted to iso2Code", {
   country <- "Australia"
   country_input_type_string <- country_input_type(country, countries_dataframe)
   convert_to_iso2Code(country_input_type_string, country) %>% expect_equal("AU")
 })
 
-test_that("iso2Code is identified as such and kept as iso2Code", {
+test_that("invalid country_name/iso2Code is identified as such", {
   country <- "AustrTESTalia"
   country_input_type_string <- country_input_type(country, countries_dataframe)
   expect_error(convert_to_iso2Code(country_input_type_string, country),
@@ -81,18 +82,18 @@ test_that("iso2Code is identified as such and kept as iso2Code", {
 #----- Testing retrieval of of inflation data using retrieve_inflation_data() -----#
 
 
-test_that("Inflation data is retrieved as expected", {
+test_that("Inflation data is retrieved as expected for iso2Code input", {
   country <- "AU"
   expect_gt(retrieve_inflation_data(country) %>% .[[2]] %>% nrow, 50)
 })
 
 
-test_that("Inflation data is retrieved as expected", {
+test_that("Inflation data is retrieved as expected for country_name input", {
   country <- "Australia"
   expect_gt(retrieve_inflation_data(country) %>% .[[2]] %>% nrow, 50)
 })
 
-test_that("Inflation data is retrieved as expected", {
+test_that("Retrieval of inflation data for an invalid input fails with appropriate error message", {
   country <- "AustraTESTlia"
   expect_error(retrieve_inflation_data(country) %>% .[[2]] %>% nrow,
                paste0("'", country, "'", " is not a valid country input - select a valid country from show_countries()"))
@@ -117,7 +118,7 @@ test_that("One price, one from date, one to date", {
 
 })
 
-test_that("One price, one from date, one to date, extrapoloating using 3 year average", {
+test_that("One price, one from date, one to date, extrapolating using 3 year average", {
   adjust_for_inflation(price, from_date, country, to_date = 2019,
                        inflation_dataframe = inflation_dataframe, countries_dataframe = countries_dataframe,
                        extrapolate_future_method = "average", future_averaging_period = 3) %>%
@@ -155,7 +156,7 @@ test_that("adjust_for_inflation() errors with a useful message when to_date is b
                          inflation_dataframe = inflation_dataframe, countries_dataframe = countries_dataframe)
     ,
     # Error message
-    paste0("'to_date' (", to_date, ") is later than the latest available data (",
+    paste0("'to_date' (", to_date, ") is/contains a later date than the latest available data (",
            max(available_inflation_data$date), ").\nTry setting 'extrapolate_future' to TRUE or using an earlier 'to_date'"),
 
     # Avoid regex: https://github.com/r-lib/testthat/issues/726
