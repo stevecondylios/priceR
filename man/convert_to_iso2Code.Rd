@@ -4,27 +4,31 @@
 \alias{convert_to_iso2Code}
 \title{Convert any country input into its iso2Code}
 \usage{
-convert_to_iso2Code(country_input_type_string, country)
+convert_to_iso2Code(country_input_type_string, country, countries_dataframe)
 }
 \arguments{
 \item{country_input_type_string}{Either "country_name" or "iso2Code" - use country_input_type(country, countries_dataframe) to determine or assign manually.}
 
 \item{country}{A country/region name or iso2Code.}
+
+\item{countries_dataframe}{The output of show_countries()}
 }
 \description{
 `convert_to_iso2Code` accepts the type of country input and the country, and returns the relevant iso2Code
 }
 \examples{
 
-# Provide a salary string and 'extract_salary' and will extract the salary and return it
+# Assign so as to save on API calls (recommended)
+countries_dataframe <- show_countries()
+
 country <- "Australia"
 country_input_type_string <- "country_name"
-convert_to_iso2Code(country_input_type_string, country)
+convert_to_iso2Code(country_input_type_string, country, countries_dataframe)
 # [1] "AU"
 
 country <- "AU"
 country_input_type_string <- "iso2Code"
-convert_to_iso2Code(country_input_type_string, country)
+convert_to_iso2Code(country_input_type_string, country, countries_dataframe)
 # [1] "AU"
 
 

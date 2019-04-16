@@ -10,7 +10,6 @@ url_all_results(original_url)
 \item{original_url}{A World Bank API URL. E.g. "https://api.worldbank.org/v2/country".}
 }
 \description{
-`url_all_results` automatically converts any World Bank API URL into one that includes all
 results and returns JSON format
 }
 \examples{

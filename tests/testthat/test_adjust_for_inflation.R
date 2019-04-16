@@ -1,8 +1,9 @@
 context("Outputs (or errors/warnings) are generated as expected")
-library(jsonlite)
-library(dplyr)
-library(lubridate)
-library(purrr)
+# library(jsonlite)
+# library(dplyr)
+# library(lubridate)
+# library(purrr)
+# library(testthat)
 # options(digits = 22)
 
 
@@ -62,7 +63,7 @@ test_that("iso2Code is identified as such and kept as iso2Code", {
 test_that("country_name is identified as such and converted to iso2Code", {
   country <- "Australia"
   country_input_type_string <- country_input_type(country, countries_dataframe)
-  convert_to_iso2Code(country_input_type_string, country) %>% expect_equal("AU")
+  convert_to_iso2Code(country_input_type_string, country, countries_dataframe) %>% expect_equal("AU")
 })
 
 test_that("invalid country_name/iso2Code is identified as such", {

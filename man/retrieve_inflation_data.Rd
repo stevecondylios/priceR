@@ -4,29 +4,33 @@
 \alias{retrieve_inflation_data}
 \title{Retrieve historical inflation data}
 \usage{
-retrieve_inflation_data(country)
+retrieve_inflation_data(country, countries_dataframe)
 }
 \arguments{
 \item{country}{A country_name or iso2code (see show_countries() for complete list of available inputs).}
+
+\item{countries_dataframe}{The output from show_countries(). It is optional, but if not provided, it will be retreived via the API.}
 }
 \description{
 Retrieve inflation data for any country/region (using iso2Code or country_name)
 }
 \examples{
-
+\dontrun{
 # Retrieve inflation data for any country (or iso2Code)
 country <- "AU"
-retrieve_inflation_data(country)
+inflation_dataframe <- retrieve_inflation_data(country)
 
 country <- "Australia"
-retrieve_inflation_data(country)
-
-     indicator.id                       indicator.value country.id country.value              value decimal date
-1  FP.CPI.TOTL.ZG Inflation, consumer prices (annual \%)         AU     Australia               <NA>       1 2018
-2  FP.CPI.TOTL.ZG Inflation, consumer prices (annual \%)         AU     Australia   1.94864740944522       1 2017
-3  FP.CPI.TOTL.ZG Inflation, consumer prices (annual \%)         AU     Australia   1.27699094497328       1 2016
-4  FP.CPI.TOTL.ZG Inflation, consumer prices (annual \%)         AU     Australia   1.50836672165921       1 2015
-Etc
+countries_dataframe <- show_countries()
+inflation_dataframe <- retrieve_inflation_data(country, countries_dataframe)
+}
+# inflation_dataframe
+#    indicator.id                       indicator.value country.id country.value     value
+#  FP.CPI.TOTL.ZG Inflation, consumer prices (annual \%)         AU     Australia      <NA>
+#  FP.CPI.TOTL.ZG Inflation, consumer prices (annual \%)         AU     Australia   1.94864
+#  FP.CPI.TOTL.ZG Inflation, consumer prices (annual \%)         AU     Australia   1.27699
+#  FP.CPI.TOTL.ZG Inflation, consumer prices (annual \%)         AU     Australia   1.50836
+#  Etc
 
 
 }

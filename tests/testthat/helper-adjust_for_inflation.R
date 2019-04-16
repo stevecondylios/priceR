@@ -2,7 +2,17 @@ library(jsonlite)
 library(dplyr)
 library(lubridate)
 library(purrr)
+library(testthat)
 # options(digits = 22)
+
+# Note that this .R script doesn't know about functions in priceR
+# So let's change that
+
+# print(getwd())
+# Note: this will be executed from: /tests/testthat"
+# source("../../R/adjust_for_inflation.R")
+
+
 
 
 # Assign these variables once
