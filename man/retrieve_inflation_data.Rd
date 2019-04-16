@@ -26,7 +26,7 @@ retrieve_inflation_data(country)
 2  FP.CPI.TOTL.ZG Inflation, consumer prices (annual \%)         AU     Australia   1.94864740944522       1 2017
 3  FP.CPI.TOTL.ZG Inflation, consumer prices (annual \%)         AU     Australia   1.27699094497328       1 2016
 4  FP.CPI.TOTL.ZG Inflation, consumer prices (annual \%)         AU     Australia   1.50836672165921       1 2015
-Etc. Etc.
+Etc
 
 
 }

@@ -5,10 +5,6 @@ library(lubridate)
 library(purrr)
 # options(digits = 22)
 
-# Assign these variables once
-country <- "AU"
-inflation_dataframe <- retrieve_inflation_data(country)
-countries_dataframe <- show_countries()
 
 
 
@@ -47,8 +43,6 @@ test_that("show_countries() retrieves countries as expected", {
 
 #----- Identification of iso2Code/country_name -----#
 
-countries_dataframe <- show_countries()
-
 test_that("show_countries() retrieves countries as expected", {
   expect_equal(country_input_type("AU", countries_dataframe), "iso2Code")
   expect_equal(country_input_type("Australia", countries_dataframe), "country_name")
@@ -81,12 +75,10 @@ test_that("invalid country_name/iso2Code is identified as such", {
 
 #----- Testing retrieval of of inflation data using retrieve_inflation_data() -----#
 
-
 test_that("Inflation data is retrieved as expected for iso2Code input", {
   country <- "AU"
   expect_gt(retrieve_inflation_data(country) %>% .[[2]] %>% nrow, 50)
 })
-
 
 test_that("Inflation data is retrieved as expected for country_name input", {
   country <- "Australia"
@@ -105,32 +97,42 @@ test_that("Retrieval of inflation data for an invalid input fails with appropria
 ##### Testing adjust_for_inflation() ######
 ###########################################
 
-country <- "Australia"
-price <- 10
-from_date <- today() - (365 * 28)
+
 
 
 test_that("One price, one from date, one to date", {
+
+  price <- 10
+  from_date <- 2015
+
   adjust_for_inflation(price, from_date, country, to_date = 2017,
                        inflation_dataframe = inflation_dataframe,
                        countries_dataframe = countries_dataframe) %>%
-    expect_equal(18.98172323759792590181)
+    expect_equal(10.2804619373085088796)
 
 })
 
 test_that("One price, one from date, one to date, extrapolating using 3 year average", {
-  adjust_for_inflation(price, from_date, country, to_date = 2019,
+
+  price <- 10
+  from_date <- 2022 # Some future date so not using real data
+
+  adjust_for_inflation(price, from_date, country, to_date = 2030,
                        inflation_dataframe = inflation_dataframe, countries_dataframe = countries_dataframe,
                        extrapolate_future_method = "average", future_averaging_period = 3) %>%
-    expect_equal(19.65697883048040139897)
+    expect_equal(11.33436825573669715084)
 
 })
 
 test_that("One price, one from date, one to date", {
-  adjust_for_inflation(price, from_date, country, to_date = 2019,
+
+  price <- 10
+  from_date <- 2025 # Some future date so not using real data
+
+  adjust_for_inflation(price, from_date, country, to_date = 2022,
                        inflation_dataframe = inflation_dataframe, countries_dataframe = countries_dataframe,
                        extrapolate_future_method = "average", future_averaging_period = 3) %>%
-    expect_equal(19.65697883048040139897)
+    expect_equal(9.541156191493925575742)
 
 })
 
@@ -145,10 +147,13 @@ test_that("One price, one from date, one to date", {
 #                      extrapolate_future_method = "average", future_averaging_period = 3)
 
 
-available_inflation_data <- inflation_dataframe %>% .[[2]] %>% na.omit
-to_date <- 2030
+
+
 
 test_that("adjust_for_inflation() errors with a useful message when to_date is beyond available data", {
+
+  to_date <- 2050
+  from_date <- 2017
 
   expect_error(
     # Function
@@ -166,11 +171,12 @@ test_that("adjust_for_inflation() errors with a useful message when to_date is b
 )
 
 
-available_inflation_data <- inflation_dataframe %>% .[[2]] %>% na.omit
-to_date <- 2030
-extrapolate_future_method = "average"
+
 
 test_that("adjust_for_inflation() prompts user for number of years to use in extrapolating using average (future)", {
+
+  to_date <- 2030
+  extrapolate_future_method = "average"
 
   expect_error(
     # Function
@@ -197,12 +203,15 @@ test_that("adjust_for_inflation() prompts user for number of years to use in ext
 
 
 
-available_inflation_data <- inflation_dataframe %>% .[[2]] %>% na.omit
-to_date <- 2030
-extrapolate_future_method = "average"
-future_averaging_period <- 3
+
+
 
 test_that("Expect a future_rate if rate extrapolation is used (future)", {
+
+  to_date <- 2030
+  extrapolate_future_method = "average"
+  future_averaging_period <- 3
+
 
   expect_error(
     # Function
@@ -236,10 +245,13 @@ test_that("Expect a future_rate if rate extrapolation is used (future)", {
 
 
 test_that("past extrapolation works when based on the last three available periods",
-          {adjust_for_inflation(price, from_date, country, to_date = 1930,
+          {
+            from_date <- 2017
+
+            adjust_for_inflation(price, from_date, country, to_date = 1930,
                                 inflation_dataframe = inflation_dataframe, countries_dataframe = countries_dataframe,
                                 extrapolate_past_method = "average", past_averaging_period = 3) %>%
-              expect_equal(0.7210519871541605230192)
+              expect_equal(0.3844421546081657758975)
             }
           )
 
@@ -290,30 +302,31 @@ test_that("extrapolation works with longer form date input",
 ##################################
 
 
-country <- "AU"
-price <- c(10, 11, 12, 15)
-from_date <- Sys.Date()-(365 * 10)
-
 
 test_that("adjust_for_inflation() can handle a vector of price inputs",
-          {adjust_for_inflation(price = price, from_date = from_date, to_date = 2017, country = country,
+          {
+            price <- c(10, 11, 12, 15)
+            from_date <- 2007
+
+            adjust_for_inflation(price = price, from_date = from_date, to_date = 2017, country = country,
                                 inflation_dataframe = inflation_dataframe, countries_dataframe = countries_dataframe) %>%
-              expect_equal(c(11.88555858310627044716, 13.07411444141689749188, 14.26267029972752453659, 17.82833787465940389438))
+              expect_equal(c(12.69130055280768765158, 13.96043060808845659437, 15.22956066336922376081, 19.03695082921153058919))
           }
 )
 
 
 
 
-
-country <- "AU"
-price <- c(10, 10, 10, 10)
-from_date <- c(Sys.Date()-(365 * 10), Sys.Date()-(365 * 6), Sys.Date()-(365 * 4), Sys.Date()-(365 * 7))
 
 test_that("adjust_for_inflation() can handle a vector of price inputs and a vector of from dates",
-          {adjust_for_inflation(price = price, from_date = from_date, to_date = 2017, country = country,
+          {
+
+            price <- c(10, 10, 10, 10)
+            from_date <- c(2007, 2013, 2015, 2012)
+
+            adjust_for_inflation(price = price, from_date = from_date, to_date = 2017, country = country,
                                 inflation_dataframe = inflation_dataframe, countries_dataframe = countries_dataframe) %>%
-              expect_equal(c(11.88555858310627044716, 10.79435783221975242441, 10.28046193730850887960, 10.98463863006799279276))
+              expect_equal(c(12.69130055280768765158, 10.79435783221975242441, 10.28046193730850887960, 10.98463863006799279276))
           }
 )
 
@@ -321,23 +334,30 @@ test_that("adjust_for_inflation() can handle a vector of price inputs and a vect
 
 
 
-country <- "AU"
-price <- c(10, 10, 10, 10)
-from_date <- c(2009, 2013, 2015, 2012)
-to_date <- c(1997, 2008, 2007, 2017)
+
+
 
 test_that("adjust_for_inflation() can handle a vector of price inputs, from dates and to dates",
-          {adjust_for_inflation(price = price, from_date = from_date, to_date = to_date, country = country,
+          {
+
+            price <- c(10, 10, 10, 10)
+            from_date <- c(2009, 2013, 2015, 2012)
+            to_date <- c(1997, 2008, 2007, 2017)
+
+            adjust_for_inflation(price = price, from_date = from_date, to_date = to_date, country = country,
                                 inflation_dataframe = inflation_dataframe, countries_dataframe = countries_dataframe) %>%
               expect_equal(c(7.159303882195446000480,  8.864734299516909388217,  8.165776642674712704206, 10.984638630067992792760))
           }
 )
 
 
-from_date <- c(2009, 2013, 2015, 2012)
-to_date <- c(1997, 2008, 2007, 2017)
+
 test_that("vector inputs return same results as element inputs done separately",
           {
+            price <- c(10, 10, 10, 10)
+            from_date <- c(2009, 2013, 2015, 2012)
+            to_date <- c(1997, 2008, 2007, 2017)
+
             first <- adjust_for_inflation(price = price[1], from_date = from_date[1], to_date = to_date[1], country = country,
                                           inflation_dataframe = inflation_dataframe, countries_dataframe = countries_dataframe)
 

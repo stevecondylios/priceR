@@ -11,14 +11,15 @@ show_countries()
 }
 \examples{
 
-# Simply call show_countries() to receive a dataframe of all countries (and regions) and their iso2Code
+# Simply call show_countries() to receive a dataframe of all countries (and regions) and their
+# iso2Code
 show_countries()
     iso2Code         country_name
 1         AW                Aruba
 2         AF          Afghanistan
 3         A9               Africa
 4         AO               Angola
-Etc. Etc.
+Etc
 
 # Assign so as to save on API calls (recommended)
 countries_dataframe <- show_countries()

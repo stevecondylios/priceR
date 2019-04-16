@@ -1,7 +1,9 @@
 
 #' Generate a World Bank API URL that will return all results for a given indicator in JSON format
 #'
-#' `url_all_results` automatically converts any World Bank API URL into one that includes all results and returns JSON format
+#' `url_all_results` automatically converts any World Bank API URL into one that includes all
+#' results and returns JSON format
+#'
 #' @name url_all_results
 #'
 #' @usage url_all_results(original_url)
@@ -16,7 +18,8 @@
 #'
 #' @examples
 #'
-#' # Provide a World Bank API URL and `url_all_results` will convert it into one with all results for that indicator
+#' # Provide a World Bank API URL and `url_all_results` will convert it into one with all results
+#' # for that indicator
 #'   original_url <- "https://api.worldbank.org/v2/country" # Note: no ?format=json on url
 #'   url_all_results(original_url)
 #' # "https://api.worldbank.org/v2/country?format=json&per_page=304"
@@ -68,14 +71,15 @@ url_all_results <- function(original_url) {
 #'
 #' @examples
 #'
-#' # Simply call show_countries() to receive a dataframe of all countries (and regions) and their iso2Code
+#' # Simply call show_countries() to receive a dataframe of all countries (and regions) and their
+#' # iso2Code
 #' show_countries()
 #'     iso2Code         country_name
 #' 1         AW                Aruba
 #' 2         AF          Afghanistan
 #' 3         A9               Africa
 #' 4         AO               Angola
-#' Etc. Etc.
+#' Etc
 #'
 #' # Assign so as to save on API calls (recommended)
 #' countries_dataframe <- show_countries()
@@ -103,13 +107,15 @@ show_countries <- function() {
 
 #' Determines whether country input is a country name or iso2Code
 #'
-#' Determines whether a string is a country name, an iso2Code, or invalid (not a World Bank API country/region)
+#' Determines whether a string is a country name, an iso2Code, or invalid (not a World Bank API
+#' country/region)
 #' @name country_input_type
 #'
 #' @usage country_input_type(country_input, countries_dataframe)
 #'
 #' @param country_input A country/region the user wishes to validate (string) E.g. "Australia".
-#' @param countries_dataframe A dataframe containing available iso2Code and country_name (see show_countries()).
+#' @param countries_dataframe A dataframe containing available iso2Code and country_name
+#' (see show_countries()).
 #'
 #' @import dplyr
 #' @import stringr
@@ -140,7 +146,8 @@ library(purrr)
 country_input_type <- function(country_input, countries_dataframe) {
 
   # Logic: if the country_input is found among the iso2Codes, assume it's an iso2Code,
-  # if the country_input if not found in iso2Codes, then check to see if it's found among country_names,
+  # if the country_input if not found in iso2Codes, then check to see if it's found among
+  # country_names,
   # and if not, return 'invalid'
 
   if (which(countries_dataframe$iso2Code %in% country_input) %>% length > 0) {
@@ -286,7 +293,7 @@ convert_to_iso2Code <- function(country_input_type_string, country) {
 #' 2  FP.CPI.TOTL.ZG Inflation, consumer prices (annual %)         AU     Australia   1.94864740944522       1 2017
 #' 3  FP.CPI.TOTL.ZG Inflation, consumer prices (annual %)         AU     Australia   1.27699094497328       1 2016
 #' 4  FP.CPI.TOTL.ZG Inflation, consumer prices (annual %)         AU     Australia   1.50836672165921       1 2015
-#' Etc. Etc.
+#' Etc
 #'
 #'
 library(jsonlite)
@@ -462,7 +469,8 @@ adjust_for_inflation <- function(price, from_date, country, to_date, inflation_d
 
   # Extrapolating future
   available_inflation_data <- inflation_dataframe %>% na.omit
-  max_year_requested <- max(to_date)
+  max_year_requested <- max(c(to_date, from_date)) # from_date included here for edge case where
+  # going from future from date to future to_date AND where from_date > to_date
   max_year_available_without_extrapolation <- max(available_inflation_data$date)
 
   if(extrapolate_future & (max_year_requested > max_year_available_without_extrapolation)) {
@@ -500,7 +508,7 @@ adjust_for_inflation <- function(price, from_date, country, to_date, inflation_d
 
 
   # Extrapolating past
-  min_year_requested <- min(to_date) # Note that this is still the 'to_date'; taking whatever values are provided into a date in the past
+  min_year_requested <- min(to_date, from_date) # Note that this is still the 'to_date'; taking whatever values are provided into a date in the past
   min_year_available_without_extrapolation <- min(available_inflation_data$date)
 
   if(extrapolate_past & (min_year_requested >= min_year_available_without_extrapolation)) {

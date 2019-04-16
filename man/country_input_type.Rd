@@ -9,10 +9,12 @@ country_input_type(country_input, countries_dataframe)
 \arguments{
 \item{country_input}{A country/region the user wishes to validate (string) E.g. "Australia".}
 
-\item{countries_dataframe}{A dataframe containing available iso2Code and country_name (see show_countries()).}
+\item{countries_dataframe}{A dataframe containing available iso2Code and country_name
+(see show_countries()).}
 }
 \description{
-Determines whether a string is a country name, an iso2Code, or invalid (not a World Bank API country/region)
+Determines whether a string is a country name, an iso2Code, or invalid (not a World Bank API
+country/region)
 }
 \examples{
 
