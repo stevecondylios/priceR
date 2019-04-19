@@ -2,11 +2,16 @@
 % Please edit documentation in R/adjust_for_inflation.R
 \name{adjust_for_inflation}
 \alias{adjust_for_inflation}
+\alias{afi}
 \title{Convert nominal prices into real prices}
 \usage{
 adjust_for_inflation(price, from_date, country, to_date, inflation_dataframe,
 countries_dataframe, extrapolate_future_method, future_averaging_period, future_rate,
 extrapolate_past_method, past_averaging_period, past_rate)
+
+afi(price, from_date, country, to_date, inflation_dataframe,
+  countries_dataframe, extrapolate_future_method, future_averaging_period,
+  future_rate, extrapolate_past_method, past_averaging_period, past_rate)
 }
 \arguments{
 \item{price}{A price (or prices).}

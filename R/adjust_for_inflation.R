@@ -357,6 +357,7 @@ retrieve_inflation_data <- function(country, countries_dataframe) {
 #'
 #' @export
 #'
+#'
 #' @examples
 #' \dontrun{
 #' # Assign these variables once
@@ -574,6 +575,10 @@ adjust_for_inflation <- function(price, from_date, country, to_date, inflation_d
 
 
 
+
+#' @rdname adjust_for_inflation
+
+afi <- adjust_for_inflation
 
 
 
