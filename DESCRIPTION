@@ -1,6 +1,6 @@
 Package: priceR
 Type: Package
-Title: Economics and pricing tools
+Title: Economics and Pricing Tools
 Version: 0.1.1
 Imports: dplyr, gsubfn, stringr, purrr, jsonlite, stats
 Author: Steve Condylios [aut, cre] (<https://orcid.org/0000-0003-0599-844X>)

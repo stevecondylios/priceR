@@ -1,4 +1,4 @@
-#' priceR: Regular Expressions for Prices and Currencies
+#' priceR: Economics and Pricing Tools
 #' @docType package
 #'
 #' @details
@@ -9,7 +9,7 @@
 #'
 #'
 #'
-#' @name priceR
+#' @name priceR-package
 #'
 # NULL
 # From jennybc's comment here: https://github.com/STAT545-UBC/Discussion/issues/451
