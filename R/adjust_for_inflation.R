@@ -552,11 +552,12 @@ adjust_for_inflation <- function(price, from_date, country, to_date, inflation_d
   # This function takes a single from value and single to value and creates a multiplier
   # Note that we don't pass inflation_dataframe object to this as it confuses mapply/sapply and they
   # Don't understand what to do with it
+  # from_input <- from_date; to_input <- to_date
   make_multiplier <- function(from_input, to_input) {
     # Note dilligent use of inequalities (rightly) prevent current year's inflation being applied
     # if(length(from_date) == 1) { from_input <- rep(from_input, length(price))}
     # if(length(to_date) == 1) { to_input <- rep(to_input, length(price))}
-    inflation_dataframe %>% filter(date >= from_input & date < to_input | date <= from_input & date > to_input ) %>%
+    inflation_dataframe %>% filter(date > from_input & date <= to_input | date < from_input & date >= to_input ) %>%
       .$value %>% {. / 100} %>% {. + 1} %>% { ifelse(from_input < to_input, prod(.), { 1 / prod(.) }) }
   }
 
