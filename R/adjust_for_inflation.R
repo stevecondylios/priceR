@@ -431,7 +431,6 @@ adjust_for_inflation <- function(price, from_date, country, to_date, inflation_d
     stop("from_date must be a date or a vector of dates of the same length as the price(s)")
   }
 
-
   if(missing(countries_dataframe)) {
   message("Retreiving countries")
   # Determine country input type
@@ -439,7 +438,7 @@ adjust_for_inflation <- function(price, from_date, country, to_date, inflation_d
   }
 
   country_input_type_string <- country_input_type(country, countries_dataframe)
-  country <- convert_to_iso2Code(country_input_type_string, country)
+  country <- convert_to_iso2Code(country_input_type_string, country, countries_dataframe)
   # 'country' is iso2Code from here on
 
   name_of_country <- which(countries_dataframe$iso2Code %in% country) %>% countries_dataframe$country_name[.]
