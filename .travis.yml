@@ -2,3 +2,7 @@
 
 language: R
 cache: packages
+before_install:
+  - sudo apt-get update
+
+# https://docs.travis-ci.com/user/common-build-problems/#Linux%3A-apt-fails-to-install-package-with-404-error
