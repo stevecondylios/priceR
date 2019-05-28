@@ -8,3 +8,5 @@
 .git
 .gitignore
 R/TEMP
+.travis.yml
+^\.travis\.yml$
