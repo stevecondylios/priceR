@@ -7,3 +7,9 @@ before_install:
   - sudo apt-get install libcurl4-openssl-dev
 
 # https://docs.travis-ci.com/user/common-build-problems/#Linux%3A-apt-fails-to-install-package-with-404-error
+
+warnings_are_errors: false
+# From: https://stackoverflow.com/questions/35412383/building-an-r-package-on-travis-how-not-to-treat-warnings-as-errors
+# Example: https://github.com/cdeterman/gpuR/blob/develop/.travis.yml
+
+
