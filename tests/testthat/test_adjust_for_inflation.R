@@ -5,7 +5,7 @@ context("Outputs (or errors/warnings) are generated as expected")
 # library(purrr)
 # library(testthat)
 # options(digits = 22)
-
+# devtools::test()
 
 
 
@@ -109,7 +109,7 @@ test_that("One price, one from date, one to date", {
   adjust_for_inflation(price, from_date, country, to_date = 2017,
                        inflation_dataframe = inflation_dataframe,
                        countries_dataframe = countries_dataframe) %>%
-    expect_equal(10.2804619373085088796)
+    expect_equal(10.32505224053865866551)
 
 })
 
@@ -252,7 +252,7 @@ test_that("past extrapolation works when based on the last three available perio
             adjust_for_inflation(price, from_date, country, to_date = 1930,
                                 inflation_dataframe = inflation_dataframe, countries_dataframe = countries_dataframe,
                                 extrapolate_past_method = "average", past_averaging_period = 3) %>%
-              expect_equal(0.3844421546081657758975)
+              expect_equal(0.3846295809055066405868)
             }
           )
 
@@ -261,7 +261,7 @@ test_that("past extrapolation works with a rate",
           {adjust_for_inflation(price, from_date = 1990, country, to_date = 1930,
                                 inflation_dataframe = inflation_dataframe, countries_dataframe = countries_dataframe,
                                 extrapolate_past_method = "rate", past_rate = 2.5) %>%
-              expect_equal(0.6273066554899743296758)
+              expect_equal(0.6568850636543038801207)
           }
 )
 
@@ -282,7 +282,7 @@ test_that("extrapolation works with longer form date input",
           {adjust_for_inflation(price, from_date = "1991-04-14", country, to_date = 1930,
                                 inflation_dataframe = inflation_dataframe, countries_dataframe = countries_dataframe,
                                 extrapolate_past_method = "rate", past_rate = 2.5) %>%
-              expect_equal(0.6079927011033156025732)
+              expect_equal(0.6120064931609506819754)
           }
 )
 
@@ -291,7 +291,7 @@ test_that("extrapolation works with longer form date input",
           {adjust_for_inflation(price, from_date = "2009-04-09 13:09:39 AEST", country, to_date = 1930,
                                 inflation_dataframe = inflation_dataframe, countries_dataframe = countries_dataframe,
                                 extrapolate_past_method = "rate", past_rate = 2.5) %>%
-              expect_equal(0.3859573478757593045785)
+              expect_equal(0.3832127850909711752614)
           }
 )
 
@@ -311,7 +311,7 @@ test_that("adjust_for_inflation() can handle a vector of price inputs",
 
             adjust_for_inflation(price = price, from_date = from_date, to_date = 2017, country = country,
                                 inflation_dataframe = inflation_dataframe, countries_dataframe = countries_dataframe) %>%
-              expect_equal(c(12.69130055280768765158, 13.96043060808845659437, 15.22956066336922376081, 19.03695082921153058919))
+              expect_equal(c(12.64429911856696620021, 13.90872903042366282023, 15.17315894228035944025, 18.96644867785045107667))
           }
 )
 
@@ -327,7 +327,7 @@ test_that("adjust_for_inflation() can handle a vector of price inputs and a vect
 
             adjust_for_inflation(price = price, from_date = from_date, to_date = 2017, country = country,
                                 inflation_dataframe = inflation_dataframe, countries_dataframe = countries_dataframe) %>%
-              expect_equal(c(12.69130055280768765158, 10.79435783221975242441, 10.28046193730850887960, 10.98463863006799279276))
+              expect_equal(c(12.64429911856696620021, 10.74154589371981316503, 10.32505224053865866551, 11.00470180648354734387))
           }
 )
 
@@ -347,7 +347,7 @@ test_that("adjust_for_inflation() can handle a vector of price inputs, from date
 
             adjust_for_inflation(price = price, from_date = from_date, to_date = to_date, country = country,
                                 inflation_dataframe = inflation_dataframe, countries_dataframe = countries_dataframe) %>%
-              expect_equal(c(7.159303882195446000480,  8.864734299516909388217,  8.165776642674712704206, 10.984638630067992792760))
+              expect_equal(c(7.269754768392368227126,  8.703291264538480120905,  8.100400659910437894951, 11.004701806483547343873))
           }
 )
 
@@ -380,5 +380,5 @@ test_that("vector inputs return same results as element inputs done separately",
 
 
 
-
+# devtools::test()
 
