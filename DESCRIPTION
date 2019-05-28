@@ -2,7 +2,7 @@ Package: priceR
 Type: Package
 Title: Economics and Pricing Tools
 Version: 0.1.1
-Imports: dplyr, gsubfn, stringr, purrr, jsonlite, stats, lubridate
+Imports: dplyr, gsubfn, stringr, purrr, jsonlite, stats, lubridate, curl
 Author: Steve Condylios [aut, cre] (<https://orcid.org/0000-0003-0599-844X>)
 Maintainer: Steve Condylios <steve.condylios@gmail.com>
 BugReports: https://github.com/stevecondylios/priceR/issues
