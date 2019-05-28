@@ -3,6 +3,7 @@
 language: R
 cache: packages
 before_install:
-  - sudo apt-get update
+  # - sudo apt-get update
+  - sudo apt-get install libcurl4-openssl-dev
 
 # https://docs.travis-ci.com/user/common-build-problems/#Linux%3A-apt-fails-to-install-package-with-404-error
