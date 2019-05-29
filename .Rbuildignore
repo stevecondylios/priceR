@@ -10,3 +10,4 @@
 R/TEMP
 .travis.yml
 ^\.travis\.yml$
+^README\.Rmd$
