@@ -577,7 +577,7 @@ adjust_for_inflation <- function(price, from_date, country, to_date, inflation_d
 
 
 #' @rdname adjust_for_inflation
-
+#' @export
 afi <- adjust_for_inflation
 
 
