@@ -113,29 +113,31 @@ test_that("One price, one from date, one to date", {
 
 })
 
-test_that("One price, one from date, one to date, extrapolating using 3 year average", {
-
-  price <- 10
-  from_date <- 2022 # Some future date so not using real data
-
-  adjust_for_inflation(price, from_date, country, to_date = 2030,
-                       inflation_dataframe = inflation_dataframe, countries_dataframe = countries_dataframe,
-                       extrapolate_future_method = "average", future_averaging_period = 3) %>%
-    expect_equal(11.33436825573669715084)
-
-})
-
-test_that("One price, one from date, one to date", {
-
-  price <- 10
-  from_date <- 2025 # Some future date so not using real data
-
-  adjust_for_inflation(price, from_date, country, to_date = 2022,
-                       inflation_dataframe = inflation_dataframe, countries_dataframe = countries_dataframe,
-                       extrapolate_future_method = "average", future_averaging_period = 3) %>%
-    expect_equal(9.541156191493925575742)
-
-})
+# # Note: this doesn't will fail each time API data updates.
+# test_that("One price, one from date, one to date, extrapolating using 3 year average", {
+#
+#   price <- 10
+#   from_date <- 2022 # Some future date so not using real data
+#
+#   adjust_for_inflation(price, from_date, country, to_date = 2030,
+#                        inflation_dataframe = inflation_dataframe, countries_dataframe = countries_dataframe,
+#                        extrapolate_future_method = "average", future_averaging_period = 3) %>%
+#     expect_equal(11.33436825573669715084)
+#
+# })
+#
+# # Note: this doesn't will fail each time API data updates.
+# test_that("One price, one from date, one to date", {
+#
+#   price <- 10
+#   from_date <- 2025 # Some future date so not using real data
+#
+#   adjust_for_inflation(price, from_date, country, to_date = 2022,
+#                        inflation_dataframe = inflation_dataframe, countries_dataframe = countries_dataframe,
+#                        extrapolate_future_method = "average", future_averaging_period = 3) %>%
+#     expect_equal(9.541156191493925575742)
+#
+# })
 
 
 
