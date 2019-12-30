@@ -339,7 +339,7 @@ retrieve_inflation_data <- function(country, countries_dataframe) {
 #' @param country A country or region in whose currency the prices are denominated.
 #' @param to_date A date(s) to which the prices will be converted.
 #' @param inflation_dataframe The R object (list) representing the JSON retreived by calling retrieve_inflation_data().
-#' @param countries_dataframe The R object (data.frame) representing the JSOn retreived by calling show_countries().
+#' @param countries_dataframe The R object (data.frame) representing the JSON retreived by calling show_countries().
 #' @param extrapolate_future_method The extrapolation method that shall be used if extrapolation into the future is required. Options are 'average' or 'rate'.
 #' @param future_averaging_period The number of recent periods to average in order to extrapolate forward (if 'average' is method being used).
 #' @param future_rate An assumed rate of inflation to use for extrapolating forward (if 'rate' is method being used).
