@@ -24,7 +24,7 @@ afi(price, from_date, country, to_date, inflation_dataframe,
 
 \item{inflation_dataframe}{The R object (list) representing the JSON retreived by calling retrieve_inflation_data().}
 
-\item{countries_dataframe}{The R object (data.frame) representing the JSOn retreived by calling show_countries().}
+\item{countries_dataframe}{The R object (data.frame) representing the JSON retreived by calling show_countries().}
 
 \item{extrapolate_future_method}{The extrapolation method that shall be used if extrapolation into the future is required. Options are 'average' or 'rate'.}
 
