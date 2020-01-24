@@ -53,7 +53,7 @@ url_all_results <- function(original_url) {
 
 #'  Show available country codes
 #'
-#' `show_countries` calls the World Bank API and retreives a list of available countries and regions
+#' `show_countries` calls the World Bank API and retrieves a list of available countries and regions
 #' @name show_countries
 #'
 #' @usage show_countries()
@@ -261,7 +261,7 @@ convert_to_iso2Code <- function(country_input_type_string, country, countries_da
 #' @usage retrieve_inflation_data(country, countries_dataframe)
 #'
 #' @param country A country_name or iso2code (see show_countries() for complete list of available inputs).
-#' @param countries_dataframe The output from show_countries(). It is optional, but if not provided, it will be retreived via the API.
+#' @param countries_dataframe The output from show_countries(). It is optional, but if not provided, it will be retrieved via the API.
 #'
 #' @import dplyr
 #' @import stringr
@@ -338,7 +338,7 @@ retrieve_inflation_data <- function(country, countries_dataframe) {
 #' @param from_date A date(s) from which the prices will be converted.
 #' @param country A country or region in whose currency the prices are denominated.
 #' @param to_date A date(s) to which the prices will be converted.
-#' @param inflation_dataframe The R object (list) representing the JSON retreived by calling retrieve_inflation_data().
+#' @param inflation_dataframe The R object (list) representing the JSON retrieved by calling retrieve_inflation_data().
 #' @param countries_dataframe The R object (data.frame) representing the JSON retreived by calling show_countries().
 #' @param extrapolate_future_method The extrapolation method that shall be used if extrapolation into the future is required. Options are 'average' or 'rate'.
 #' @param future_averaging_period The number of recent periods to average in order to extrapolate forward (if 'average' is method being used).
@@ -380,9 +380,19 @@ retrieve_inflation_data <- function(country, countries_dataframe) {
 
 
 
-adjust_for_inflation <- function(price, from_date, country, to_date, inflation_dataframe, countries_dataframe,
-                                 extrapolate_future_method, future_averaging_period, future_rate,
-                                 extrapolate_past_method, past_averaging_period, past_rate) {
+adjust_for_inflation <- function(price,
+                                 from_date,
+                                 country,
+                                 to_date,
+                                 inflation_dataframe,
+                                 countries_dataframe,
+                                 extrapolate_future_method, # exf_method
+                                 future_averaging_period, #exf_period
+                                 future_rate, # exf_rate
+                                 extrapolate_past_method, #exp_method
+                                 past_averaging_period, # exp_period
+                                 past_rate) { # exp_rate
+
   # Later, it would be great to include a parameter for 'extrapolate = TRUE' - this could project for earlier and later dates, rather than returning NA
 
 
@@ -415,7 +425,6 @@ adjust_for_inflation <- function(price, from_date, country, to_date, inflation_d
   }
 
 
-
   # If no to_date is provided, assume conversion into present day dollars is intended
   if(missing(to_date)) {
     to_date <- rep(Sys.Date(), length(price)) %>% substr(., 1, 4) %>% as.integer
@@ -428,11 +437,11 @@ adjust_for_inflation <- function(price, from_date, country, to_date, inflation_d
 
   # Validate that there are as many dates as prices (or just one date)
   if(!(length(price) == length(from_date) | length(from_date) == 1)) {
-    stop("from_date must be a date or a vector of dates of the same length as the price(s)")
+    stop("from_date must be a date or a vector of dates of the same length as price")
   }
 
   if(missing(countries_dataframe)) {
-  message("Retreiving countries")
+  message("Retrieving countries data")
   # Determine country input type
   countries_dataframe <- show_countries()
   }
