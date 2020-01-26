@@ -15,7 +15,9 @@ round_to_nearest(amount, to_nearest)
 Round prices to the nearest specified increment
 }
 \examples{
+
 # Round to nearest 0.05 (5c)
+library(dplyr)
 prices <- c(4.45, 5.22, 0.16, 27.88, 112.19)
 prices \%>\% round_to_nearest(0.05)
 

@@ -7,7 +7,7 @@
 show_countries()
 }
 \description{
-`show_countries` calls the World Bank API and retreives a list of available countries and regions
+`show_countries` calls the World Bank API and retrieves a list of available countries and regions
 }
 \examples{
 

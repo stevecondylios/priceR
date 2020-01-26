@@ -9,7 +9,7 @@ retrieve_inflation_data(country, countries_dataframe)
 \arguments{
 \item{country}{A country_name or iso2code (see show_countries() for complete list of available inputs).}
 
-\item{countries_dataframe}{The output from show_countries(). It is optional, but if not provided, it will be retreived via the API.}
+\item{countries_dataframe}{The output from show_countries(). It is optional, but if not provided, it will be retrieved via the API.}
 }
 \description{
 Retrieve inflation data for any country/region (using iso2Code or country_name)

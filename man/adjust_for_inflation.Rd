@@ -22,7 +22,7 @@ afi(price, from_date, country, to_date, inflation_dataframe,
 
 \item{to_date}{A date(s) to which the prices will be converted.}
 
-\item{inflation_dataframe}{The R object (list) representing the JSON retreived by calling retrieve_inflation_data().}
+\item{inflation_dataframe}{The R object (list) representing the JSON retrieved by calling retrieve_inflation_data().}
 
 \item{countries_dataframe}{The R object (data.frame) representing the JSON retreived by calling show_countries().}
 
