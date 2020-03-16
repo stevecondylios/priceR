@@ -16,7 +16,7 @@ include_periodicity, hours_per_workday, days_per_workweek, working_weeks_per_yea
 
 \item{salary_range_handling}{A method of handling salary ranges. Defaults to returning an average of the range; can also be set to "max" or "min".}
 
-\item{include_periodicity}{Set to TRUE to return an additional column stating the detected peridicity in the character string.}
+\item{include_periodicity}{Set to TRUE to return an additional column stating the detected peridicity in the character string. Periodicity is assumed to be 'Annual' unless evidence is found to the contrary.}
 
 \item{hours_per_workday}{Set assumed number of hours in the workday. Only affects annualisation of rates indentified as Daily. Default is 8 hours.}
 

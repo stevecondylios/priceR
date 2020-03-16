@@ -11,7 +11,7 @@
 #' @param exclude_below A lower bound. Anything lower than this number will be replaced with NA.
 #' @param exclude_above An upper bound. Anything above this number will be replaced with NA.
 #' @param salary_range_handling A method of handling salary ranges. Defaults to returning an average of the range; can also be set to "max" or "min".
-#' @param include_periodicity Set to TRUE to return an additional column stating the detected peridicity in the character string.
+#' @param include_periodicity Set to TRUE to return an additional column stating the detected peridicity in the character string. Periodicity is assumed to be 'Annual' unless evidence is found to the contrary.
 #' @param hours_per_workday Set assumed number of hours in the workday. Only affects annualisation of rates indentified as Daily. Default is 8 hours.
 #' @param days_per_workweek Set assumed number of days per workweek. Only affects annualisation of rates indentified as Daily. Default is 5 days.
 #' @param working_weeks_per_year Set assumed number of working weeks in the year. Only affects annualisation of rates indentified as Daily or Weekly. Default is 48 weeks.
