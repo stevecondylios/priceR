@@ -134,7 +134,8 @@ extract_salary <- function(salary_text, exclude_below, exclude_above, salary_ran
   # Identify hourly, daily or annual
   hourly_daily_or_annual <- function(salary) {
 
-    hourly_terms <- c("ph", "p\\.h", "p\\.h\\.", "hourly", "hour"); daily_terms <- c("pd", "p\\.d", "p\\.d\\.", "daily", "day")
+    hourly_terms <- c("ph", "p\\.h", "p\\.h\\.", "p/h", "hourly", "hour")
+    daily_terms <- c("pd", "p\\.d", "p\\.d\\.", "p/d", "daily", "day")
 
     period <- salary %>% { ifelse((grepl(paste(daily_terms, collapse="|"), . , ignore.case=TRUE)), "Daily",
                                   ifelse(grepl(paste(hourly_terms, collapse="|"), . , ignore.case=TRUE), "Hourly",
