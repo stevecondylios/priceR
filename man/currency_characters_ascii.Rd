@@ -12,5 +12,5 @@ Provide currency characters available in ASCII
 \examples{
 
 currency_characters_ascii()
-# [1] "¤" "£" "€" "$" "¢" "¥" "₧" "ƒ"
+
 }

@@ -24,12 +24,12 @@
 #' format_currency("2423562534234.876", "$", 2)
 #' # "$2,423,562,534,234.88"
 #'
-#' format_currency("2423562534234", "€", 2)
-#' # "€2,423,562,534,234.00"
+#' format_currency("2423562534234", "¥", 2)
+#' # "¥2,423,562,534,234.00"
 #'
 #' # format_currency() is vectorized and can accept vector arguments
-#' format_currency(c("2423562534234", "20"), c("€", "$"), c(1, 2))
-#' # "€2,423,562,534,234.0" "$20.0"
+#' format_currency(c("2423562534234", "20"), c("¥", "$"), c(1, 2))
+#' # "¥2,423,562,534,234.0" "$20.0"
 #'
 
 
@@ -105,17 +105,20 @@ format_dollars <- function(amount, digits) {
 #'
 #' @usage currency_characters_ascii()
 #'
-#'
+#' @import stringi
 #' @export
 #'
 #' @examples
 #'
 #' currency_characters_ascii()
-#' # [1] "¤" "£" "€" "$" "¢" "¥" "₧" "ƒ"
+#'
 
 
 currency_characters_ascii <- function() {
-  c("¤", "£", "€", "$", "¢", "¥", "₧", "ƒ")
+
+  c("\\u00a4", "\\u00a3", "\\u20ac", "\\u00a2", "\\u00a5", "\\u20a7",
+    "\\u0192") %>% stringi::stri_unescape_unicode()
+
 }
 
 
@@ -138,8 +141,8 @@ currency_characters_ascii <- function() {
 #'
 #' @examples
 #' library(dplyr)
-#' c("$134,345.05", "£22", "¥30000", "€500") %>% currency_to_numeric()
-#' # [1] 134345     22  30000    500
+#' c("$134,345.05", "£22", "¥30000") %>% currency_to_numeric()
+#' # [1] 134345     22  30000
 
 
 currency_to_numeric <- function(currency_text) {

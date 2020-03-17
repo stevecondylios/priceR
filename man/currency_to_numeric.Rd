@@ -4,16 +4,16 @@
 \alias{currency_to_numeric}
 \title{Convert human readable currencies into numeric data}
 \usage{
-currency_to_numeric(amount)
+currency_to_numeric(currency_text)
 }
 \arguments{
-\item{amount}{Price or vector of prices}
+\item{currency_text}{Price or vector of prices}
 }
 \description{
 Convert human readable currencies into numeric data
 }
 \examples{
 library(dplyr)
-c("$134,345.05", "£22", "¥30000", "€500") \%>\% currency_to_numeric()
-# [1] 134345     22  30000    500
+c("$134,345.05", "£22", "¥30000") \%>\% currency_to_numeric()
+# [1] 134345     22  30000
 }

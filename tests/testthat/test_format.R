@@ -24,7 +24,7 @@ test_that("format_currency() correctly inserts commas and symbol to decimal valu
 
 test_that("format_currency() correctly inserts commas and symbol other than dollar sign", {
 
-  expect_equal(format_currency("2423562534234", "€", 2), "€2,423,562,534,234.00")
+  expect_equal(format_currency("2423562534234", "¥", 2), "¥2,423,562,534,234.00")
 
 })
 
@@ -32,8 +32,8 @@ test_that("format_currency() correctly inserts commas and symbol other than doll
 
 test_that("format_currency() correctly handles vector arguments", {
 
-  expect_equal(format_currency(c("2423562534234", "20"), c("€", "$"), c(1, 2)),
-               c("€2,423,562,534,234.0", "$20.0"))
+  expect_equal(format_currency(c("2423562534234", "20"), c("¥", "$"), c(1, 2)),
+               c("¥2,423,562,534,234.0", "$20.0"))
 
 })
 
