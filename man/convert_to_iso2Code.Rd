@@ -18,6 +18,7 @@ convert_to_iso2Code(country_input_type_string, country, countries_dataframe)
 }
 \examples{
 
+\dontrun{
 # Assign so as to save on API calls (recommended)
 countries_dataframe <- show_countries()
 
@@ -30,6 +31,6 @@ country <- "AU"
 country_input_type_string <- "iso2Code"
 convert_to_iso2Code(country_input_type_string, country, countries_dataframe)
 # [1] "AU"
-
+}
 
 }

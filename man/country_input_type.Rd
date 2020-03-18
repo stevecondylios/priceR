@@ -18,7 +18,7 @@ country/region)
 }
 \examples{
 
-
+\dontrun{
 # Assign so as to save on API calls - recommended
 countries_dataframe <- show_countries()
 
@@ -33,5 +33,5 @@ countries_dataframe <- show_countries()
   country <- "something incorrect"
   country_input_type(country, countries_dataframe)
 # [1] "invalid"
-
+}
 }

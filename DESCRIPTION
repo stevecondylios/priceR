@@ -1,6 +1,6 @@
 Package: priceR
 Type: Package
-Title: Economics and Pricing Tools
+Title: Microeconomics and Pricing Tools
 Version: 0.1.1
 Imports: dplyr, gsubfn, stringr, purrr, jsonlite, stats, lubridate, curl, stringi
 Author: Steve Condylios [aut, cre] (<https://orcid.org/0000-0003-0599-844X>)
@@ -8,7 +8,7 @@ Maintainer: Steve Condylios <steve.condylios@gmail.com>
 BugReports: https://github.com/stevecondylios/priceR/issues
 License: MIT + file LICENSE
 URL: https://github.com/stevecondylios/priceR
-Description: Functions to aid in the analysis of price and currency data by expediting data preprocessing. This includes extraction of relevant data (e.g. from text fields), conversion into numeric class, cleaning, and standardisation as appropriate.
+Description: Functions to aid in microeconomic analysis and handling of price and currency data. This includes extraction of relevant data (e.g. from World Bank API, and other sources), data cleaning, and standardisation.
 Encoding: UTF-8
 LazyData: true
 RoxygenNote: 7.0.2

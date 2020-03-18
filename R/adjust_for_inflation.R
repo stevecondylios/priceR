@@ -117,7 +117,7 @@ show_countries <- function() {
 #'
 #' @examples
 #'
-#'
+#' \dontrun{
 #' # Assign so as to save on API calls - recommended
 #' countries_dataframe <- show_countries()
 #'
@@ -132,7 +132,7 @@ show_countries <- function() {
 #'   country <- "something incorrect"
 #'   country_input_type(country, countries_dataframe)
 #' # [1] "invalid"
-#'
+#' }
 
 country_input_type <- function(country_input, countries_dataframe) {
 
@@ -197,6 +197,7 @@ country_input_type <- function(country_input, countries_dataframe) {
 #'
 #' @examples
 #'
+#' \dontrun{
 #' # Assign so as to save on API calls (recommended)
 #' countries_dataframe <- show_countries()
 #'
@@ -209,7 +210,7 @@ country_input_type <- function(country_input, countries_dataframe) {
 #' country_input_type_string <- "iso2Code"
 #' convert_to_iso2Code(country_input_type_string, country, countries_dataframe)
 #' # [1] "AU"
-#'
+#' }
 #'
 
 convert_to_iso2Code <- function(country_input_type_string, country, countries_dataframe) {

@@ -22,7 +22,7 @@ include_periodicity, hours_per_workday, days_per_workweek, working_weeks_per_yea
 
 \item{days_per_workweek}{Set assumed number of days per workweek. Only affects annualisation of rates indentified as Daily. Default is 5 days.}
 
-\item{working_weeks_per_year}{Set assumed number of working weeks in the year. Only affects annualisation of rates indentified as Daily or Weekly. Default is 48 weeks.}
+\item{working_weeks_per_year}{Set assumed number of working weeks in the year. Only affects annualisation of rates indentified as Daily or Weekly. Default is 50 weeks.}
 }
 \description{
 Extract numeric salary from text data. `extract_salary` automatically converts weekly and hourly rates to amounts per annum.
@@ -87,7 +87,7 @@ extract_salary(salaries, exclude_below = 20000, exclude_above = 600000)
 # days per workweek, and hours per workday
 # And the assumed number of hours per workday can be changed from the default (8)
 # The assumed number of workdays per workweek can be changed from the default (5)
-# The assumed number of working weeks in year can be changed from the default (48)
+# The assumed number of working weeks in year can be changed from the default (50)
 # E.g.
 extract_salary(salaries, hours_per_workday = 7, days_per_workweek = 4,
                working_weeks_per_year = 46, exclude_below = 20000)

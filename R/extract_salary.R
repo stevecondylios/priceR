@@ -14,7 +14,7 @@
 #' @param include_periodicity Set to TRUE to return an additional column stating the detected peridicity in the character string. Periodicity is assumed to be 'Annual' unless evidence is found to the contrary.
 #' @param hours_per_workday Set assumed number of hours in the workday. Only affects annualisation of rates indentified as Daily. Default is 8 hours.
 #' @param days_per_workweek Set assumed number of days per workweek. Only affects annualisation of rates indentified as Daily. Default is 5 days.
-#' @param working_weeks_per_year Set assumed number of working weeks in the year. Only affects annualisation of rates indentified as Daily or Weekly. Default is 48 weeks.
+#' @param working_weeks_per_year Set assumed number of working weeks in the year. Only affects annualisation of rates indentified as Daily or Weekly. Default is 50 weeks.
 #'
 #' @import dplyr
 #' @import stringr
@@ -82,7 +82,7 @@
 #' # days per workweek, and hours per workday
 #' # And the assumed number of hours per workday can be changed from the default (8)
 #' # The assumed number of workdays per workweek can be changed from the default (5)
-#' # The assumed number of working weeks in year can be changed from the default (48)
+#' # The assumed number of working weeks in year can be changed from the default (50)
 #' # E.g.
 #' extract_salary(salaries, hours_per_workday = 7, days_per_workweek = 4,
 #'                working_weeks_per_year = 46, exclude_below = 20000)
@@ -109,9 +109,7 @@
 #' # 14     NA      Hourly
 #'
 #'
-library(dplyr)
-library(stringr)
-library(gsubfn)
+
 
 extract_salary <- function(salary_text, exclude_below, exclude_above, salary_range_handling, include_periodicity, hours_per_workday, days_per_workweek, working_weeks_per_year) {
 
@@ -121,7 +119,7 @@ extract_salary <- function(salary_text, exclude_below, exclude_above, salary_ran
 
   if(missing(hours_per_workday)) { hours_per_workday <- 8 }
   if(missing(days_per_workweek)) { days_per_workweek <- 5 }
-  if(missing(working_weeks_per_year)) { working_weeks_per_year <- 48 }
+  if(missing(working_weeks_per_year)) { working_weeks_per_year <- 50 }
 
   if(missing(salary_range_handling)) { salary_range_handling <- "average" }
   if(!salary_range_handling %in% c("average", "max", "min")) { stop("salary_range_handling parameter must be either \"average\", \"min\", or \"max\"") }
