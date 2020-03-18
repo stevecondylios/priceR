@@ -8,7 +8,7 @@ Maintainer: Steve Condylios <steve.condylios@gmail.com>
 BugReports: https://github.com/stevecondylios/priceR/issues
 License: MIT + file LICENSE
 URL: https://github.com/stevecondylios/priceR
-Description: Functions to aid in microeconomic analysis and handling of price and currency data. This includes extraction of relevant data (e.g. from World Bank API, and other sources), data cleaning, and standardisation.
+Description: Functions to aid in microeconomic analysis and handling of price and currency data. This includes extraction of relevant data (e.g. from World Bank API, and other sources), data cleaning/parsing, and standardisation.
 Encoding: UTF-8
 LazyData: true
 RoxygenNote: 7.0.2
