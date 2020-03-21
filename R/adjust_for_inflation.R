@@ -9,6 +9,8 @@
 #'
 #' @param original_url A World Bank API URL. E.g. "https://api.worldbank.org/v2/country".
 #'
+#' @return A character vector
+#'
 #' @import dplyr
 #' @import stringr
 #'
@@ -57,6 +59,8 @@ url_all_results <- function(original_url) {
 #' @name show_countries
 #'
 #' @usage show_countries()
+#'
+#' @return A data.frame of countries available to query using the World Bank API
 #'
 #' @import dplyr
 #' @import stringr
@@ -108,6 +112,8 @@ show_countries <- function() {
 #' @param countries_dataframe A dataframe containing available iso2Code and country_name
 #' (see show_countries()).
 #'
+#' @return A character vector
+#'
 #' @import dplyr
 #' @import stringr
 #' @import gsubfn
@@ -129,7 +135,7 @@ show_countries <- function() {
 #'   country_input_type(country, countries_dataframe)
 #' # [1] "iso2Code"
 #'
-#'   country <- "something incorrect"
+#'   country <- "something other than a valid country name or iso2Code"
 #'   country_input_type(country, countries_dataframe)
 #' # [1] "invalid"
 #' }
@@ -188,6 +194,8 @@ country_input_type <- function(country_input, countries_dataframe) {
 #' @param country A country/region name or iso2Code.
 #' @param countries_dataframe The output of show_countries()
 #'
+#' @return A character vector containing a valid iso2Code
+#'
 #' @import dplyr
 #' @import stringr
 #' @import gsubfn
@@ -198,18 +206,20 @@ country_input_type <- function(country_input, countries_dataframe) {
 #' @examples
 #'
 #' \dontrun{
+#'
 #' # Assign so as to save on API calls (recommended)
 #' countries_dataframe <- show_countries()
-#'
 #' country <- "Australia"
-#' country_input_type_string <- "country_name"
+#' country_input_type_string <- country_input_type(country, countries_dataframe)
 #' convert_to_iso2Code(country_input_type_string, country, countries_dataframe)
 #' # [1] "AU"
 #'
 #' country <- "AU"
-#' country_input_type_string <- "iso2Code"
+#' country_input_type_string <- country_input_type(country, countries_dataframe)
 #' convert_to_iso2Code(country_input_type_string, country, countries_dataframe)
 #' # [1] "AU"
+#'
+#'
 #' }
 #'
 
@@ -264,6 +274,8 @@ convert_to_iso2Code <- function(country_input_type_string, country, countries_da
 #' @param country A country_name or iso2code (see show_countries() for complete list of available inputs).
 #' @param countries_dataframe The output from show_countries(). It is optional, but if not provided, it will be retrieved via the API.
 #'
+#' @return A data.frame containing inflation data from World Bank API for specified country
+#'
 #' @import dplyr
 #' @import stringr
 #' @import gsubfn
@@ -309,6 +321,7 @@ retrieve_inflation_data <- function(country, countries_dataframe) {
   inflation_url <- inflation_url %>% url_all_results
 
   inflation_data <- inflation_url %>% fromJSON(.)
+  inflation_data <- inflation_data[[2]]
 
   return(inflation_data)
 }
@@ -348,6 +361,7 @@ retrieve_inflation_data <- function(country, countries_dataframe) {
 #' @param past_averaging_period The number of periods back from the earliest available inflation data for a given country to average in order to extrapolate into the past (if 'average' is method being used).
 #' @param past_rate An assumed rate of inflation to use for extrapolating from the earliest available data to some even earlier period (if 'rate' is method being used).
 #'
+#' @return A vector of inflation-adjusted prices
 #'
 #' @import dplyr
 #' @import stringr
@@ -372,7 +386,7 @@ retrieve_inflation_data <- function(country, countries_dataframe) {
 #' inflation_dataframe = inflation_dataframe,
 #' countries_dataframe = countries_dataframe)
 #'
-#' # [0] 134.96287 # i.e. $100 in 2005 had the same purchasing power as $134.96 in 2017
+#' # [1] 133.9861 # i.e. $100 in 2005 had the same purchasing power as $133.99 in 2017
 #' }
 #'
 
@@ -455,7 +469,7 @@ adjust_for_inflation <- function(price,
 
 
   if(missing(inflation_dataframe)) { inflation_dataframe <- retrieve_inflation_data(country, countries_dataframe = countries_dataframe) }
-  inflation_dataframe <- inflation_dataframe %>% .[[2]] %>% .[ , c("value", "date")]
+  inflation_dataframe <- inflation_dataframe %>% .[ , c("value", "date")]
   inflation_dataframe$date <- inflation_dataframe$date %>% as.integer
   inflation_dataframe$value <- inflation_dataframe$value %>% as.numeric
 
@@ -566,10 +580,12 @@ adjust_for_inflation <- function(price,
   make_multiplier <- function(from_input, to_input) {
 
     # Note dilligent use of inequalities (rightly) prevent current year's inflation being applied
+    # https://economics.stackexchange.com/questions/28972/convention-standard-methodology-for-calculating-real-prices
     # if(length(from_date) == 1) { from_input <- rep(from_input, length(price))}
     # if(length(to_date) == 1) { to_input <- rep(to_input, length(price))}
 
-    inflation_dataframe %>% filter(date > from_input & date <= to_input | date < from_input & date >= to_input ) %>%
+    inflation_dataframe %>%
+      filter(date > from_input & date <= to_input | date < from_input & date >= to_input ) %>%
       .$value %>% {. / 100} %>% {. + 1} %>% { ifelse(from_input < to_input, prod(.), { 1 / prod(.) }) }
   }
 

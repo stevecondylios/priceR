@@ -9,6 +9,9 @@ url_all_results(original_url)
 \arguments{
 \item{original_url}{A World Bank API URL. E.g. "https://api.worldbank.org/v2/country".}
 }
+\value{
+A character vector
+}
 \description{
 results and returns JSON format
 }

@@ -12,6 +12,9 @@ country_input_type(country_input, countries_dataframe)
 \item{countries_dataframe}{A dataframe containing available iso2Code and country_name
 (see show_countries()).}
 }
+\value{
+A character vector
+}
 \description{
 Determines whether a string is a country name, an iso2Code, or invalid (not a World Bank API
 country/region)
@@ -30,7 +33,7 @@ countries_dataframe <- show_countries()
   country_input_type(country, countries_dataframe)
 # [1] "iso2Code"
 
-  country <- "something incorrect"
+  country <- "something other than a valid country name or iso2Code"
   country_input_type(country, countries_dataframe)
 # [1] "invalid"
 }

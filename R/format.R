@@ -5,8 +5,10 @@
 #' @usage format_currency(amount, symbol, digits)
 #'
 #' @param amount Price or vector of prices (character, numeric, or integer)
-#' @param symbol Symbol to prepend to amount (e.g. $) see: currency_characters_ascii()
+#' @param symbol Symbol to prepend to amount (e.g. $) see: currency_characters()
 #' @param digits The number of decimal places. Set equal to 2 to include cents (defaults to 0 i.e. whole major currency units)
+#'
+#' @return A character vector
 #'
 #' @import dplyr
 #' @import stringr
@@ -66,6 +68,8 @@ format_currency <- function(amount, symbol, digits) {
 #' @param amount Price or vector of prices (character, numeric, or integer)
 #' @param digits The number of decimal places. Set equal to 2 to include cents (defaults to 0 i.e. whole dollars)
 #'
+#' @return A character vector
+#'
 #' @import dplyr
 #' @export
 #'
@@ -99,24 +103,26 @@ format_dollars <- function(amount, digits) {
 
 
 
-#' Provide currency characters available in ASCII
+#' Provide currency characters
 #'
-#' @name currency_characters_ascii
+#' @name currency_characters
 #'
-#' @usage currency_characters_ascii()
+#' @usage currency_characters()
+#'
+#' @return A character vector of currency symbols
 #'
 #' @import stringi
 #' @export
 #'
 #' @examples
 #'
-#' currency_characters_ascii()
+#' currency_characters()
 #'
 
 
-currency_characters_ascii <- function() {
+currency_characters <- function() {
 
-  c("\\u00a4", "\\u00a3", "\\u20ac", "\\u00a2", "\\u00a5", "\\u20a7",
+  c("\\u0024", "\\u00a4", "\\u00a3", "\\u20ac", "\\u00a2", "\\u00a5", "\\u20a7",
     "\\u0192") %>% stringi::stri_unescape_unicode()
 
 }
@@ -136,6 +142,8 @@ currency_characters_ascii <- function() {
 #'
 #' @param currency_text Price or vector of prices
 #'
+#' @return A numeric vector
+#'
 #' @import dplyr
 #' @export
 #'
@@ -147,7 +155,7 @@ currency_characters_ascii <- function() {
 
 currency_to_numeric <- function(currency_text) {
 
-  currency_symbols <- currency_characters_ascii()
+  currency_symbols <- currency_characters()
 
   currency_symbols_regex <- currency_symbols %>% gsub("\\$", "\\\\$", .)
 

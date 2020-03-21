@@ -9,9 +9,12 @@ format_currency(amount, symbol, digits)
 \arguments{
 \item{amount}{Price or vector of prices (character, numeric, or integer)}
 
-\item{symbol}{Symbol to prepend to amount (e.g. $) see: currency_characters_ascii()}
+\item{symbol}{Symbol to prepend to amount (e.g. $) see: currency_characters()}
 
 \item{digits}{The number of decimal places. Set equal to 2 to include cents (defaults to 0 i.e. whole major currency units)}
+}
+\value{
+A character vector
 }
 \description{
 Make numeric currency values human readable

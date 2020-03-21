@@ -11,6 +11,9 @@ format_dollars(amount, digits)
 
 \item{digits}{The number of decimal places. Set equal to 2 to include cents (defaults to 0 i.e. whole dollars)}
 }
+\value{
+A character vector
+}
 \description{
 Make numeric currency values human readable
 }

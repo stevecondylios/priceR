@@ -16,6 +16,8 @@
 #' @param days_per_workweek Set assumed number of days per workweek. Only affects annualisation of rates indentified as Daily. Default is 5 days.
 #' @param working_weeks_per_year Set assumed number of working weeks in the year. Only affects annualisation of rates indentified as Daily or Weekly. Default is 50 weeks.
 #'
+#' @return A data.frame of 1 column, or 2 columns if include_periodicity is set to TRUE
+#'
 #' @import dplyr
 #' @import stringr
 #' @import gsubfn

@@ -6,6 +6,9 @@
 \usage{
 show_countries()
 }
+\value{
+A data.frame of countries available to query using the World Bank API
+}
 \description{
 `show_countries` calls the World Bank API and retrieves a list of available countries and regions
 }

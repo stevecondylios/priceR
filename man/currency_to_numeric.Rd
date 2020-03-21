@@ -9,6 +9,9 @@ currency_to_numeric(currency_text)
 \arguments{
 \item{currency_text}{Price or vector of prices}
 }
+\value{
+A numeric vector
+}
 \description{
 Convert human readable currencies into numeric data
 }

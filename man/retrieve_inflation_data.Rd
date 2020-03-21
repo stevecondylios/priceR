@@ -11,6 +11,9 @@ retrieve_inflation_data(country, countries_dataframe)
 
 \item{countries_dataframe}{The output from show_countries(). It is optional, but if not provided, it will be retrieved via the API.}
 }
+\value{
+A data.frame containing inflation data from World Bank API for specified country
+}
 \description{
 Retrieve inflation data for any country/region (using iso2Code or country_name)
 }

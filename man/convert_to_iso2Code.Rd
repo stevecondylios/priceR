@@ -13,24 +13,29 @@ convert_to_iso2Code(country_input_type_string, country, countries_dataframe)
 
 \item{countries_dataframe}{The output of show_countries()}
 }
+\value{
+A character vector containing a valid iso2Code
+}
 \description{
 `convert_to_iso2Code` accepts the type of country input and the country, and returns the relevant iso2Code
 }
 \examples{
 
 \dontrun{
+
 # Assign so as to save on API calls (recommended)
 countries_dataframe <- show_countries()
-
 country <- "Australia"
-country_input_type_string <- "country_name"
+country_input_type_string <- country_input_type(country, countries_dataframe)
 convert_to_iso2Code(country_input_type_string, country, countries_dataframe)
 # [1] "AU"
 
 country <- "AU"
-country_input_type_string <- "iso2Code"
+country_input_type_string <- country_input_type(country, countries_dataframe)
 convert_to_iso2Code(country_input_type_string, country, countries_dataframe)
 # [1] "AU"
+
+
 }
 
 }

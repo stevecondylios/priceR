@@ -24,6 +24,9 @@ include_periodicity, hours_per_workday, days_per_workweek, working_weeks_per_yea
 
 \item{working_weeks_per_year}{Set assumed number of working weeks in the year. Only affects annualisation of rates indentified as Daily or Weekly. Default is 50 weeks.}
 }
+\value{
+A data.frame of 1 column, or 2 columns if include_periodicity is set to TRUE
+}
 \description{
 Extract numeric salary from text data. `extract_salary` automatically converts weekly and hourly rates to amounts per annum.
 }

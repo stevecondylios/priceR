@@ -49,6 +49,9 @@ afi(
 
 \item{past_rate}{An assumed rate of inflation to use for extrapolating from the earliest available data to some even earlier period (if 'rate' is method being used).}
 }
+\value{
+A vector of inflation-adjusted prices
+}
 \description{
 Inflate/deflate prices from any year to any year, using World Bank inflation data and assumptions only where necessary.
 Typically used for converting past (nominal) values into current (real) values. This uses World Bank inflation data where available,
@@ -67,7 +70,7 @@ adjust_for_inflation(100, 2005, country, to_date = 2017,
 inflation_dataframe = inflation_dataframe,
 countries_dataframe = countries_dataframe)
 
-# [0] 134.96287 # i.e. $100 in 2005 had the same purchasing power as $134.96 in 2017
+# [1] 133.9861 # i.e. $100 in 2005 had the same purchasing power as $133.99 in 2017
 }
 
 }
