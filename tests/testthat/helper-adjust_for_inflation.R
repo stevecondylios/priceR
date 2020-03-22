@@ -23,7 +23,7 @@ countries_dataframe <- show_countries()
 
 
 # Required for some error messages
-available_inflation_data <- inflation_dataframe %>% .[[2]] %>% na.omit
+available_inflation_data <- inflation_dataframe %>% na.omit
 
 price <- 10
 
