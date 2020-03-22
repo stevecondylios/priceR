@@ -18,9 +18,7 @@
 #'
 #' @return A data.frame of 1 column, or 2 columns if include_periodicity is set to TRUE
 #'
-#' @import dplyr
-#' @import stringr
-#' @import gsubfn
+#' @import dplyr stringr gsubfn
 #'
 #' @export
 #'

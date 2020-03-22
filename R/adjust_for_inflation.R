@@ -11,8 +11,7 @@
 #'
 #' @return A character vector
 #'
-#' @import dplyr
-#' @import stringr
+#' @import dplyr stringr
 #'
 #' @export
 #'
@@ -62,9 +61,7 @@ url_all_results <- function(original_url) {
 #'
 #' @return A data.frame of countries available to query using the World Bank API
 #'
-#' @import dplyr
-#' @import stringr
-#' @import gsubfn
+#' @import dplyr stringr
 #' @importFrom jsonlite fromJSON
 #'
 #' @export
@@ -114,9 +111,7 @@ show_countries <- function() {
 #'
 #' @return A character vector
 #'
-#' @import dplyr
-#' @import stringr
-#' @import gsubfn
+#' @import dplyr stringr
 #' @importFrom jsonlite fromJSON
 #'
 #' @export
@@ -196,9 +191,7 @@ country_input_type <- function(country_input, countries_dataframe) {
 #'
 #' @return A character vector containing a valid iso2Code
 #'
-#' @import dplyr
-#' @import stringr
-#' @import gsubfn
+#' @import dplyr stringr
 #' @importFrom jsonlite fromJSON
 #'
 #' @export
@@ -276,9 +269,7 @@ convert_to_iso2Code <- function(country_input_type_string, country, countries_da
 #'
 #' @return A data.frame containing inflation data from World Bank API for specified country
 #'
-#' @import dplyr
-#' @import stringr
-#' @import gsubfn
+#' @import dplyr stringr
 #' @importFrom jsonlite fromJSON
 #'
 #' @export
@@ -363,9 +354,7 @@ retrieve_inflation_data <- function(country, countries_dataframe) {
 #'
 #' @return A vector of inflation-adjusted prices
 #'
-#' @import dplyr
-#' @import stringr
-#' @import gsubfn
+#' @import dplyr stringr
 #' @importFrom jsonlite fromJSON
 #' @importFrom purrr map_df
 #' @importFrom stats na.omit

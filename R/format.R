@@ -10,8 +10,7 @@
 #'
 #' @return A character vector
 #'
-#' @import dplyr
-#' @import stringr
+#' @import dplyr stringr
 #'
 #' @export
 #'
