@@ -7,7 +7,7 @@
 url_all_results(original_url)
 }
 \arguments{
-\item{original_url}{A World Bank API URL. E.g. "https://api.worldbank.org/v2/country".}
+\item{original_url}{A World Bank API URL. E.g. "http://api.worldbank.org/v2/country".}
 }
 \value{
 A character vector
@@ -19,9 +19,9 @@ results and returns JSON format
 
 # Provide a World Bank API URL and `url_all_results` will convert it into one with all results
 # for that indicator
-  original_url <- "https://api.worldbank.org/v2/country" # Note: no ?format=json on url
+  original_url <- "http://api.worldbank.org/v2/country" # Note: no ?format=json on url
   url_all_results(original_url)
-# "https://api.worldbank.org/v2/country?format=json&per_page=304"
+# "http://api.worldbank.org/v2/country?format=json&per_page=304"
 
 
 

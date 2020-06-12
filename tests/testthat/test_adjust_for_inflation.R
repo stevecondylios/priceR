@@ -12,7 +12,7 @@ context("Outputs (or errors/warnings) are generated as expected")
 #----- URL conversion -----#
 
 test_that("url_all_results() correctly converts URL to JSON", {
-  original_url <- "https://api.worldbank.org/v2/country" # Note: no ?format=json on url
+  original_url <- "http://api.worldbank.org/v2/country" # Note: no ?format=json on url
   expect_gt(url_all_results(original_url) %>% fromJSON %>% .[[2]] %>% nrow, 50)
 })
 
@@ -21,14 +21,14 @@ test_that("url_all_results() correctly converts URL to JSON", {
 #----- Retieving all results (not just first page) from WB API -----#
 
 test_that("The number of total results is retreived (and not just 50 on first page)", {
-  original_url <- "https://api.worldbank.org/v2/country?format=json"
+  original_url <- "http://api.worldbank.org/v2/country?format=json"
   total_results <- original_url %>% fromJSON %>% .[[1]] %>% .$total
   expect_gt(total_results, 50)
 
 })
 
 test_that("url_all_results() correctly retreives WB API data", {
-  original_url <- "https://api.worldbank.org/v2/country?format=json"
+  original_url <- "http://api.worldbank.org/v2/country?format=json"
   expect_gt(url_all_results(original_url) %>% fromJSON %>% .[[2]] %>% nrow, 50)
 })
 

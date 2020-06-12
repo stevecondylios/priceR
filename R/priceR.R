@@ -1,4 +1,4 @@
-#' priceR: Economics and Pricing Tools
+#' @description priceR: Economics and Pricing Tools
 #' @docType package
 #'
 #' @details
