@@ -307,7 +307,11 @@ retrieve_inflation_data <- function(country, countries_dataframe) {
   country <- convert_to_iso2Code(country_input_type_string, country, countries_dataframe)
 
   cat("Retrieving inflation data for", country, "\n")
-  inflation_url <- paste0("http://api.worldbank.org/countries/", country, "/indicators/FP.CPI.TOTL.ZG")
+
+  # Works
+  # http://api.worldbank.org/v2/country/AU/indicator/FP.CPI.TOTL.ZG?format=json
+
+  inflation_url <- paste0("http://api.worldbank.org/v2/country/", country, "/indicator/FP.CPI.TOTL.ZG")
 
   inflation_url <- inflation_url %>% url_all_results
 
