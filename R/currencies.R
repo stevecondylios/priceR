@@ -45,13 +45,26 @@ currencies <- function() {
 
 
 
-latest_exchange_rates <- function(symbol = "USD") {
+
+
+
+
+
+
+
+
+
+
+
+
+
+latest_exchange_rate <- function(currency = "USD") {
 
   display_api_info()
 
-  dat <- fromJSON(paste0("https://api.exchangerate.host/latest?base=", symbol))
+  dat <- fromJSON(paste0("https://api.exchangerate.host/latest?base=", currency))
 
-  cat("Daily", symbol, "exchange rate as at end of day", dat$date, "GMT", "\n")
+  cat("Daily", currency, "exchange rate as at end of day", dat$date, "GMT", "\n")
 
   # "EOD / End of Day historical exchange rates, which become available at
   # 00:05am GMT for the previous day and are time stamped at one second before midnight."
@@ -59,7 +72,7 @@ latest_exchange_rates <- function(symbol = "USD") {
   options(scipen=999)
   options(digits=1)
 
-  col_name <- paste0("one_", tolower(symbol), "_is_equivalent_to")
+  col_name <- paste0("one_", tolower(currency), "_is_equivalent_to")
 
   dat$rates %>%
     map_dbl(~ .x[1]) %>%
@@ -69,13 +82,23 @@ latest_exchange_rates <- function(symbol = "USD") {
 
 }
 
-latest_exchange_rates()
-latest_exchange_rates("AUD")
+latest_exchange_rate()
+latest_exchange_rate("AUD")
 
 
 
 
 
+
+
+
+
+
+
+
+
+
+# This simply creates date ranges so as to beach up large API calls into many smaller ones
 
 make_dates <- function(start_date, end_date, n_days) {
 
@@ -144,9 +167,12 @@ make_dates(start_date, end_date, n_days)
 
 
 
-historical_exchange_rates <- function(from, to, start_date, end_date) {
 
-  display_api_info()
+
+
+# Helper for next function
+
+retrieve_historical_rates <- function(start_date, end_date, from, to) {
 
   # "https://api.exchangerate.host/timeseries?start_date=2020-01-01&end_date=2020-01-04"
   endpoint <- paste0("https://api.exchangerate.host/timeseries?start_date=",
@@ -168,9 +194,36 @@ historical_exchange_rates <- function(from, to, start_date, end_date) {
       stack %>%
       .[,c(2,1)] %>%
       `colnames<-`(c("date", col_name))
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+historical_exchange_rates <- function(from, to, start_date, end_date) {
+
+  display_api_info()
+
+  api_time_splits <- make_dates(start_date, end_date, 365)
+
+  # pmap*() variants map over rows of a data.frame
+  pmap_dfr(api_time_splits, retrieve_historical_rates, from = from, to = to)
 
 
 }
+
+
 
 historical_exchange_rates("USD", to = "AUD",
                           start_date = "2020-01-01", end_date = "2020-06-30")
@@ -180,19 +233,8 @@ historical_exchange_rates("AUD", to = "USD",
                           start_date = "2010-01-01", end_date = "2020-06-30")
 
 
-start_date
-end_date
-
-
-
-fromJSON("https://api.exchangerate.host/timeseries?start_date=2020-01-01&end_date=2020-01-04&base=USD")
-
-fromJSON("https://api.exchangerate.host/timeseries?start_date=2020-01-01&end_date=2020-01-04")
-
-
-a <- fromJSON("https://api.exchangerate.host/timeseries?start_date=2020-01-01&end_date=2020-01-04&base=USD")
-
-
+historical_exchange_rates("AUD", to = "USD",
+                          start_date = "2010-01-01", end_date = "2020-06-30")
 
 
 
