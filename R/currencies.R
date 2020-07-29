@@ -218,7 +218,23 @@ exchange_rate_latest <- function(currency = "USD") {
 #' n_days = 365
 #' priceR:::make_dates(start_date, end_date, n_days)
 #'
+#' # 366 days (note 2020 was a leap year)
+#' start_date = "2019-07-30"
+#' end_date = "2020-07-29"
+#' n_days = 365
+#' priceR:::make_dates(start_date, end_date, n_days)
 #'
+#' # 365 days
+#' start_date = "2019-07-30"
+#' end_date = "2020-07-28"
+#' n_days = 365
+#' priceR:::make_dates(start_date, end_date, n_days)
+#'
+#' # 1095 days (3 years)
+#' start_date = "2019-07-30"
+#' end_date = "2022-07-28"
+#' n_days = 365
+#' priceR:::make_dates(start_date, end_date, n_days)
 #'
 
 
@@ -229,25 +245,29 @@ make_dates <- function(start_date, end_date, n_days) {
   start_date <- as.Date(start_date)
   end_date <- as.Date(end_date)
 
-  range_in_days <- (end_date - start_date) %>% as.integer
-  days_covered_by_period <- range_in_days + 1
+  range_in_days <- (end_date - start_date) %>% as.integer %>%
+
+    # Note that we add one since 2020-01-01 to 2020-01-02 is 2 days, yet one
+    # minus the other gives a difference of only 1, so we add one to the difference
+
+    `+`(1)
 
   # In cases where we don't need mutliple periods,
   # simply return a 1 row data.frame
 
-  if(days_covered_by_period <= n_days) {
+  if(range_in_days <= n_days) {
     dates <- data.frame(start_date=start_date,
                       end_date=end_date)
     return(dates)
   }
 
 
-  from_ind <- seq(1, days_covered_by_period, n_days)
-  to_ind <- seq(n_days + 1, days_covered_by_period, n_days)
+  from_ind <- seq(1, range_in_days, n_days)
+  to_ind <- seq(n_days, range_in_days, n_days)
 
   # add the end date to the to_ind (except for cases where it's an exact multiple of n_days)
-  if(days_covered_by_period != last(to_ind)) {
-    to_ind <- to_ind %>% c(days_covered_by_period)
+  if(range_in_days != last(to_ind)) {
+    to_ind <- to_ind %>% c(range_in_days)
   }
 
   date_seq <- (start_date:end_date) %>% as.Date(origin = "1970-01-01")
@@ -258,6 +278,7 @@ make_dates <- function(start_date, end_date, n_days) {
 
   return(dates)
 }
+
 
 
 

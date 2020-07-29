@@ -39,6 +39,22 @@ end_date = "2020-06-30"
 n_days = 365
 priceR:::make_dates(start_date, end_date, n_days)
 
+# 366 days (note 2020 was a leap year)
+start_date = "2019-07-30"
+end_date = "2020-07-29"
+n_days = 365
+priceR:::make_dates(start_date, end_date, n_days)
 
+# 365 days
+start_date = "2019-07-30"
+end_date = "2020-07-28"
+n_days = 365
+priceR:::make_dates(start_date, end_date, n_days)
+
+# 1095 days (3 years)
+start_date = "2019-07-30"
+end_date = "2022-07-28"
+n_days = 365
+priceR:::make_dates(start_date, end_date, n_days)
 
 }
