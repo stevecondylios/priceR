@@ -22,69 +22,75 @@ knitr::opts_chunk$set(echo = TRUE)
 - *Formatting* - easily handle currencies in written work, including Rmarkdown documents 
 
 
-# Installation
+### Installation
 
-Install from CRAN
+Installation via CRAN `install.packages("priceR")`
 
 ```{r message=FALSE}
-# install.packages("priceR")
 library(priceR)
+library(tidyverse)
+options(scipen = 100); options(digits = 6)
 ``` 
 
 
 
 
-## Exchange Rates
+### Retrieve current exchange rates
 
-Retrieve exchange rate between any currency and 170 others:
+Works for 170 currencies
 
 ```{r message=FALSE}
 
-library(dplyr)
-options(scipen = 100); options(digits = 6)
+exchange_rate_latest("USD") %>% 
+  head(10)
 
-exchange_rate_latest("USD") 
+```
 
+### View available currencies
 
-# View full list of available currencies with currencies()
+```{r}
+currencies() %>%
+  head()
 ```
 
 
-Retrieve historical rates between any currency and of 170 others:
+### Retrieve historical exchange rates
 
-```{r}
-library(priceR) # devtools::install_github("stevecondylios/priceR")
-library(tidyverse)
+```{r message=FALSE}
 
+# Retieve AUD to USD exchange rates
 au <- historical_exchange_rates("AUD", to = "USD",
                           start_date = "2010-01-01", end_date = "2020-06-30")
+
+# Retieve AUD to EUR exchange rates
 ae <- historical_exchange_rates("AUD", to = "EUR",
                           start_date = "2010-01-01", end_date = "2020-06-30")
- 
+
+# Combine
 cur <- au %>% left_join(ae, by = "date")
 
+head(cur)
 
 ```
 
+### Plot exchange rates
 
-```{r}
+```{r message=FALSE}
 library(ggplot2)
 
 cur %>% 
   rename(aud_to_usd = one_AUD_equivalent_to_x_USD,
          aud_to_eur = one_AUD_equivalent_to_x_EUR) %>% 
   pivot_longer(c("aud_to_usd", "aud_to_eur")) %>% 
+  mutate(date = as.Date(date)) %>% 
   ggplot(aes(x=date, y = value, colour=name)) +
   geom_line()
-
-
 
 ```
 
 
-### AUD to USD last 200 days
 
-```{r}
+```{r message=FALSE}
 cur %>% 
   tail(200) %>% 
   rename(aud_to_usd = one_AUD_equivalent_to_x_USD,
@@ -95,15 +101,13 @@ cur %>%
   geom_smooth(method = 'loess') + 
   theme(axis.title.x=element_blank(),
         axis.ticks.x=element_blank()) + 
-  scale_x_date(date_labels = "%b-%Y", date_breaks = "1 month") 
+  scale_x_date(date_labels = "%b-%Y", date_breaks = "1 month") +
+  ggtitle("AUD to USD over last 200 days")
 ```
 
 
 
-
-
-### EUR last 8 years
-```{r}
+```{r message=FALSE}
 cur %>% 
   tail(365 * 8) %>% 
   rename(aud_to_usd = one_AUD_equivalent_to_x_USD,
@@ -114,7 +118,8 @@ cur %>%
   geom_smooth(method = 'loess', se = TRUE) + 
   theme(axis.title.x=element_blank(),
         axis.ticks.x=element_blank()) + 
-  scale_x_date(date_labels = "%Y", date_breaks = "1 year")
+  scale_x_date(date_labels = "%Y", date_breaks = "1 year")  +
+  ggtitle("AUD to EUR over last 8 years")
 ```
 
 
@@ -122,55 +127,67 @@ cur %>%
 
 
 
-# Inflation (convert between nominal and real dollars)
+### Adjust prices for inflation
 
-Inflate nominal values into real currency units. This uses historical inflation data direction
-from World Bank, and works for any of 304 countries / areas. See them with `show_countries()`
+`adjust_for_inflation()` automatically converts between nominal and real dollars,
+or in/deflates prices from one year's prices to another's.
 
-```{r message=FALSE}
+It works for any of 304 countries / areas. See them with all with `show_countries()`
 
-exchange_rate_latest("USD") 
+```{r message=FALSE, echo=FALSE}
 
+set.seed(123)
+nominal_prices <- rnorm(10, mean=10, sd=3)
+years <- round(rnorm(10, mean=2006, sd=5))
+df <- data.frame(years, nominal_prices)
 
-# View full list of available currencies with currencies()
+df$in_2008_dollars <- adjust_for_inflation(nominal_prices, years, "US", to_date = 2008)
+
+df
 ```
 
 
 
+### Extraction helpers: extract useful numeric data from messy free text
 
-
-
-
-
-
-## Regular Expressions 
-
-Extract numeric currencies from messy text data
+`extract_salary()` extracts salaries as useful numeric data from non-standard free text
 
 ```{r}
 
-b[c(2,3,4,8,19,22,35,56,66,80,121), ] %>% extract_salary()
+messy_salary_data <- c(
+  "$90000 - $120000 per annum",
+  "$90k - $110k p.a.",
+  "$110k - $120k p.a. + super + bonus + benefits",
+  "$140K-$160K + Super + Bonus/Equity",
+  "$200,000 - $250,000 package",
+  "c$200K Package Neg",
+  "$700 p/d",                                       # daily
+  "$120 - $140 (Inc. Super) per hour",              # hourly
+  "Competitive"                                     # nothing useful
+)
 
-
-
+messy_salary_data %>%
+  extract_salary(include_periodicity = TRUE, 
+                 salary_range_handling = "average")
 
 ```
 
 
-## Formatting
+### Neatly format currencies
 
-Retrieve exchange rate between a currency and 170 others:
+`format_currency()` makes nicely formats numeric data:
 
 ```{r message=FALSE}
 
-exchange_rate_latest("USD") 
+format_currency("22500000", "¥")
 
-
-# View full list of available currencies with currencies()
 ```
 
+`format_dollars()` is the same but exclusively for dollars:
 
-
+```{r}
+format_dollars(c("445.50", "199.99"), digits = 2)
+```
 
 
 
