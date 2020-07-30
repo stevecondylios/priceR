@@ -118,7 +118,7 @@ extract_salary <- function(salary_text, exclude_below, exclude_above, salary_ran
   # and not scientific notation! - very important.
 
   # Set existing option(s)
-  op <- options(scipen)
+  op <- options("scipen")
 
   # Give scipen option a new value
   options(scipen = 100)
