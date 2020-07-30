@@ -349,7 +349,8 @@ retrieve_historical_rates <- function(from, to, start_date, end_date) {
       map_dbl(~ .x[1][[1]][[1]]) %>%
       stack %>%
       .[,c(2,1)] %>%
-      `colnames<-`(c("date", col_name))
+      `colnames<-`(c("date", col_name)) %>%
+    mutate(date = as.Date(date))
 }
 
 

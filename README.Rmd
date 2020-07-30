@@ -21,7 +21,6 @@ knitr::opts_chunk$set(echo = TRUE)
 - *Regular Expressions* - easily extract common pricing patterns from free text
 - *Formatting* - easily handle currencies in written work, including Rmarkdown documents 
 
-`rawr` takes care of this.  
 
 # Installation
 
@@ -32,11 +31,101 @@ Install from CRAN
 library(priceR)
 ``` 
 
-# Capabilties 
 
-#### Exchange Rates
 
-Retrieve exchange rate between a currency and 170 others:
+
+## Exchange Rates
+
+Retrieve exchange rate between any currency and 170 others:
+
+```{r message=FALSE}
+
+library(dplyr)
+options(scipen = 100); options(digits = 6)
+
+exchange_rate_latest("USD") 
+
+
+# View full list of available currencies with currencies()
+```
+
+
+Retrieve historical rates between any currency and of 170 others:
+
+```{r}
+library(priceR) # devtools::install_github("stevecondylios/priceR")
+library(tidyverse)
+
+au <- historical_exchange_rates("AUD", to = "USD",
+                          start_date = "2010-01-01", end_date = "2020-06-30")
+ae <- historical_exchange_rates("AUD", to = "EUR",
+                          start_date = "2010-01-01", end_date = "2020-06-30")
+ 
+cur <- au %>% left_join(ae, by = "date")
+
+
+```
+
+
+```{r}
+library(ggplot2)
+
+cur %>% 
+  rename(aud_to_usd = one_AUD_equivalent_to_x_USD,
+         aud_to_eur = one_AUD_equivalent_to_x_EUR) %>% 
+  pivot_longer(c("aud_to_usd", "aud_to_eur")) %>% 
+  ggplot(aes(x=date, y = value, colour=name)) +
+  geom_line()
+
+
+
+```
+
+
+### AUD to USD last 200 days
+
+```{r}
+cur %>% 
+  tail(200) %>% 
+  rename(aud_to_usd = one_AUD_equivalent_to_x_USD,
+         aud_to_eur = one_AUD_equivalent_to_x_EUR) %>%  
+  mutate(date = as.Date(date)) %>% 
+  ggplot(aes(x = date, y = aud_to_usd, group = 1)) +
+  geom_line() +
+  geom_smooth(method = 'loess') + 
+  theme(axis.title.x=element_blank(),
+        axis.ticks.x=element_blank()) + 
+  scale_x_date(date_labels = "%b-%Y", date_breaks = "1 month") 
+```
+
+
+
+
+
+### EUR last 8 years
+```{r}
+cur %>% 
+  tail(365 * 8) %>% 
+  rename(aud_to_usd = one_AUD_equivalent_to_x_USD,
+         aud_to_eur = one_AUD_equivalent_to_x_EUR) %>% 
+  mutate(date = as.Date(date)) %>% 
+  ggplot(aes(x = date, y = aud_to_eur, group = 1)) +
+  geom_line() +
+  geom_smooth(method = 'loess', se = TRUE) + 
+  theme(axis.title.x=element_blank(),
+        axis.ticks.x=element_blank()) + 
+  scale_x_date(date_labels = "%Y", date_breaks = "1 year")
+```
+
+
+
+
+
+
+# Inflation (convert between nominal and real dollars)
+
+Inflate nominal values into real currency units. This uses historical inflation data direction
+from World Bank, and works for any of 304 countries / areas. See them with `show_countries()`
 
 ```{r message=FALSE}
 
@@ -47,7 +136,14 @@ exchange_rate_latest("USD")
 ```
 
 
-### Regular Expressions 
+
+
+
+
+
+
+
+## Regular Expressions 
 
 Extract numeric currencies from messy text data
 
@@ -58,6 +154,19 @@ b[c(2,3,4,8,19,22,35,56,66,80,121), ] %>% extract_salary()
 
 
 
+```
+
+
+## Formatting
+
+Retrieve exchange rate between a currency and 170 others:
+
+```{r message=FALSE}
+
+exchange_rate_latest("USD") 
+
+
+# View full list of available currencies with currencies()
 ```
 
 
