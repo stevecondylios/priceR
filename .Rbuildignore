@@ -11,5 +11,5 @@ R/TEMP
 .travis.yml
 ^\.travis\.yml$
 ^README\.Rmd$
-
+README_files/
 
