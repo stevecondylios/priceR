@@ -113,6 +113,24 @@
 
 extract_salary <- function(salary_text, exclude_below, exclude_above, salary_range_handling, include_periodicity, hours_per_workday, days_per_workweek, working_weeks_per_year) {
 
+
+  ### These steps ensure any digits found via regular expressions are replaced with complete numbers
+  # and not scientific notation! - very important.
+
+  # Set existing option(s)
+  op <- options(scipen)
+
+  # Give scipen option a new value
+  options(scipen = 100)
+
+  # Run this to ensure that on existing the current scope (i.e. function), the option is set back to
+  # its original value
+  on.exit(options(op))
+
+
+
+
+
   if(missing(exclude_above)) { exclude_above <- 9999999999999 }
   if(missing(exclude_below)) { exclude_below <- 0 }
   if(missing(include_periodicity)) { include_periodicity <- FALSE }

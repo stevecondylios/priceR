@@ -1,17 +1,10 @@
+
 ---
 output: github_document
 ---
-
-<!-- README.md is generated from README.Rmd. Please edit that file -->
-
-```{r, include = FALSE}
-knitr::opts_chunk$set(
-  collapse = TRUE,
-  comment = "#>",
-  fig.path = "man/figures/README-",
-  out.width = "100%"
-)
-options()
+  
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
 ```
 
 # priceR 
@@ -20,4 +13,99 @@ options()
 [![CRAN status](https://www.r-pkg.org/badges/version/priceR)](https://cran.r-project.org/package=priceR)
 [![Travis build status](https://travis-ci.org/stevecondylios/priceR.svg?branch=master)](https://travis-ci.org/stevecondylios/priceR)
 <!-- badges: end -->
+
+`priceR` contains 4 types of capabilties:
+
+- *Exchange Rates* - easily retrieve exchange rates for immediate use
+- *Inflation* - easily inflate past (nominal) values into present day (real) prices
+- *Regular Expressions* - easily extract common pricing patterns from free text
+- *Formatting* - easily handle currencies in written work, including Rmarkdown documents 
+
+`rawr` takes care of this.  
+
+# Installation
+
+Install from CRAN
+
+```{r message=FALSE}
+# install.packages("priceR")
+library(priceR)
+``` 
+
+# Capabilties 
+
+#### Exchange Rates
+
+Retrieve exchange rate between a currency and 170 others:
+
+```{r message=FALSE}
+
+exchange_rate_latest("USD") 
+
+
+# View full list of available currencies with currencies()
+```
+
+
+### Regular Expressions 
+
+Extract numeric currencies from messy text data
+
+```{r}
+
+b[c(2,3,4,8,19,22,35,56,66,80,121), ] %>% extract_salary()
+
+
+
+
+```
+
+
+
+
+
+
+
+
+# Issues and Feature Requests
+
+When reporting an issue, please include:
+
+* Example code that reproduces the **observed** behavior.
+* An explanation of what the **expected** behavior is.
+* A specific url you're attempting to retrieve R code from (if that's what your issue concerns)
+
+
+For feature requests, raise an issue with the following:
+
+* The desired functionality
+* Example inputs and desired output
+
+
+
+# Pull Requests
+
+Pull requests are welcomed. Before doing so, please create an issue or email me with your idea.  
+
+Any new functions should follow the conventions established by the the package's existing functions. Please ensure
+
+* Functions are sensibly named
+* The __intent__ of the contribution is clear
+* At least one example is provided in the documentation
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
