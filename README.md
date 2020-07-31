@@ -38,17 +38,17 @@ exchange_rate_latest("USD") %>%
   head(10)
 ```
 
-    ## Daily USD exchange rate as at end of day 2020-07-30 GMT
+    ## Daily USD exchange rate as at end of day 2020-07-31 GMT
 
     ##    currency one_usd_is_equivalent_to
-    ## 1       AED                  3.67295
-    ## 2       AFN                 76.85000
-    ## 3       ALL                105.32304
-    ## 4       AMD                481.61623
-    ## 5       ANG                  1.78991
-    ## 6       AOA                557.91700
-    ## 7       ARS                 72.19630
-    ## 8       AUD                  1.39558
+    ## 1       AED                  3.67300
+    ## 2       AFN                 76.80003
+    ## 3       ALL                105.30020
+    ## 4       AMD                481.61635
+    ## 5       ANG                  1.79471
+    ## 6       AOA                552.92014
+    ## 7       ARS                 72.25342
+    ## 8       AUD                  1.38494
     ## 9       AWG                  1.80000
     ## 10      AZN                  1.70250
 
@@ -150,9 +150,22 @@ dollars, or in/deflates prices from one year’s prices to another’s.
 It works for any of 304 countries / areas. See them with all with
 `show_countries()`
 
+``` r
+set.seed(123)
+nominal_prices <- rnorm(10, mean=10, sd=3)
+years <- round(rnorm(10, mean=2006, sd=5))
+df <- data.frame(years, nominal_prices)
+
+df$in_2008_dollars <- adjust_for_inflation(nominal_prices, years, "US", to_date = 2008)
+```
+
     ## Generating URL to request all 304 results
     ## Retrieving inflation data for US 
     ## Generating URL to request all 60 results
+
+``` r
+df
+```
 
     ##    years nominal_prices in_2008_dollars
     ## 1   2012        8.31857         7.66782

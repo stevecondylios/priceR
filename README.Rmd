@@ -134,7 +134,7 @@ or in/deflates prices from one year's prices to another's.
 
 It works for any of 304 countries / areas. See them with all with `show_countries()`
 
-```{r message=FALSE, echo=FALSE}
+```{r message=FALSE}
 
 set.seed(123)
 nominal_prices <- rnorm(10, mean=10, sd=3)
