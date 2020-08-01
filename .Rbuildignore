@@ -13,3 +13,6 @@ R/TEMP
 ^README\.Rmd$
 README_files/
 
+^_pkgdown\.yml$
+^docs$
+^pkgdown$
