@@ -41,7 +41,7 @@ url_all_results <- function(original_url) {
   cat("Generating URL to request all", total_results, "results\n")
   url_with_all_results <- paste0(original_url, "&per_page=", total_results)
 
-  url_with_all_results %>% return
+  url_with_all_results
 
 }
 
@@ -591,7 +591,7 @@ adjust_for_inflation <- function(price,
 
   real_price <- price * multipliers
 
-  real_price %>% return
+  real_price
 }
 
 
