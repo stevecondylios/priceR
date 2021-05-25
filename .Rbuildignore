@@ -16,3 +16,4 @@ README_files/
 ^_pkgdown\.yml$
 ^docs$
 ^pkgdown$
+_config.yml
