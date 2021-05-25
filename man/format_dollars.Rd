@@ -19,15 +19,15 @@ Make numeric currency values human readable
 }
 \examples{
 
-format_dollars("2423562534234")
+# format_dollars("2423562534234")
 # "$2,423,562,534,234"
 
-format_dollars("2423562534234.876", 0)
+# format_dollars("2423562534234.876", 0)
 # "$2,423,562,534,234"
 
-format_dollars("2423562534234.876", 2)
+# format_dollars("2423562534234.876", 2)
 # "$2,423,562,534,234.88"
 
-format_dollars("2423562534234", 2)
+# format_dollars("2423562534234", 2)
 # "$2,423,562,534,234.00"
 }

@@ -16,16 +16,16 @@
 #'
 #' @examples
 #'
-#' format_currency("2423562534234", "$")
+#' # format_currency("2423562534234", "$")
 #' # "$2,423,562,534,234"
 #'
-#' format_currency("2423562534234.876", "$", 0)
+#' # format_currency("2423562534234.876", "$", 0)
 #' # "$2,423,562,534,234.88"
 #'
-#' format_currency("2423562534234.876", "$", 2)
+#' # format_currency("2423562534234.876", "$", 2)
 #' # "$2,423,562,534,234.88"
 #'
-#' format_currency("2423562534234", "¥", 2)
+#' # format_currency("2423562534234", "¥", 2)
 #' # "¥2,423,562,534,234.00"
 #'
 #' # format_currency() is vectorized and can accept vector arguments
@@ -74,16 +74,16 @@ format_currency <- function(amount, symbol, digits) {
 #'
 #' @examples
 #'
-#' format_dollars("2423562534234")
+#' # format_dollars("2423562534234")
 #' # "$2,423,562,534,234"
 #'
-#' format_dollars("2423562534234.876", 0)
+#' # format_dollars("2423562534234.876", 0)
 #' # "$2,423,562,534,234"
 #'
-#' format_dollars("2423562534234.876", 2)
+#' # format_dollars("2423562534234.876", 2)
 #' # "$2,423,562,534,234.88"
 #'
-#' format_dollars("2423562534234", 2)
+#' # format_dollars("2423562534234", 2)
 #' # "$2,423,562,534,234.00"
 
 format_dollars <- function(amount, digits) {
