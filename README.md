@@ -1,5 +1,5 @@
 
-# priceR
+# collidr <a href='https://github.com/stevecondylios/priceR'><img src='man/figures/priceR.png' align="right" height="139" /></a>
 
 <!-- badges: start -->
 
@@ -11,12 +11,12 @@ status](https://travis-ci.org/stevecondylios/priceR.svg?branch=master)](https://
 
 `priceR` contains 4 types of capabilties:
 
-  - *Exchange Rates* - easily retrieve exchange rates for immediate use
-  - *Inflation* - easily inflate past (nominal) values into present day
+-   *Exchange Rates* - easily retrieve exchange rates for immediate use
+-   *Inflation* - easily inflate past (nominal) values into present day
     (real) prices
-  - *Regular Expressions* - easily extract common pricing patterns from
+-   *Regular Expressions* - easily extract common pricing patterns from
     free text
-  - *Formatting* - easily handle currencies in written work, including
+-   *Formatting* - easily handle currencies in written work, including
     Rmarkdown documents
 
 ### Installation
@@ -38,19 +38,19 @@ exchange_rate_latest("USD") %>%
   head(10)
 ```
 
-    ## Daily USD exchange rate as at end of day 2020-07-31 GMT
+    ## Daily USD exchange rate as at end of day 2021-08-25 GMT
 
     ##    currency one_usd_is_equivalent_to
-    ## 1       AED                  3.67300
-    ## 2       AFN                 76.80003
-    ## 3       ALL                105.30020
-    ## 4       AMD                481.61635
-    ## 5       ANG                  1.79471
-    ## 6       AOA                552.92014
-    ## 7       ARS                 72.25342
-    ## 8       AUD                  1.38494
-    ## 9       AWG                  1.80000
-    ## 10      AZN                  1.70250
+    ## 1       AED                  3.67306
+    ## 2       AFN                 86.10161
+    ## 3       ALL                103.70741
+    ## 4       AMD                491.86574
+    ## 5       ANG                  1.79480
+    ## 6       AOA                636.13058
+    ## 7       ARS                 97.36602
+    ## 8       AUD                  1.38060
+    ## 9       AWG                  1.80077
+    ## 10      AZN                  1.70085
 
 ### View available currencies
 
@@ -159,9 +159,9 @@ df <- data.frame(years, nominal_prices)
 df$in_2008_dollars <- adjust_for_inflation(nominal_prices, years, "US", to_date = 2008)
 ```
 
-    ## Generating URL to request all 304 results
+    ## Generating URL to request all 299 results
     ## Retrieving inflation data for US 
-    ## Generating URL to request all 60 results
+    ## Generating URL to request all 61 results
 
 ``` r
 df
@@ -235,15 +235,15 @@ format_dollars(c("445.50", "199.99"), digits = 2)
 
 When reporting an issue, please include:
 
-  - Example code that reproduces the **observed** behavior.
-  - An explanation of what the **expected** behavior is.
-  - A specific url you’re attempting to retrieve R code from (if that’s
+-   Example code that reproduces the **observed** behavior.
+-   An explanation of what the **expected** behavior is.
+-   A specific url you’re attempting to retrieve R code from (if that’s
     what your issue concerns)
 
 For feature requests, raise an issue with the following:
 
-  - The desired functionality
-  - Example inputs and desired output
+-   The desired functionality
+-   Example inputs and desired output
 
 # Pull Requests
 
@@ -253,6 +253,6 @@ email me with your idea.
 Any new functions should follow the conventions established by the the
 package’s existing functions. Please ensure
 
-  - Functions are sensibly named
-  - The **intent** of the contribution is clear
-  - At least one example is provided in the documentation
+-   Functions are sensibly named
+-   The **intent** of the contribution is clear
+-   At least one example is provided in the documentation

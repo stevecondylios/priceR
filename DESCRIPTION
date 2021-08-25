@@ -1,9 +1,13 @@
 Package: priceR
 Type: Package
 Title: Economics and Pricing Tools
-Version: 0.1.6
+Version: 0.1.61
 Imports: dplyr, gsubfn, stringr, purrr, jsonlite, stats, lubridate, curl, stringi
-Author: Steve Condylios [aut, cre] (<https://orcid.org/0000-0003-0599-844X>)
+Authors@R: person(given="Steve", family="Condylios", 
+    role=c("aut", "cre"), email="steve.condylios@gmail.com", 
+    comment("https://orcid.org/0000-0003-0599-844X"),
+    person(given="Bruno", family="Mioto", role="ctb", email="brunomioto97@gmail.com")
+    )
 Maintainer: Steve Condylios <steve.condylios@gmail.com>
 BugReports: https://github.com/stevecondylios/priceR/issues
 License: MIT + file LICENSE
