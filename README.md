@@ -5,8 +5,8 @@
 
 [![CRAN
 status](https://www.r-pkg.org/badges/version/priceR)](https://cran.r-project.org/package=priceR)
-[![Travis build
-status](https://travis-ci.org/stevecondylios/priceR.svg?branch=master)](https://travis-ci.org/stevecondylios/priceR)
+[![R build
+status](https://github.com/stevecondylios/priceR/workflows/R-CMD-check/badge.svg)](https://github.com/stevecondylios/priceR/actions?workflow=R-CMD-check)
 <!-- badges: end -->
 
 `priceR` contains 4 types of capabilties:
