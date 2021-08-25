@@ -1,5 +1,5 @@
 
-# collidr <a href='https://github.com/stevecondylios/priceR'><img src='man/figures/priceR.png' align="right" height="139" /></a>
+# priceR <a href='https://github.com/stevecondylios/priceR'><img src='man/figures/priceR.png' align="right" height="139" /></a>
 
 <!-- badges: start -->
 
