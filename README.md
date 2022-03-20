@@ -38,19 +38,19 @@ exchange_rate_latest("USD") %>%
   head(10)
 ```
 
-    ## Daily USD exchange rate as at end of day 2021-08-25 GMT
+    ## Daily USD exchange rate as at end of day 2022-03-20 GMT
 
     ##    currency one_usd_is_equivalent_to
-    ## 1       AED                  3.67306
-    ## 2       AFN                 86.10161
-    ## 3       ALL                103.70741
-    ## 4       AMD                491.86574
-    ## 5       ANG                  1.79480
-    ## 6       AOA                636.13058
-    ## 7       ARS                 97.36602
-    ## 8       AUD                  1.38060
-    ## 9       AWG                  1.80077
-    ## 10      AZN                  1.70085
+    ## 1       AED                  3.67028
+    ## 2       AFN                 88.92454
+    ## 3       ALL                111.45574
+    ## 4       AMD                486.96704
+    ## 5       ANG                  1.80086
+    ## 6       AOA                455.60708
+    ## 7       ARS                109.44314
+    ## 8       AUD                  1.34618
+    ## 9       AWG                  1.79952
+    ## 10      AZN                  1.69876
 
 ### View available currencies
 
@@ -96,6 +96,8 @@ head(cur)
 
 ``` r
 library(ggplot2)
+library(ggthemes)
+library(ggrepel)
 
 cur %>% 
   rename(aud_to_usd = one_AUD_equivalent_to_x_USD,
@@ -103,7 +105,32 @@ cur %>%
   pivot_longer(c("aud_to_usd", "aud_to_eur")) %>% 
   mutate(date = as.Date(date)) %>% 
   ggplot(aes(x=date, y = value, colour=name)) +
-  geom_line()
+  geom_line(size=1) + 
+  scale_color_manual(
+    breaks = c("aud_to_usd", "aud_to_eur"), # Sets order in legend
+    labels = c( "AUD to USD", "AUD to EUR"), # Pretty names in legend
+    values = c("#02506A", "#03A5DC") # Sets line/legend colours
+    ) + 
+  scale_x_date(date_labels = "%b %Y", date_breaks = "6 month") +
+  scale_y_continuous(
+    expand = c(0, 0), 
+    limits = c(0, 1.5)
+    ) +
+  labs(
+    title = "AUD to USD and EUR 2010 to 2020",
+    subtitle = "Plotting the Australian Dollar against the USD and Euro",
+    y = "Exchange Rate"
+    ) +
+  theme_economist() + 
+  theme(
+    plot.title = element_text(size = 18, margin=margin(0,0,8,0)),
+    axis.title.x = element_blank(),
+    axis.ticks.x = element_blank(),
+    axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1),
+    axis.title.y = element_text(vjust = 3.5),
+    legend.position="bottom",
+    legend.title = element_blank()
+    ) 
 ```
 
 ![](README_files/figure-gfm/unnamed-chunk-5-1.png)<!-- -->
@@ -115,12 +142,24 @@ cur %>%
          aud_to_eur = one_AUD_equivalent_to_x_EUR) %>%  
   mutate(date = as.Date(date)) %>% 
   ggplot(aes(x = date, y = aud_to_usd, group = 1)) +
-  geom_line() +
-  geom_smooth(method = 'loess') + 
-  theme(axis.title.x=element_blank(),
-        axis.ticks.x=element_blank()) + 
-  scale_x_date(date_labels = "%b-%Y", date_breaks = "1 month") +
-  ggtitle("AUD to USD over last 200 days")
+  geom_line(colour = "#F15B40") +
+  geom_smooth(method = 'loess', colour="#03A5DC") + 
+  scale_x_date(date_labels = "%b %Y", date_breaks = "1 month") +
+  labs(
+    title = "AUD to USD over last 200 days",
+    subtitle = "AUD to USD Exchange Rate; Polynomial regression trendline",
+    y = "Exchange Rate"
+    ) +
+  theme_economist() + 
+  theme(
+    plot.title = element_text(size = 18, margin=margin(0,0,8,0)),
+    axis.title.x = element_blank(),
+    axis.ticks.x = element_blank(),
+    axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1),
+    axis.title.y = element_text(vjust = 3.5),
+    legend.position="bottom",
+    legend.title = element_blank()
+    ) 
 ```
 
 ![](README_files/figure-gfm/unnamed-chunk-6-1.png)<!-- -->
@@ -134,10 +173,24 @@ cur %>%
   ggplot(aes(x = date, y = aud_to_eur, group = 1)) +
   geom_line() +
   geom_smooth(method = 'loess', se = TRUE) + 
-  theme(axis.title.x=element_blank(),
-        axis.ticks.x=element_blank()) + 
-  scale_x_date(date_labels = "%Y", date_breaks = "1 year")  +
-  ggtitle("AUD to EUR over last 8 years")
+  geom_line(colour = "#02506A") +
+  geom_smooth(method = 'loess', colour="#03A5DC") + 
+  scale_x_date(date_labels = "%Y", date_breaks = "1 year") +
+  labs(
+    title = "AUD to EUR over last 8 years",
+    subtitle = "AUD to EUR Exchange Rate; Polynomial regression trendline",
+    y = "Exchange Rate"
+    ) +
+  theme_economist() + 
+  theme(
+    plot.title = element_text(size = 18, margin=margin(0,0,8,0)),
+    axis.title.x = element_blank(),
+    axis.ticks.x = element_blank(),
+    axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1),
+    axis.title.y = element_text(vjust = 3.5),
+    legend.position="bottom",
+    legend.title = element_blank()
+    ) 
 ```
 
 ![](README_files/figure-gfm/unnamed-chunk-7-1.png)<!-- -->
