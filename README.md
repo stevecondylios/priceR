@@ -38,19 +38,19 @@ exchange_rate_latest("USD") %>%
   head(10)
 ```
 
-    ## Daily USD exchange rate as at end of day 2022-03-20 GMT
+    ## Daily USD exchange rate as at end of day 2022-06-17 GMT
 
     ##    currency one_usd_is_equivalent_to
-    ## 1       AED                  3.67028
-    ## 2       AFN                 88.92454
-    ## 3       ALL                111.45574
-    ## 4       AMD                486.96704
-    ## 5       ANG                  1.80086
-    ## 6       AOA                455.60708
-    ## 7       ARS                109.44314
-    ## 8       AUD                  1.34618
-    ## 9       AWG                  1.79952
-    ## 10      AZN                  1.69876
+    ## 1       AED                  3.66982
+    ## 2       AFN                 89.28219
+    ## 3       ALL                113.54182
+    ## 4       AMD                421.88487
+    ## 5       ANG                  1.80190
+    ## 6       AOA                433.64088
+    ## 7       ARS                122.82785
+    ## 8       AUD                  1.42343
+    ## 9       AWG                  1.79911
+    ## 10      AZN                  1.69928
 
 ### View available currencies
 
@@ -214,7 +214,7 @@ df$in_2008_dollars <- adjust_for_inflation(nominal_prices, years, "US", to_date 
 
     ## Generating URL to request all 299 results
     ## Retrieving inflation data for US 
-    ## Generating URL to request all 61 results
+    ## Generating URL to request all 62 results
 
 ``` r
 df
@@ -283,6 +283,12 @@ format_dollars(c("445.50", "199.99"), digits = 2)
 ```
 
     ## [1] "$445.50" "$199.99"
+
+# priceR in action
+
+-   [*Converting Between Currencies Using
+    priceR*](https://www.bryanshalloway.com/2022/06/16/converting-between-currencies-using-pricer/)
+    by Bryan Shalloway
 
 # Issues and Feature Requests
 

@@ -248,6 +248,10 @@ format_dollars(c("445.50", "199.99"), digits = 2)
 
 
 
+# priceR in action
+
+- [*Converting Between Currencies Using priceR*](https://www.bryanshalloway.com/2022/06/16/converting-between-currencies-using-pricer/) by Bryan Shalloway
+
 
 
 # Issues and Feature Requests
