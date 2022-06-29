@@ -193,9 +193,7 @@ test_that("adjust_for_inflation() prompts user for number of years to use in ext
 
     # Avoid regex: https://github.com/r-lib/testthat/issues/726
     fixed = TRUE
-  )
-}
-)
+  )})
 
 
 
