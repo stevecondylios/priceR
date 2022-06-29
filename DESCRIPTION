@@ -19,6 +19,6 @@ Description: Functions to aid in micro and macro economic analysis and handling 
     and historical end of day exchange rates for 171 currencies from the European Central Bank
     Statistical Data Warehouse (2020) <https://sdw.ecb.europa.eu/curConverter.do>.
 Encoding: UTF-8
-RoxygenNote: 7.1.1
+RoxygenNote: 7.1.2
 Suggests: 
     testthat
