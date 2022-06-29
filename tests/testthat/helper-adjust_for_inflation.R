@@ -1,9 +1,7 @@
 library(jsonlite)
 library(dplyr)
-library(lubridate)
 library(purrr)
 library(testthat)
-library(curl)
 # options(digits = 22)
 
 # Note that this .R script doesn't know about functions in priceR
