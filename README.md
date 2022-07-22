@@ -38,19 +38,19 @@ exchange_rate_latest("USD") %>%
   head(10)
 ```
 
-    ## Daily USD exchange rate as at end of day 2022-06-17 GMT
+    ## Daily USD exchange rate as at end of day 2022-07-22 GMT
 
     ##    currency one_usd_is_equivalent_to
-    ## 1       AED                  3.66982
-    ## 2       AFN                 89.28219
-    ## 3       ALL                113.54182
-    ## 4       AMD                421.88487
-    ## 5       ANG                  1.80190
-    ## 6       AOA                433.64088
-    ## 7       ARS                122.82785
-    ## 8       AUD                  1.42343
-    ## 9       AWG                  1.79911
-    ## 10      AZN                  1.69928
+    ## 1       AED                  3.67290
+    ## 2       AFN                 90.16924
+    ## 3       ALL                114.52124
+    ## 4       AMD                413.25135
+    ## 5       ANG                  1.79961
+    ## 6       AOA                430.91151
+    ## 7       ARS                129.58699
+    ## 8       AUD                  1.44977
+    ## 9       AWG                  1.79432
+    ## 10      AZN                  1.70081
 
 ### View available currencies
 
@@ -284,11 +284,32 @@ format_dollars(c("445.50", "199.99"), digits = 2)
 
     ## [1] "$445.50" "$199.99"
 
-# priceR in action
+### priceR Guides and tutorials
 
 -   [*Converting Between Currencies Using
     priceR*](https://www.bryanshalloway.com/2022/06/16/converting-between-currencies-using-pricer/)
     by Bryan Shalloway
+
+### priceR in Research and Academia
+
+-   Curran-Groome, W., Hino, M., BenDor, T. and Salvesen, D., 2022.
+    [*Complexities and costs of floodplain buyout
+    implementation*](https://www.sciencedirect.com/science/article/abs/pii/S0264837722001557),
+    Land Use Policy, Volume 118, July 2022.
+-   Thomas, C., Shae, W., Koestler, D., DeFor, T., Bahr, N. and Alpern,
+    J., 2022. [*Antifungal drug price increases in the United States
+    2000–2019*](https://pubmed.ncbi.nlm.nih.gov/35722703/), Mycoses,
+    Online Ahead of Print, June 2022.
+-   Petitbon, A. and Hitchcock, D., 2022. [*What Kind of Music Do You
+    Like? A Statistical Analysis of Music Genre Popularity Over
+    Time*](https://people.stat.sc.edu/hitchcock/jds1040.pdf), Journal of
+    Data Science, Volume 20 (2), April 2022.
+-   Widdicombe, J., Basáñez, M., Entezami, M., Jackson, D., Larrieu, E.
+    and Prada, J., 2022. [*The economic evaluation of Cystic
+    echinococcosis control strategies focused on zoonotic hosts: A
+    scoping
+    review*](https://journals.plos.org/plosntds/article?id=10.1371/journal.pntd.0010568),
+    PLoS Neglected Tropical Diseases, Volume 16 (7), July 2022.
 
 # Issues and Feature Requests
 
