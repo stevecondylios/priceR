@@ -2,6 +2,7 @@
 ---
 output: github_document
 ---
+
   
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
@@ -35,10 +36,11 @@ options(scipen = 100); options(digits = 6)
 
 
 
+# Exchange rates
 
-### Retrieve current exchange rates
+### Current exchange rates
 
-Works for 170 currencies
+View the current exchange rates for 170 currencies (see them all by running `currencies()`):
 
 ```{r message=FALSE}
 
@@ -47,15 +49,11 @@ exchange_rate_latest("USD") %>%
 
 ```
 
-### View available currencies
-
-```{r}
-currencies() %>%
-  head()
-```
 
 
-### Retrieve historical exchange rates
+### Historical exchange rates
+
+Here's an example of how to get exchange rates for some currency pairs:
 
 ```{r message=FALSE}
 
@@ -74,7 +72,7 @@ head(cur)
 
 ```
 
-### Plot exchange rates
+..and how to plot exchange rates:
 
 ```{r message=FALSE}
 library(ggplot2)
@@ -182,14 +180,14 @@ cur %>%
 
 
 
-
+# Inflation
 
 ### Adjust prices for inflation
 
 `adjust_for_inflation()` automatically converts between nominal and real dollars,
 or in/deflates prices from one year's prices to another's.
 
-It works for any of 304 countries / areas. See them with all with `show_countries()`
+It works for 304 countries / areas (see them with all by running `show_countries()`). 
 
 ```{r message=FALSE}
 
@@ -205,7 +203,11 @@ df
 
 
 
-### Extraction helpers: extract useful numeric data from messy free text
+# Extraction helpers
+
+These helpers let you extract useful *numeric* data from messy free text (character) data. 
+
+### Extract salary from free text
 
 `extract_salary()` extracts salaries as useful numeric data from non-standard free text
 
@@ -220,7 +222,7 @@ messy_salary_data <- c(
   "c$200K Package Neg",
   "$700 p/d",                                       # daily
   "$120 - $140 (Inc. Super) per hour",              # hourly
-  "Competitive"                                     # nothing useful
+  "Competitive"                                     # nothing useful (will return NA)
 )
 
 messy_salary_data %>%
@@ -229,6 +231,8 @@ messy_salary_data %>%
 
 ```
 
+
+# Formatting helpers
 
 ### Neatly format currencies
 
@@ -247,21 +251,38 @@ format_dollars(c("445.50", "199.99"), digits = 2)
 ```
 
 
+# More about priceR
 
-### priceR Guides and tutorials
+### Research and academia
 
-- [*Converting Between Currencies Using priceR*](https://www.bryanshalloway.com/2022/06/16/converting-between-currencies-using-pricer/) by Bryan Shalloway
 
-### priceR in Research and Academia
-
-- Curran-Groome, W., Hino, M., BenDor, T. and Salvesen, D., 2022. [*Complexities and costs of floodplain buyout implementation*](https://www.sciencedirect.com/science/article/abs/pii/S0264837722001557), Land Use Policy, Volume 118, July 2022. 
-- Thomas, C., Shae, W., Koestler, D., DeFor, T., Bahr, N. and Alpern, J., 2022. [*Antifungal drug price increases in the United States 2000–2019*](https://pubmed.ncbi.nlm.nih.gov/35722703/), Mycoses, Online Ahead of Print, June 2022.
-- Petitbon, A. and Hitchcock, D., 2022. [*What Kind of Music Do You Like? A Statistical Analysis of Music Genre Popularity Over Time*](https://people.stat.sc.edu/hitchcock/jds1040.pdf), Journal of Data Science, Volume 20 (2), April 2022.
-- Widdicombe, J., Basáñez, M., Entezami, M., Jackson, D., Larrieu, E. and Prada, J., 2022. [*The economic evaluation of Cystic echinococcosis control strategies focused on zoonotic hosts: A scoping review*](https://journals.plos.org/plosntds/article?id=10.1371/journal.pntd.0010568), PLoS Neglected Tropical Diseases, Volume 16 (7), July 2022.
+Curran-Groome, W., Hino, M., BenDor, T. and Salvesen, D., 2022. [*Complexities and costs of floodplain buyout implementation*](https://www.sciencedirect.com/science/article/abs/pii/S0264837722001557), Land Use Policy, Volume 118, July 2022.
 
 
 
-# Issues and Feature Requests
+Thomas, C., Shae, W., Koestler, D., DeFor, T., Bahr, N. and Alpern, J., 2022. [*Antifungal drug price increases in the United States 2000–2019*](https://pubmed.ncbi.nlm.nih.gov/35722703/), Mycoses, Online Ahead of Print, June 2022.
+
+
+
+Petitbon, A. and Hitchcock, D., 2022. [*What Kind of Music Do You Like? A Statistical Analysis of Music Genre Popularity Over Time*](https://people.stat.sc.edu/hitchcock/jds1040.pdf), Journal of Data Science, Volume 20 (2), April 2022.
+
+
+
+Widdicombe, J., Basáñez, M., Entezami, M., Jackson, D., Larrieu, E. and Prada, J., 2022. [*The economic evaluation of Cystic echinococcosis control strategies focused on zoonotic hosts: A scoping review*](https://journals.plos.org/plosntds/article?id=10.1371/journal.pntd.0010568), PLoS Neglected Tropical Diseases, Volume 16 (7), July 2022.
+
+
+
+### Guides and tutorials
+
+How to [*Convert Between Currencies Using priceR*](https://www.bryanshalloway.com/2022/06/16/converting-between-currencies-using-pricer/) by Bryan Shalloway
+
+
+### Contributing to priceR
+
+If your research, guide or tutorial uses priceR, please contact the priceR maintainer (or create an [issue](https://github.com/stevecondylios/priceR/issues)) so your work can be included here. 
+
+
+**Issues and Feature Requests**
 
 When reporting an issue, please include:
 
@@ -277,7 +298,7 @@ For feature requests, raise an issue with the following:
 
 
 
-# Pull Requests
+**Pull Requests**
 
 Pull requests are welcomed. Before doing so, please create an issue or email me with your idea.  
 
@@ -286,15 +307,6 @@ Any new functions should follow the conventions established by the the package's
 * Functions are sensibly named
 * The __intent__ of the contribution is clear
 * At least one example is provided in the documentation
-
-
-
-
-
-
-
-
-
 
 
 

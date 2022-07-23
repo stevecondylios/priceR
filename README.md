@@ -29,45 +29,35 @@ library(tidyverse)
 options(scipen = 100); options(digits = 6)
 ```
 
-### Retrieve current exchange rates
+# Exchange rates
 
-Works for 170 currencies
+### Current exchange rates
+
+View the current exchange rates for 170 currencies (see them all by
+running `currencies()`):
 
 ``` r
 exchange_rate_latest("USD") %>% 
   head(10)
 ```
 
-    ## Daily USD exchange rate as at end of day 2022-07-22 GMT
+    ## Daily USD exchange rate as at end of day 2022-07-23 GMT
 
     ##    currency one_usd_is_equivalent_to
-    ## 1       AED                  3.67290
-    ## 2       AFN                 90.16924
-    ## 3       ALL                114.52124
-    ## 4       AMD                413.25135
-    ## 5       ANG                  1.79961
-    ## 6       AOA                430.91151
-    ## 7       ARS                129.58699
-    ## 8       AUD                  1.44977
-    ## 9       AWG                  1.79432
-    ## 10      AZN                  1.70081
+    ## 1       AED                  3.67181
+    ## 2       AFN                 89.99649
+    ## 3       ALL                114.75591
+    ## 4       AMD                410.82630
+    ## 5       ANG                  1.80343
+    ## 6       AOA                431.79941
+    ## 7       ARS                129.64170
+    ## 8       AUD                  1.44352
+    ## 9       AWG                  1.79355
+    ## 10      AZN                  1.69931
 
-### View available currencies
+### Historical exchange rates
 
-``` r
-currencies() %>%
-  head()
-```
-
-    ##                     description code
-    ## 1   United Arab Emirates Dirham  AED
-    ## 2                Afghan Afghani  AFN
-    ## 3                  Albanian Lek  ALL
-    ## 4                 Armenian Dram  AMD
-    ## 5 Netherlands Antillean Guilder  ANG
-    ## 6                Angolan Kwanza  AOA
-
-### Retrieve historical exchange rates
+Here’s an example of how to get exchange rates for some currency pairs:
 
 ``` r
 # Retieve AUD to USD exchange rates
@@ -92,7 +82,7 @@ head(cur)
     ## 5 2010-01-05                    0.912011                    0.634840
     ## 6 2010-01-06                    0.920736                    0.639223
 
-### Plot exchange rates
+..and how to plot exchange rates:
 
 ``` r
 library(ggplot2)
@@ -133,7 +123,7 @@ cur %>%
     ) 
 ```
 
-![](README_files/figure-gfm/unnamed-chunk-5-1.png)<!-- -->
+![](README_files/figure-gfm/unnamed-chunk-4-1.png)<!-- -->
 
 ``` r
 cur %>% 
@@ -162,7 +152,7 @@ cur %>%
     ) 
 ```
 
-![](README_files/figure-gfm/unnamed-chunk-6-1.png)<!-- -->
+![](README_files/figure-gfm/unnamed-chunk-5-1.png)<!-- -->
 
 ``` r
 cur %>% 
@@ -193,15 +183,17 @@ cur %>%
     ) 
 ```
 
-![](README_files/figure-gfm/unnamed-chunk-7-1.png)<!-- -->
+![](README_files/figure-gfm/unnamed-chunk-6-1.png)<!-- -->
+
+# Inflation
 
 ### Adjust prices for inflation
 
 `adjust_for_inflation()` automatically converts between nominal and real
 dollars, or in/deflates prices from one year’s prices to another’s.
 
-It works for any of 304 countries / areas. See them with all with
-`show_countries()`
+It works for 304 countries / areas (see them with all by running
+`show_countries()`).
 
 ``` r
 set.seed(123)
@@ -232,7 +224,12 @@ df
     ## 9   2010        7.93944         7.67319
     ## 10  2004        8.66301         9.87471
 
-### Extraction helpers: extract useful numeric data from messy free text
+# Extraction helpers
+
+These helpers let you extract useful *numeric* data from messy free text
+(character) data.
+
+### Extract salary from free text
 
 `extract_salary()` extracts salaries as useful numeric data from
 non-standard free text
@@ -247,7 +244,7 @@ messy_salary_data <- c(
   "c$200K Package Neg",
   "$700 p/d",                                       # daily
   "$120 - $140 (Inc. Super) per hour",              # hourly
-  "Competitive"                                     # nothing useful
+  "Competitive"                                     # nothing useful (will return NA)
 )
 
 messy_salary_data %>%
@@ -265,6 +262,8 @@ messy_salary_data %>%
     ## 7 175000       Daily
     ## 8 260000      Hourly
     ## 9     NA      Annual
+
+# Formatting helpers
 
 ### Neatly format currencies
 
@@ -284,34 +283,45 @@ format_dollars(c("445.50", "199.99"), digits = 2)
 
     ## [1] "$445.50" "$199.99"
 
-### priceR Guides and tutorials
+# More about priceR
 
--   [*Converting Between Currencies Using
-    priceR*](https://www.bryanshalloway.com/2022/06/16/converting-between-currencies-using-pricer/)
-    by Bryan Shalloway
+### Research and academia
 
-### priceR in Research and Academia
+Curran-Groome, W., Hino, M., BenDor, T. and Salvesen, D., 2022.
+[*Complexities and costs of floodplain buyout
+implementation*](https://www.sciencedirect.com/science/article/abs/pii/S0264837722001557),
+Land Use Policy, Volume 118, July 2022.
 
--   Curran-Groome, W., Hino, M., BenDor, T. and Salvesen, D., 2022.
-    [*Complexities and costs of floodplain buyout
-    implementation*](https://www.sciencedirect.com/science/article/abs/pii/S0264837722001557),
-    Land Use Policy, Volume 118, July 2022.
--   Thomas, C., Shae, W., Koestler, D., DeFor, T., Bahr, N. and Alpern,
-    J., 2022. [*Antifungal drug price increases in the United States
-    2000–2019*](https://pubmed.ncbi.nlm.nih.gov/35722703/), Mycoses,
-    Online Ahead of Print, June 2022.
--   Petitbon, A. and Hitchcock, D., 2022. [*What Kind of Music Do You
-    Like? A Statistical Analysis of Music Genre Popularity Over
-    Time*](https://people.stat.sc.edu/hitchcock/jds1040.pdf), Journal of
-    Data Science, Volume 20 (2), April 2022.
--   Widdicombe, J., Basáñez, M., Entezami, M., Jackson, D., Larrieu, E.
-    and Prada, J., 2022. [*The economic evaluation of Cystic
-    echinococcosis control strategies focused on zoonotic hosts: A
-    scoping
-    review*](https://journals.plos.org/plosntds/article?id=10.1371/journal.pntd.0010568),
-    PLoS Neglected Tropical Diseases, Volume 16 (7), July 2022.
+Thomas, C., Shae, W., Koestler, D., DeFor, T., Bahr, N. and Alpern, J.,
+2022. [*Antifungal drug price increases in the United States
+2000–2019*](https://pubmed.ncbi.nlm.nih.gov/35722703/), Mycoses, Online
+Ahead of Print, June 2022.
 
-# Issues and Feature Requests
+Petitbon, A. and Hitchcock, D., 2022. [*What Kind of Music Do You Like?
+A Statistical Analysis of Music Genre Popularity Over
+Time*](https://people.stat.sc.edu/hitchcock/jds1040.pdf), Journal of
+Data Science, Volume 20 (2), April 2022.
+
+Widdicombe, J., Basáñez, M., Entezami, M., Jackson, D., Larrieu, E. and
+Prada, J., 2022. [*The economic evaluation of Cystic echinococcosis
+control strategies focused on zoonotic hosts: A scoping
+review*](https://journals.plos.org/plosntds/article?id=10.1371/journal.pntd.0010568),
+PLoS Neglected Tropical Diseases, Volume 16 (7), July 2022.
+
+### Guides and tutorials
+
+How to [*Convert Between Currencies Using
+priceR*](https://www.bryanshalloway.com/2022/06/16/converting-between-currencies-using-pricer/)
+by Bryan Shalloway
+
+### Contributing to priceR
+
+If your research, guide or tutorial uses priceR, please contact the
+priceR maintainer (or create an
+[issue](https://github.com/stevecondylios/priceR/issues)) so your work
+can be included here.
+
+**Issues and Feature Requests**
 
 When reporting an issue, please include:
 
@@ -325,7 +335,7 @@ For feature requests, raise an issue with the following:
 -   The desired functionality
 -   Example inputs and desired output
 
-# Pull Requests
+**Pull Requests**
 
 Pull requests are welcomed. Before doing so, please create an issue or
 email me with your idea.
