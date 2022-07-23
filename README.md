@@ -82,7 +82,7 @@ head(cur)
     ## 5 2010-01-05                    0.912011                    0.634840
     ## 6 2010-01-06                    0.920736                    0.639223
 
-..and how to plot exchange rates:
+And to plot the exchange rate data:
 
 ``` r
 library(ggplot2)

@@ -72,7 +72,7 @@ head(cur)
 
 ```
 
-..and how to plot exchange rates:
+And to plot the exchange rate data:
 
 ```{r message=FALSE}
 library(ggplot2)
