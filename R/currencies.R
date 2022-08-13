@@ -411,6 +411,21 @@ retrieve_historical_rates <- function(from, to, start_date, end_date) {
 
 historical_exchange_rates <- function(from, to, start_date, end_date) {
 
+    # Validate currencies
+
+  valid_currencies <- priceR::currencies()
+
+  from = toupper(from)
+  to = toupper(to)
+
+  if (!all(c(from, to) %in% valid_currencies$code)){
+    invalid_currencies <- c(from, to)[which(!c(from, to) %in% valid_currencies$code)]
+    error_message = paste0("Invalid currency code(s): " ,"\"", paste0(invalid_currencies, collapse="\", \""), "\"",
+". Run currencies()
+  to view all ", nrow(valid_currencies), " valid currency codes.")
+    stop(error_message)
+  }
+
   display_api_info()
 
   api_time_splits <- make_dates(start_date, end_date, 365)
