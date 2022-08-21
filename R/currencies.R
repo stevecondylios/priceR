@@ -252,7 +252,7 @@ make_dates <- function(start_date, end_date, n_days) {
 
     `+`(1)
 
-  # In cases where we don't need mutliple periods,
+  # In cases where we don't need multiple periods,
   # simply return a 1 row data.frame
 
   if(range_in_days <= n_days) {
