@@ -23,21 +23,18 @@ Retrieves historical exchange rates between a currency pair
 }
 \examples{
 \dontrun{
-# Note date range >365 days', and returns 912 rows (as expected)
-historical_exchange_rates("USD", to = "AUD", start_date = "2018-01-01", end_date = "2020-06-30")
-
-historical_exchange_rates("USD", to = "AUD",
-                          start_date = "2020-01-01", end_date = "2020-06-30")
-
-
-historical_exchange_rates("AUD", to = "USD",
+Retrieve AUD to USD exchange rates
+au <- historical_exchange_rates(from = "AUD", to = "USD",
                           start_date = "2010-01-01", end_date = "2020-06-30")
 
-
-historical_exchange_rates("AUD", to = "USD",
+# Retrieve AUD to EUR exchange rates
+ae <- historical_exchange_rates(from = "AUD", to = "EUR",
                           start_date = "2010-01-01", end_date = "2020-06-30")
 
+# Combine
+cur <- au \%>\% left_join(ae, by = "date")
 
+head(cur)
 }
 
 
