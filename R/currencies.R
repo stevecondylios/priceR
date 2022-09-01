@@ -469,4 +469,33 @@ historical_exchange_rates <- function(from, to, start_date, end_date) {
 
 
 
+#'
+#' Provides information for 191 currencies
+#' @name currency_info
+#'
+#' @usage currency_info()
+#'
+#' @return A data.frame containing currency information for 191 currencies.
+#'     Currency information includes: name, iso code, currency symbol (and
+#'     alternative symbols if applicable), subunit, number of subunits per major
+#'     unit, whether the currency symbol ought to appear before or after the
+#'     number of units, display format, html entity, decimal mark,
+#'     thousands separator, iso numeric, and smallest denomination.
+#'
+#' @importFrom jsonlite fromJSON
+#'
+#' @export
+#'
+#' @examples
+#'  \dontrun{
+#' # currency_info <- currency_info()
+#' # # Inspect first 6 rows
+#' # head(currency_info)
+#' }
+
+currency_info <- function() {
+  e <- new.env()
+  currency_info <- load("data/currency_info.rda", envir = e)
+  e$currency_info
+}
 
