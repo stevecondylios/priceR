@@ -41,30 +41,30 @@ exchange_rate_latest("USD") %>%
   head(10)
 ```
 
-    ## Daily USD exchange rate as at end of day 2022-07-23 GMT
+    ## Daily USD exchange rate as at end of day 2022-09-01 GMT
 
     ##    currency one_usd_is_equivalent_to
-    ## 1       AED                  3.67181
-    ## 2       AFN                 89.99649
-    ## 3       ALL                114.75591
-    ## 4       AMD                410.82630
-    ## 5       ANG                  1.80343
-    ## 6       AOA                431.79941
-    ## 7       ARS                129.64170
-    ## 8       AUD                  1.44352
-    ## 9       AWG                  1.79355
-    ## 10      AZN                  1.69931
+    ## 1       AED                  3.67229
+    ## 2       AFN                 87.78391
+    ## 3       ALL                116.81890
+    ## 4       AMD                401.85491
+    ## 5       ANG                  1.79423
+    ## 6       AOA                429.35068
+    ## 7       ARS                138.70133
+    ## 8       AUD                  1.46778
+    ## 9       AWG                  1.80503
+    ## 10      AZN                  1.70043
 
 ### Historical exchange rates
 
 Here’s an example of how to get exchange rates for some currency pairs:
 
 ``` r
-# Retieve AUD to USD exchange rates
+# Retrieve AUD to USD exchange rates
 au <- historical_exchange_rates("AUD", to = "USD",
                           start_date = "2010-01-01", end_date = "2020-06-30")
 
-# Retieve AUD to EUR exchange rates
+# Retrieve AUD to EUR exchange rates
 ae <- historical_exchange_rates("AUD", to = "EUR",
                           start_date = "2010-01-01", end_date = "2020-06-30")
 

@@ -57,11 +57,11 @@ Here's an example of how to get exchange rates for some currency pairs:
 
 ```{r message=FALSE}
 
-# Retieve AUD to USD exchange rates
+# Retrieve AUD to USD exchange rates
 au <- historical_exchange_rates("AUD", to = "USD",
                           start_date = "2010-01-01", end_date = "2020-06-30")
 
-# Retieve AUD to EUR exchange rates
+# Retrieve AUD to EUR exchange rates
 ae <- historical_exchange_rates("AUD", to = "EUR",
                           start_date = "2010-01-01", end_date = "2020-06-30")
 
