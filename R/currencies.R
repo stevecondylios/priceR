@@ -486,7 +486,116 @@ historical_exchange_rates <- function(from, to, start_date, end_date) {
 
 
 
+### functions for `convert_currencies()`
 
+# used to remove redundant API calls of currency pairs. I.e. don't need separate
+# calls for when have both `from = EUR, to = USD` and `from = USD, to = EUR`
+# Code is copied from SO thread here:
+# https://stackoverflow.com/a/73254014/9059865
+pminmax <- function(x, y) {
+  paste(pmin.int(x, y), pmax.int(x, y), sep = ".")
+}
+
+# wrapper around `priceR::historical_exchange_rates()` with slight modifications
+# to structure of inputs and output
+from_to_dates_rates <- function(from, to, dates) {
+  historical_exchange_rates(
+    from = from,
+    to = to,
+    start_date = dates[[1]],
+    end_date = dates[[2]]
+  ) %>%
+    purrr::set_names("date", "rate")
+}
+
+#' Convert Currencies
+#'
+#' Vectorized approach to converting prices across potentially different dates
+#' and between different currencies.
+#'
+#' @param price_start Numeric vector of prices in terms of `from` currenc(ies).
+#' @param from Character vector of currenc(ies) of `price_start`.
+#' @param to Character vector of currenc(ies) to convert `price_start` to.
+#' @param date Date vector specifying date of exchange rate to use.
+#' @param floor_unit Character string. Default is "day" meaning that `date` will
+#'   be converted based on daily conversion rates. Changing to "week" will
+#'   change conversions to be based on the start of the week of `date`.
+#'
+#' @return Numeric vector of `price_start` now in the `to` currenc(ies).
+#' @export
+#'
+#' @examples
+#' library(dplyr)
+#'
+#' sales_transactions <- tibble(
+#'   local_price = c(100, 80, 9200, 90),
+#'   local_currency = c("USD", "EUR", "JPY", "USD"),
+#'   final_currency = c("EUR", "USD", "USD", "JPY"),
+#'   date_transaction = lubridate::ymd(c(20200601, 20200609, 20200614, 20200623))
+#' )
+#' # Some made-up sales transactions of different values and currencies
+#' sales_transactions %>%
+#'   mutate(
+#'     converted_price = convert_currencies(
+#'       price_start = local_price,
+#'       from = local_currency,
+#'       to = final_currency,
+#'       date = date_transaction
+#'     )
+#'   )
+convert_currencies <- function(price_start,
+                               from,
+                               to,
+                               date = lubridate::today(),
+                               floor_unit = "day") {
+  rates_start <- dplyr::tibble(
+    from = from,
+    to = to,
+    date = date %>%
+      as.Date() %>%
+      lubridate::floor_date(floor_unit)
+  ) %>%
+    dplyr::mutate(from_to = pminmax(from, to)) %>%
+    dplyr::distinct(from_to, date, .keep_all = TRUE)
+
+  # When passing things to the priceR API it is much faster to send over a range
+  # of dates rather than doing individual API calls for each date (even when
+  # there are many redundant dates between `from` and `to` values).
+
+  rates_end <- rates_start %>%
+    dplyr::group_by(from_to) %>%
+    dplyr::summarise(
+      date_range = list(range(date)),
+      from = from[[1]],
+      to = to[[1]],
+      rates_lookup = purrr::pmap(.l = list(from, to, date_range),
+                          .f = from_to_dates_rates)
+    ) %>%
+    dplyr::select(-date_range) %>%
+    tidyr::unnest(rates_lookup)
+
+  rates_lookup <- rates_end %>%
+    dplyr::semi_join(rates_start, "date")
+
+  # this step makes it so could convert either "from" or "to" currency
+  rates_lookup <- dplyr::bind_rows(
+    rates_lookup,
+    rates_lookup %>%
+      dplyr::rename(from = to, to = from) %>%
+      dplyr::mutate(rate = 1 / rate)
+  ) %>%
+    dplyr::distinct()
+
+  dplyr::tibble(
+    price = price_start,
+    from = from,
+    to = to,
+    date = date
+  ) %>%
+    dplyr::left_join(rates_lookup, c("from", "to", "date")) %>%
+    dplyr::mutate(output = price * rate) %>%
+    dplyr::pull(output)
+}
 
 
 
