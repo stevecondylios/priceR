@@ -572,7 +572,7 @@ adjust_for_inflation <- function(price,
   # from_input <- from_date; to_input <- to_date
   make_multiplier <- function(from_input, to_input) {
 
-    # Note dilligent use of inequalities (rightly) prevent current year's inflation being applied
+    # Note diligent use of inequalities (rightly) prevent current year's inflation being applied
     # https://economics.stackexchange.com/questions/28972/convention-standard-methodology-for-calculating-real-prices
     # if(length(from_date) == 1) { from_input <- rep(from_input, length(price))}
     # if(length(to_date) == 1) { to_input <- rep(to_input, length(price))}
