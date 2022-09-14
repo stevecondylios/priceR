@@ -594,6 +594,16 @@ convert_currencies <- function(price_start,
                                to,
                                date = lubridate::today(),
                                floor_unit = "day") {
+
+  # Note: https://stackoverflow.com/a/8096882/5783745 silences the following
+  # NOTE in the R CMD check --as-cran
+  # convert_currencies: no visible binding for global variable ‘from_to’
+  # convert_currencies: no visible binding for global variable ‘date_range’
+  # convert_currencies: no visible binding for global variable ‘rate’
+  # convert_currencies: no visible binding for global variable ‘price’
+  # convert_currencies: no visible binding for global variable ‘output’
+  from_to = date_range = rate = price = output = NULL
+
   rates_start <- dplyr::tibble(
     from = from,
     to = to,
