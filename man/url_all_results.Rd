@@ -19,8 +19,10 @@ results and returns JSON format
 
 # Provide a World Bank API URL and `url_all_results` will convert it into one with all results
 # for that indicator
+\dontrun{
   original_url <- "http://api.worldbank.org/v2/country" # Note: no ?format=json on url
   url_all_results(original_url)
+}
 # "http://api.worldbank.org/v2/country?format=json&per_page=304"
 
 

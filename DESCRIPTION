@@ -1,7 +1,7 @@
 Package: priceR
 Type: Package
 Title: Economics and Pricing Tools
-Version: 0.1.66
+Version: 0.1.67
 Imports: dplyr, gsubfn, stringr, purrr, jsonlite, stats, lubridate, curl, stringi, tidyr
 Authors@R: c(person(given="Steve", family="Condylios", 
     role=c("aut", "cre"), email="steve.condylios@gmail.com", 
