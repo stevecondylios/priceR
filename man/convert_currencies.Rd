@@ -33,6 +33,7 @@ Vectorized approach to converting prices across potentially different dates
 and between different currencies.
 }
 \examples{
+\dontrun{
 library(dplyr)
 
 sales_transactions <- tibble(
@@ -51,4 +52,5 @@ sales_transactions \%>\%
       date = date_transaction
     )
   )
+}
 }

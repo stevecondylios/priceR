@@ -488,16 +488,60 @@ historical_exchange_rates <- function(from, to, start_date, end_date) {
 
 ### functions for `convert_currencies()`
 
-# used to remove redundant API calls of currency pairs. I.e. don't need separate
-# calls for when have both `from = EUR, to = USD` and `from = USD, to = EUR`
-# Code is copied from SO thread here:
-# https://stackoverflow.com/a/73254014/9059865
+
+
+
+#' Removes redundant API calls of currency pairs. That is, revmoes the need
+#' to for separate calls for both
+#' `from = EUR, to = USD` and `from = USD, to = EUR`
+#'
+#' @name pminmax
+#'
+#' @usage pminmax(x, y)
+#'
+#' @param x A currency code (see currencies() for supported codes)
+#' @param y A currency code
+#'
+#' @return A character vector
+#'
+#'
+#' @export
+#'
+#' @examples
+#'
+#' # See: https://stackoverflow.com/a/73254014/9059865
+#'
+#'
+#'
+
 pminmax <- function(x, y) {
   paste(pmin.int(x, y), pmax.int(x, y), sep = ".")
 }
 
-# wrapper around `priceR::historical_exchange_rates()` with slight modifications
-# to structure of inputs and output
+#' Wrapper around `priceR::historical_exchange_rates()` with slight modifications
+#' to structure of inputs and output
+#'
+#' @name from_to_dates_rates
+#'
+#' @usage from_to_dates_rates(from, to, dates)
+#'
+#' @param from A currency code (see currencies() for supported codes)
+#' @param to A currency code
+#' @param dates A list of date ranges
+#'
+#' @return A data.frame with two columns: date (of class Date), and rate
+#'     (of class numeric).
+#'
+#'
+#' @export
+#'
+#' @examples
+#' \dontrun{
+#' library(lubridate)
+#' from_to_dates_rates("AUD", "USD", dates = list(today()-10, today()))
+#' }
+#'
+
 from_to_dates_rates <- function(from, to, dates) {
   historical_exchange_rates(
     from = from,
@@ -525,6 +569,7 @@ from_to_dates_rates <- function(from, to, dates) {
 #' @export
 #'
 #' @examples
+#' \dontrun{
 #' library(dplyr)
 #'
 #' sales_transactions <- tibble(
@@ -543,6 +588,7 @@ from_to_dates_rates <- function(from, to, dates) {
 #'       date = date_transaction
 #'     )
 #'   )
+#' }
 convert_currencies <- function(price_start,
                                from,
                                to,
