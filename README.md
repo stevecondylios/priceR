@@ -327,8 +327,6 @@ When reporting an issue, please include:
 
 -   Example code that reproduces the **observed** behavior.
 -   An explanation of what the **expected** behavior is.
--   A specific url you’re attempting to retrieve R code from (if that’s
-    what your issue concerns)
 
 For feature requests, raise an issue with the following:
 
