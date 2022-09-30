@@ -41,19 +41,19 @@ exchange_rate_latest("USD") %>%
   head(10)
 ```
 
-    ## Daily USD exchange rate as at end of day 2022-09-01 GMT
+    ## Daily USD exchange rate as at end of day 2021-12-16 GMT
 
     ##    currency one_usd_is_equivalent_to
-    ## 1       AED                  3.67229
-    ## 2       AFN                 87.78391
-    ## 3       ALL                116.81890
-    ## 4       AMD                401.85491
-    ## 5       ANG                  1.79423
-    ## 6       AOA                429.35068
-    ## 7       ARS                138.70133
-    ## 8       AUD                  1.46778
-    ## 9       AWG                  1.80503
-    ## 10      AZN                  1.70043
+    ## 1       AED                  3.67222
+    ## 2       AFN                110.85371
+    ## 3       ALL                106.79885
+    ## 4       AMD                493.42026
+    ## 5       ANG                  1.80110
+    ## 6       AOA                557.74089
+    ## 7       ARS                101.83143
+    ## 8       AUD                  1.39250
+    ## 9       AWG                  1.79982
+    ## 10      AZN                  1.70017
 
 ### Historical exchange rates
 
