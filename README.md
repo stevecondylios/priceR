@@ -308,6 +308,13 @@ control strategies focused on zoonotic hosts: A scoping
 review*](https://journals.plos.org/plosntds/article?id=10.1371/journal.pntd.0010568),
 PLoS Neglected Tropical Diseases, Volume 16 (7), July 2022.
 
+Thielen, F.W., Heine, R.J.S.D., Berg, S. van den, Ham, R.M.T. ten and
+Groot, C.A.U. (2022). [Towards sustainability and affordability of
+expensive cell and gene therapies? Applying a cost-based pricing model
+to estimate prices for Libmeldy and
+Zolgensma](https://www.sciencedirect.com/science/article/pii/S1465324922007861),
+Cytotherapy \[online\] <doi:10.1016/j.jcyt.2022.09.002>.
+
 ### Guides and tutorials
 
 How to [*Convert Between Currencies Using

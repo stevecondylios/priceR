@@ -272,6 +272,10 @@ Widdicombe, J., Basáñez, M., Entezami, M., Jackson, D., Larrieu, E. and Prada,
 
 
 
+Thielen, F.W., Heine, R.J.S.D., Berg, S. van den, Ham, R.M.T. ten and Groot, C.A.U. (2022). [Towards sustainability and affordability of expensive cell and gene therapies? Applying a cost-based pricing model to estimate prices for Libmeldy and Zolgensma](https://www.sciencedirect.com/science/article/pii/S1465324922007861), Cytotherapy [online] doi:10.1016/j.jcyt.2022.09.002.
+
+
+
 ### Guides and tutorials
 
 How to [*Convert Between Currencies Using priceR*](https://www.bryanshalloway.com/2022/06/16/converting-between-currencies-using-pricer/) by Bryan Shalloway
