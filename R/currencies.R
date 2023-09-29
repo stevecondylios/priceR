@@ -38,6 +38,35 @@ display_api_info <- function() {
 
 
 
+append_exchangeratehost_access_key <- function(url) {
+
+  key = Sys.getenv("EXCHANGERATEHOST_ACCESS_KEY")
+
+  if(key == "") {
+    error_message = "
+    Exchangerate.host access key not found.
+    Please create one here: https://exchangerate.host/
+    Then set it in your R environment with
+    Sys.setenv(\"EXCHANGERATEHOST_ACCESS_KEY\"=\"your_access_key\")
+    E.g.
+    Sys.setenv(\"EXCHANGERATEHOST_ACCESS_KEY\"=\"afty4m2dmpcs1uyp9coimr5vjr4y27t2\")
+    "
+    stop(error_message)
+  }
+
+  if (grepl("\\?", url)) {
+    paste0(url, "&access_key=", key)
+  } else {
+    paste0(url, "?access_key=", key)
+  }
+
+}
+
+
+
+
+
+
 
 #' Retrieve available currencies and their respective symbols/codes
 #' @name currencies
