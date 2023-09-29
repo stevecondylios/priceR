@@ -38,6 +38,32 @@ display_api_info <- function() {
 
 
 
+
+
+
+#' Retrieves exchangerate.host (forex) API key from R environment variables
+#' and appends to API call
+#' @name append_exchangeratehost_access_key
+#'
+#' @usage append_exchangeratehost_access_key(url)
+#'
+#' @return The input url with API access key appended as a URL parameter
+#'
+#'
+#' @export
+#'
+#' @examples
+#' \dontrun{
+#' base_Url <- "https://api.exchangerate.host/latest?base=USD"
+#' base_Url %>% append_exchangeratehost_access_key
+#'
+#' # [1] "https://api.exchangerate.host/latest?base=USD&access_key=7e5e3140140bd8e4f4650cc41fc772c0"
+#'
+#' }
+#'
+#'
+
+
 append_exchangeratehost_access_key <- function(url) {
 
   key = Sys.getenv("EXCHANGERATEHOST_ACCESS_KEY")
@@ -357,7 +383,7 @@ make_dates <- function(start_date, end_date, n_days) {
 #'
 
 
-# # Some quick tests. Spot checks look okay
+# # Some quick spot checks - recent data
 # start_date <- "2022-01-01"
 # end_date <- "2022-06-30"
 #
@@ -369,6 +395,14 @@ make_dates <- function(start_date, end_date, n_days) {
 #
 # from = "USD"
 # to = "AUD"
+
+# # Some quick spot checks old data (possibly missing data on weekends)
+# # This short date rate will include some nulls for AUD to USD
+# start_date <- "2010-01-01"
+# end_date <- "2010-01-06"
+#
+# from = "AUD"
+# to = "USD"
 
 
 retrieve_historical_rates <- function(from, to, start_date, end_date) {
@@ -396,7 +430,7 @@ retrieve_historical_rates <- function(from, to, start_date, end_date) {
   # There are 3 possibilities to handle for
   # 1. Convert from USD to a non-USD currency.
   # 2. Convert from a non-USD currency to USD
-  # 3. Concert between two non-USD currencies
+  # 3. Convert between two non-USD currencies
 
   get_values <- function(response, index) {
     response[[8]] %>%

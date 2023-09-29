@@ -38,6 +38,19 @@ options(scipen = 100); options(digits = 6)
 
 # Exchange rates
 
+
+### Setup
+
+Set up only takes a minute and is free for 1000 requests per account per calendar month.
+
+Go to https://exchangerate.host/, create a free account, and replace `7e5e3140140bd8e4f4650cc41fc772c0` with your API key in the following, and run once per R session. 
+
+```r
+Sys.setenv("EXCHANGERATEHOST_ACCESS_KEY"="7e5e3140140bd8e4f4650cc41fc772c0")
+```
+
+
+
 ### Current exchange rates
 
 View the current exchange rates for 170 currencies (see them all by running `currencies()`):
@@ -59,11 +72,11 @@ Here's an example of how to get exchange rates for some currency pairs:
 
 # Retrieve AUD to USD exchange rates
 au <- historical_exchange_rates("AUD", to = "USD",
-                          start_date = "2010-01-01", end_date = "2020-06-30")
+                          start_date = "2013-01-01", end_date = "2023-06-30")
 
 # Retrieve AUD to EUR exchange rates
 ae <- historical_exchange_rates("AUD", to = "EUR",
-                          start_date = "2010-01-01", end_date = "2020-06-30")
+                          start_date = "2013-01-01", end_date = "2023-06-30")
 
 # Combine
 cur <- au %>% left_join(ae, by = "date")
@@ -97,7 +110,7 @@ cur %>%
     limits = c(0, 1.5)
     ) +
   labs(
-    title = "AUD to USD and EUR 2010 to 2020",
+    title = "AUD to USD and EUR 2013 to 2023",
     subtitle = "Plotting the Australian Dollar against the USD and Euro",
     y = "Exchange Rate"
     ) +
