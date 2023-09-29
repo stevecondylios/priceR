@@ -357,30 +357,77 @@ make_dates <- function(start_date, end_date, n_days) {
 #'
 
 
+# # Some quick tests. Spot checks look okay
+# start_date <- "2022-01-01"
+# end_date <- "2022-06-30"
+#
+# from = "AUD"
+# to = "EUR"
+#
+# from = "AUD"
+# to = "USD"
+#
+# from = "USD"
+# to = "AUD"
+
+
 retrieve_historical_rates <- function(from, to, start_date, end_date) {
 
-  # "https://api.exchangerate.host/timeseries?start_date=2020-01-01&end_date=2020-01-04"
-  endpoint <- paste0("https://api.exchangerate.host/timeseries?start_date=",
+  # "http://api.exchangerate.host/timeframe?start_date=2015-01-01&end_date=2015-05-01&access_key=abcd1234"
+  endpoint <- paste0("http://api.exchangerate.host/timeframe?start_date=",
                      start_date,
                      "&end_date=",
                      end_date,
-                     "&base=",
-                     from,
-                     "&symbols=",
-                     to)
+                     "&currencies=",
+                     paste0(c(from, to), collapse=",")
+  ) %>% append_exchangeratehost_access_key
 
   dat <- endpoint %>%
     fromJSON
 
   col_name <- paste0("one_", from, "_equivalent_to_x_", to)
 
-  dat$rates %>%
-      map_dbl(~ .x[1][[1]][[1]]) %>%
-      stack %>%
-      .[,c(2,1)] %>%
-      `colnames<-`(c("date", col_name)) %>%
-    mutate(date = as.Date(date))
+  num_rows <- dat[[8]] %>% length
+  df <- data.frame(date = as.Date(rep(NA, num_rows)), values = as.numeric(rep(NA, num_rows)))
+
+
+  df$date <- dat[[8]] %>% names
+
+  # There are 3 possibilities to handle for
+  # 1. Convert from USD to a non-USD currency.
+  # 2. Convert from a non-USD currency to USD
+  # 3. Concert between two non-USD currencies
+
+  get_values <- function(response, index) {
+    response[[8]] %>%
+    purrr::map_dbl( ~ {.x[[index]] }) %>% unname
+  }
+
+  values <- if (from == "USD") {
+
+  dat %>% get_values(1)
+
+  } else if (to == "USD") {
+
+  dat %>% get_values(1) %>% `/`(1, .)
+
+  } else {
+  # 3. Concert between two non-USD currencies
+
+  one_usd_is_x_cur1 <- get_values(dat, 1)
+  one_usd_is_x_cur2 <- get_values(dat, 2)
+  one_usd_is_x_cur2 / one_usd_is_x_cur1
+
+  }
+
+  df$values <- values
+
+  df <- df %>% `colnames<-`(c("date", col_name))
+  df
 }
+
+
+
 
 
 
