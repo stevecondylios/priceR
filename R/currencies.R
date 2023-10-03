@@ -39,6 +39,61 @@ display_api_info <- function() {
 
 
 
+
+
+#' Retrieves exchangerate.host (forex) API key from R environment variables
+#' and appends to API call
+#' @name append_exchangeratehost_access_key
+#'
+#' @usage append_exchangeratehost_access_key(url)
+#'
+#' @return The input URL with API access key appended as a URL parameter
+#'
+#' @param url A URL representing an API endpoint
+#' @export
+#'
+#' @examples
+#' \dontrun{
+#' base_Url <- "https://api.exchangerate.host/latest?base=USD"
+#' base_Url %>% append_exchangeratehost_access_key
+#'
+#' # [1] "https://api.exchangerate.host/latest?base=USD&access_key=7e5e3140140bd8e4f4650cc41fc772c0"
+#'
+#' }
+#'
+#'
+
+
+append_exchangeratehost_access_key <- function(url) {
+
+  key = Sys.getenv("EXCHANGERATEHOST_ACCESS_KEY")
+
+  if(key == "") {
+    error_message = "
+    Exchangerate.host access key not found.
+    Please create one here: https://exchangerate.host/
+    Then set it in your R environment with
+    Sys.setenv(\"EXCHANGERATEHOST_ACCESS_KEY\"=\"your_access_key\")
+    E.g.
+    Sys.setenv(\"EXCHANGERATEHOST_ACCESS_KEY\"=\"afty4m2dmpcs1uyp9coimr5vjr4y27t2\")
+    "
+    stop(error_message)
+  }
+
+  if (grepl("\\?", url)) {
+    paste0(url, "&access_key=", key)
+  } else {
+    paste0(url, "?access_key=", key)
+  }
+
+}
+
+
+
+
+
+
+
 #' Retrieve available currencies and their respective symbols/codes
 #' @name currencies
 #'
@@ -130,8 +185,7 @@ currencies <- function() {
 #'
 #' # Defaults to USD
 #' exchange_rate_latest()
-#' # Daily USD exchange rate as at end of day 2020-07-27 GMT
-#' #     currency one_usd_is_equivalent_to
+#' #     currency one_USD_is_equivalent_to
 #' # 1        AED                   3.6730
 #' # 2        AFN                  76.4035
 #' # 3        ALL                 105.9129
@@ -139,31 +193,73 @@ currencies <- function() {
 #' # 5        ANG                   1.7788
 #' # 6        AOA                 561.7599
 #'
-#'
+#' # It can also accept other base rates
+#' exchange_rate_latest("AUD")
+#' #    currency one_AUD_is_equivalent_to
+#' # 1       AED                  2.31619
+#' # 2       AFN                 48.69229
+#' # 3       ALL                 63.87806
+#' # 4       AMD                260.72150
+#' # 5       ANG                  1.13675
+#' # 6       AOA                522.76772
 #' }
 #'
 
 exchange_rate_latest <- function(currency = "USD") {
 
+  currency = toupper(currency)
+
   display_api_info()
 
-  dat <- fromJSON(paste0("https://api.exchangerate.host/latest?base=", currency))
+  endpoint <- "http://api.exchangerate.host/live" %>%
+    append_exchangeratehost_access_key
 
-  cat("Daily", currency, "exchange rate as at end of day", dat$date, "GMT", "\n")
+  live <- fromJSON(endpoint)
 
-  # "EOD / End of Day historical exchange rates, which become available at
-  # 00:05am GMT for the previous day and are time stamped at one second before midnight."
+  col_name <- paste0("one_", currency, "_is_equivalent_to")
 
-  # options(scipen=999)
-  # options(digits=1)
-
-  col_name <- paste0("one_", tolower(currency), "_is_equivalent_to")
-
-  dat$rates %>%
-    map_dbl(~ .x[1]) %>%
+  df <- live$quotes %>%
+    map_dbl(~ .x) %>%
     stack %>%
+    mutate(ind = substr(ind, 4, (nchar(as.character(ind))))) %>%
+    mutate(values = as.double(values)) %>%
     .[,c(2,1)] %>%
+    # Add USD since it won't be included
+    add_row(ind = "USD", values = 1) %>%
+    # then sort alphabetically
+    arrange(ind)
+
+  # Before attempting to convert, ensure currency provided is among the a
+  # available ones
+
+  error_message = paste0("Currency \"", currency, "\" not available. Available currencies are:\n\n",
+                         paste0(df$ind, collapse = (", ")))
+
+  convert_currency <- function(df, currency) {
+    # Extract conversion rate of the selected currency to USD
+    usd_conversion_rate <- df %>%
+      filter(ind == currency) %>%
+      pull(values)
+
+    # Complute new rates
+    out <- df %>%
+      mutate(values = ifelse(ind == currency, 1, values / usd_conversion_rate))
+
+    return(out)
+
+    ## Test
+    # convert_currency(df, "ANG")
+    }
+
+  if(!currency %in% df$ind) { stop(error_message) }
+
+  df_in_selected_currency <- convert_currency(df, currency)
+
+
+  df_in_selected_currency <- df_in_selected_currency %>%
     `colnames<-`(c("currency", col_name))
+
+  return(df_in_selected_currency)
 
 }
 
@@ -328,30 +424,85 @@ make_dates <- function(start_date, end_date, n_days) {
 #'
 
 
+# # Some quick spot checks - recent data
+# start_date <- "2022-01-01"
+# end_date <- "2022-06-30"
+#
+# from = "AUD"
+# to = "EUR"
+#
+# from = "AUD"
+# to = "USD"
+#
+# from = "USD"
+# to = "AUD"
+
+# # Some quick spot checks old data (possibly missing data on weekends)
+# # This short date rate will include some nulls for AUD to USD
+# start_date <- "2010-01-01"
+# end_date <- "2010-01-06"
+#
+# from = "AUD"
+# to = "USD"
+
+
 retrieve_historical_rates <- function(from, to, start_date, end_date) {
 
-  # "https://api.exchangerate.host/timeseries?start_date=2020-01-01&end_date=2020-01-04"
-  endpoint <- paste0("https://api.exchangerate.host/timeseries?start_date=",
+  # "http://api.exchangerate.host/timeframe?start_date=2015-01-01&end_date=2015-05-01&access_key=abcd1234"
+  endpoint <- paste0("http://api.exchangerate.host/timeframe?start_date=",
                      start_date,
                      "&end_date=",
                      end_date,
-                     "&base=",
-                     from,
-                     "&symbols=",
-                     to)
+                     "&currencies=",
+                     paste0(c(from, to), collapse=",")
+  ) %>% append_exchangeratehost_access_key
 
   dat <- endpoint %>%
     fromJSON
 
   col_name <- paste0("one_", from, "_equivalent_to_x_", to)
 
-  dat$rates %>%
-      map_dbl(~ .x[1][[1]][[1]]) %>%
-      stack %>%
-      .[,c(2,1)] %>%
-      `colnames<-`(c("date", col_name)) %>%
-    mutate(date = as.Date(date))
+  num_rows <- dat[[8]] %>% length
+  df <- data.frame(date = as.Date(rep(NA, num_rows)), values = as.numeric(rep(NA, num_rows)))
+
+
+  df$date <- dat[[8]] %>% names
+
+  # There are 3 possibilities to handle for
+  # 1. Convert from USD to a non-USD currency.
+  # 2. Convert from a non-USD currency to USD
+  # 3. Convert between two non-USD currencies
+
+  get_values <- function(response, index) {
+    response[[8]] %>%
+    purrr::map_dbl( ~ {.x[[index]] }) %>% unname
+  }
+
+  values <- if (from == "USD") {
+
+  dat %>% get_values(1)
+
+  } else if (to == "USD") {
+
+  dat %>% get_values(1) %>% `/`(1, .)
+
+  } else {
+  # 3. Concert between two non-USD currencies
+
+  one_usd_is_x_cur1 <- get_values(dat, 1)
+  one_usd_is_x_cur2 <- get_values(dat, 2)
+  one_usd_is_x_cur2 / one_usd_is_x_cur1
+
+  }
+
+  df$values <- values
+
+  df <- df %>% `colnames<-`(c("date", col_name))
+  df
 }
+
+
+
 
 
 
