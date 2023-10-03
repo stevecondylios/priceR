@@ -127,17 +127,30 @@ currencies <- function() {
 
   display_api_info()
 
-  symbols <- 'https://api.exchangerate.host/symbols' %>% fromJSON %>% .$symbols
+  endpoint <- "http://api.exchangerate.host/live" %>%
+    append_exchangeratehost_access_key
 
-  symbols %>%
-    {
-    data.frame(
-          description = map_chr(., ~ .x$description ) %>% unname,
-          code = map_chr(., ~ .x$code ) %>% unname
-      )
-    }
+  live <- fromJSON(endpoint)
+
+  df <- live$quotes %>%
+    map_dbl(~ .x) %>%
+    stack() %>%
+    mutate(ind = substr(.data$ind, 4, nchar(as.character(.data$ind)))) %>%
+    mutate(values = as.double(.data$values)) %>%
+    .[,c(2,1)] %>%
+    # Add USD since it won't be included
+    add_row(ind = "USD", values = 1) %>%
+    # then sort alphabetically
+    arrange(.data$ind)
+
+  df %>%
+    select(.data$ind) %>%
+    rename(code = .data$ind) %>%
+    left_join(select(.data$currency_info, .data$iso_code, .data$name), by = c("code" = "iso_code")) %>%
+    select(description = .data$name, code = .data$code)
 
 }
+
 
 
 
