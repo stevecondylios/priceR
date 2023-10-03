@@ -32,8 +32,7 @@ exchange_rate_latest("AUD")
 
 # Defaults to USD
 exchange_rate_latest()
-# Daily USD exchange rate as at end of day 2020-07-27 GMT
-#     currency one_usd_is_equivalent_to
+#     currency one_USD_is_equivalent_to
 # 1        AED                   3.6730
 # 2        AFN                  76.4035
 # 3        ALL                 105.9129
@@ -41,7 +40,15 @@ exchange_rate_latest()
 # 5        ANG                   1.7788
 # 6        AOA                 561.7599
 
-
+# It can also accept other base rates
+exchange_rate_latest("AUD")
+#    currency one_AUD_is_equivalent_to
+# 1       AED                  2.31619
+# 2       AFN                 48.69229
+# 3       ALL                 63.87806
+# 4       AMD                260.72150
+# 5       ANG                  1.13675
+# 6       AOA                522.76772
 }
 
 }

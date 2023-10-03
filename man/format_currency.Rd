@@ -25,7 +25,7 @@ Make numeric currency values human readable
 # "$2,423,562,534,234"
 
 # format_currency("2423562534234.876", "$", 0)
-# "$2,423,562,534,234.88"
+# "$2,423,562,534,234"
 
 # format_currency("2423562534234.876", "$", 2)
 # "$2,423,562,534,234.88"
@@ -35,6 +35,6 @@ Make numeric currency values human readable
 
 # format_currency() is vectorized and can accept vector arguments
 format_currency(c("2423562534234", "20"), c("¥", "$"), c(1, 2))
-# "¥2,423,562,534,234.0" "$20.0"
+# "¥2,423,562,534,234.0" "$20.00"
 
 }

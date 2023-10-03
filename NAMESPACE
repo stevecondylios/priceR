@@ -2,6 +2,7 @@
 
 export(adjust_for_inflation)
 export(afi)
+export(append_exchangeratehost_access_key)
 export(convert_currencies)
 export(convert_to_iso2Code)
 export(country_input_type)

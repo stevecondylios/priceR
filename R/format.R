@@ -20,7 +20,7 @@
 #' # "$2,423,562,534,234"
 #'
 #' # format_currency("2423562534234.876", "$", 0)
-#' # "$2,423,562,534,234.88"
+#' # "$2,423,562,534,234"
 #'
 #' # format_currency("2423562534234.876", "$", 2)
 #' # "$2,423,562,534,234.88"
@@ -30,7 +30,7 @@
 #'
 #' # format_currency() is vectorized and can accept vector arguments
 #' format_currency(c("2423562534234", "20"), c("¥", "$"), c(1, 2))
-#' # "¥2,423,562,534,234.0" "$20.0"
+#' # "¥2,423,562,534,234.0" "$20.00"
 #'
 
 
@@ -38,17 +38,26 @@ format_currency <- function(amount, symbol, digits) {
 
   if(missing(digits)) { digits <- 0 }
 
-  # From: https://stackoverflow.com/questions/14836754/is-there-an-r-function-to-escape-a-string-for-regex-characters
-  symbol_regex <- gsub("([.|()\\^{}+$*?]|\\[|\\])", "\\\\\\1", symbol)
+  single_format <- function(amount, symbol, digits) {
 
-  amount %>%
-    gsub(",", "", .) %>%
-    as.numeric %>%
-    round(., digits) %>%
-    format(big.mark = ",", digits = digits, scientific = FALSE, nsmall = digits) %>%
-    trimws %>%
-    paste0(symbol, .)
+    # From: https://stackoverflow.com/questions/14836754/is-there-an-r-function-to-escape-a-string-for-regex-characters
+    symbol_regex <- gsub("([.|()\\^{}+$*?]|\\[|\\])", "\\\\\\1", symbol)
 
+    formatted <- amount %>%
+      gsub(",", "", .) %>%
+      as.numeric %>%
+      round(., digits) %>%
+      formatC(format="f", digits=digits, big.mark=",", small.mark = digits) %>%
+      trimws %>%
+      paste0(symbol, .)
+
+    return(formatted)
+  }
+
+  formatted_vector <- mapply(single_format, amount, symbol, digits, SIMPLIFY = TRUE) %>%
+    unname
+
+  return(formatted_vector)
 }
 
 

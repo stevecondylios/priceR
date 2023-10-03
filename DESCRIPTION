@@ -1,7 +1,7 @@
 Package: priceR
 Type: Package
 Title: Economics and Pricing Tools
-Version: 0.1.67
+Version: 1.0.0
 Imports: dplyr, gsubfn, stringr, purrr, jsonlite, stats, lubridate, curl, stringi, tidyr
 Authors@R: c(person(given="Steve", family="Condylios", 
     role=c("aut", "cre"), email="steve.condylios@gmail.com", 
@@ -19,7 +19,7 @@ Description: Functions to aid in micro and macro economic analysis and handling 
     and historical end of day exchange rates for 171 currencies from the European Central Bank
     Statistical Data Warehouse (2020) <https://sdw.ecb.europa.eu/curConverter.do>.
 Encoding: UTF-8
-RoxygenNote: 7.1.2
+RoxygenNote: 7.2.3
 Suggests: 
     testthat
 LazyData: true
