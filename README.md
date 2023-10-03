@@ -50,9 +50,21 @@ View the current exchange rates for 170 currencies (see them all by
 running `currencies()`):
 
 ``` r
-# exchange_rate_latest("USD") %>% 
-#   head(10)
+exchange_rate_latest("USD") %>% 
+  head(10)
 ```
+
+    ##    currency one_USD_is_equivalent_to
+    ## 1       AED                  3.67299
+    ## 2       AFN                 77.50220
+    ## 3       ALL                101.25030
+    ## 4       AMD                413.44991
+    ## 5       ANG                  1.80265
+    ## 6       AOA                829.00004
+    ## 7       ARS                350.01992
+    ## 8       AUD                  1.58582
+    ## 9       AWG                  1.80000
+    ## 10      AZN                  1.70231
 
 ### Historical exchange rates
 
