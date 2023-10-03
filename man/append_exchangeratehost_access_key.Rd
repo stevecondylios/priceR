@@ -7,8 +7,11 @@ and appends to API call}
 \usage{
 append_exchangeratehost_access_key(url)
 }
+\arguments{
+\item{url}{A URL representing an API endpoint}
+}
 \value{
-The input url with API access key appended as a URL parameter
+The input URL with API access key appended as a URL parameter
 }
 \description{
 Retrieves exchangerate.host (forex) API key from R environment variables
