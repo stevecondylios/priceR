@@ -146,7 +146,7 @@ currencies <- function() {
   df %>%
     select(.data$ind) %>%
     rename(code = .data$ind) %>%
-    left_join(select(.data$currency_info, .data$iso_code, .data$name), by = c("code" = "iso_code")) %>%
+    left_join(select(priceR::currency_info, .data$iso_code, .data$name), by = c("code" = "iso_code")) %>%
     select(description = .data$name, code = .data$code)
 
 }
