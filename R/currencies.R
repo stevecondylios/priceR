@@ -221,16 +221,13 @@ exchange_rate_latest <- function(currency = "USD") {
   df <- live$quotes %>%
     map_dbl(~ .x) %>%
     stack %>%
-    mutate(ind = substr(ind, 4, (nchar(as.character(ind))))) %>%
-    mutate(values = as.double(values)) %>%
+    mutate(ind = substr(.data$ind, 4, (nchar(as.character(.data$ind))))) %>%
+    mutate(values = as.double(.data$values)) %>%
     .[,c(2,1)] %>%
     # Add USD since it won't be included
     add_row(ind = "USD", values = 1) %>%
     # then sort alphabetically
-    arrange(ind)
-
-  # Before attempting to convert, ensure currency provided is among the a
-  # available ones
+    arrange(.data$ind)
 
   error_message = paste0("Currency \"", currency, "\" not available. Available currencies are:\n\n",
                          paste0(df$ind, collapse = (", ")))
@@ -238,30 +235,26 @@ exchange_rate_latest <- function(currency = "USD") {
   convert_currency <- function(df, currency) {
     # Extract conversion rate of the selected currency to USD
     usd_conversion_rate <- df %>%
-      filter(ind == currency) %>%
-      pull(values)
+      filter(.data$ind == currency) %>%
+      pull(.data$values)
 
-    # Complute new rates
+    # Compute new rates
     out <- df %>%
-      mutate(values = ifelse(ind == currency, 1, values / usd_conversion_rate))
+      mutate(values = ifelse(.data$ind == currency, 1, .data$values / usd_conversion_rate))
 
     return(out)
-
-    ## Test
-    # convert_currency(df, "ANG")
-    }
+  }
 
   if(!currency %in% df$ind) { stop(error_message) }
 
   df_in_selected_currency <- convert_currency(df, currency)
 
-
   df_in_selected_currency <- df_in_selected_currency %>%
     `colnames<-`(c("currency", col_name))
 
   return(df_in_selected_currency)
-
 }
+
 
 
 
