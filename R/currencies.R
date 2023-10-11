@@ -572,7 +572,11 @@ historical_exchange_rates <- function(from, to, start_date, end_date) {
   valid_currency_codes <- c(
     "AED", "AFN", "ALL", "AMD", "ANG", "AOA", "ARS", "AUD", "AWG",
     "AZN", "BAM", "BBD", "BDT", "BGN", "BHD", "BIF", "BMD", "BND",
-    "BOB", "BRL", "BSD", "BTC", "BTN", "BWP", "BYN", "BZD", "CAD",
+    "BOB", "BRL", "BSD", "BTC", "BTN", "BWP", "BYN",
+
+    "BYR", # Added due to two possible codes for Belarusian Ruble
+
+    "BZD", "CAD",
     "CDF", "CHF", "CLF", "CLP", "CNH", "CNY", "COP", "CRC", "CUC",
     "CUP", "CVE", "CZK", "DJF", "DKK", "DOP", "DZD", "EGP", "ERN",
     "ETB", "EUR", "FJD", "FKP", "GBP", "GEL", "GGP", "GHS", "GIP",
