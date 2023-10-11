@@ -55,13 +55,16 @@ jobs:
           extra-packages: any::rcmdcheck
           needs: check
 
+      # SC: These lines from here: https://github.com/r-lib/actions/issues/78#issuecomment-611733294
+      # but updated with this in mind: https://github.com/r-lib/actions/issues/78#issuecomment-810171913 (since it errored otherwise)
+      # Note that XQuartz has to be installed before the check-r-package step (below)
+      - name: Install XQuartz on macOS
+        if: runner.os == 'macOS'
+        run: brew install xquartz --cask
+
       - uses: r-lib/actions/check-r-package@v2
         with:
           upload-snapshots: true
 
-      # SC: These lines from here: https://github.com/r-lib/actions/issues/78#issuecomment-611733294
-      # but updated with this in mind: https://github.com/r-lib/actions/issues/78#issuecomment-810171913 (since it errored otherwise)
-      - name: Install XQuartz on macOS
-        if: runner.os == 'macOS'
-        run: brew install xquartz --cask
+
 
