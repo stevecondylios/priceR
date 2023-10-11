@@ -788,6 +788,7 @@ convert_currencies <- function(price_start,
     tidyr::unnest(rates_lookup)
 
   rates_lookup <- rates_end %>%
+    mutate(date = lubridate::ymd(date)) %>%
     dplyr::semi_join(rates_start, "date")
 
   # this step makes it so could convert either "from" or "to" currency
