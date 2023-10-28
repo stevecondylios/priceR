@@ -763,7 +763,7 @@ convert_currencies <- function(price_start,
   # convert_currencies: no visible binding for global variable ‘output’
   from_to = date_range = rate = price = output = NULL
 
-  if(from==to)
+  if(from[[1]]==to[[1]])
     return(price_start)
 
 
