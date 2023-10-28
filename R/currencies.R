@@ -464,7 +464,7 @@ retrieve_historical_rates <- function(from, to, start_date, end_date) {
   ) %>% append_exchangeratehost_access_key
 
   dat <- endpoint %>%
-    fromJSON
+    m_fromJSON
 
   col_name <- paste0("one_", from, "_equivalent_to_x_", to)
 
@@ -650,8 +650,6 @@ historical_exchange_rates <- function(from, to, start_date, end_date) {
 ### functions for `convert_currencies()`
 
 
-
-
 #' Removes redundant API calls of currency pairs. That is, revmoes the need
 #' to for separate calls for both
 #' `from = EUR, to = USD` and `from = USD, to = EUR`
@@ -764,6 +762,10 @@ convert_currencies <- function(price_start,
   # convert_currencies: no visible binding for global variable ‘price’
   # convert_currencies: no visible binding for global variable ‘output’
   from_to = date_range = rate = price = output = NULL
+
+  if(from==to)
+    return(price_start)
+
 
   rates_start <- dplyr::tibble(
     from = from,
