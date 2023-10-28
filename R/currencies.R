@@ -763,8 +763,8 @@ convert_currencies <- function(price_start,
   # convert_currencies: no visible binding for global variable ‘output’
   from_to = date_range = rate = price = output = NULL
 
-  if(from[[1]]==to[[1]])
-    return(price_start)
+  #if(from[[1]]==to[[1]])
+  #  return(price_start)
 
 
   rates_start <- dplyr::tibble(
@@ -774,6 +774,8 @@ convert_currencies <- function(price_start,
       as.Date() %>%
       lubridate::floor_date(floor_unit)
   ) %>%
+  #pcias!!
+  filter(from!=to) %>%
     dplyr::mutate(from_to = pminmax(from, to)) %>%
     dplyr::distinct(from_to, date, .keep_all = TRUE)
 
