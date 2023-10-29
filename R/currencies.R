@@ -454,6 +454,12 @@ make_dates <- function(start_date, end_date, n_days) {
 
 retrieve_historical_rates <- function(from, to, start_date, end_date) {
 
+  #pcias begin
+  if(from=="USD" && to=="USD") {
+    from=to="EUR"
+  }
+  #pcias end
+
   # "http://api.exchangerate.host/timeframe?start_date=2015-01-01&end_date=2015-05-01&access_key=abcd1234"
   endpoint <- paste0("http://api.exchangerate.host/timeframe?start_date=",
                      start_date,
