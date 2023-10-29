@@ -466,6 +466,7 @@ retrieve_historical_rates <- function(from, to, start_date, end_date) {
   dat <- endpoint %>%
     m_fromJSON
 
+  #print(dat)
   col_name <- paste0("one_", from, "_equivalent_to_x_", to)
 
   num_rows <- dat[[8]] %>% length
@@ -480,8 +481,17 @@ retrieve_historical_rates <- function(from, to, start_date, end_date) {
   # 3. Convert between two non-USD currencies
 
   get_values <- function(response, index) {
-    response[[8]] %>%
-    purrr::map_dbl( ~ {.x[[index]] }) %>% unname
+    #pcias begin
+    if(from!=to){
+    #pcias end
+        response[[8]] %>%
+        purrr::map_dbl( ~ {.x[[index]] }) %>% unname
+    }
+    #pcias begin
+    else {
+      response[[8]] %>% purrr::map_dbl(1) %>% unname
+    }
+    #pcias end
   }
 
   values <- if (from == "USD") {
@@ -763,11 +773,7 @@ convert_currencies <- function(price_start,
   # convert_currencies: no visible binding for global variable ‘output’
   from_to = date_range = rate = price = output = NULL
 
-  #if(from[[1]]==to[[1]])
-  #  return(price_start)
-
-
-  rates_start <- dplyr::tibble(
+    rates_start <- dplyr::tibble(
     from = from,
     to = to,
     date = date %>%
@@ -775,9 +781,9 @@ convert_currencies <- function(price_start,
       lubridate::floor_date(floor_unit)
   ) %>%
   #pcias!!
-  filter(from!=to) %>%
-    dplyr::mutate(from_to = pminmax(from, to)) %>%
-    dplyr::distinct(from_to, date, .keep_all = TRUE)
+  #filter(from!=to) %>%
+  dplyr::mutate(from_to = pminmax(from, to)) %>%
+  dplyr::distinct(from_to, date, .keep_all = TRUE)
 
   # When passing things to the priceR API it is much faster to send over a range
   # of dates rather than doing individual API calls for each date (even when
