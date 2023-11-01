@@ -388,17 +388,6 @@ make_dates <- function(start_date, end_date, n_days) {
 
 
 
-
-
-
-
-
-
-
-
-
-
-
 #' Retrieve historical exchange rates
 #'
 #' Retrieves historical exchange rates between a currency pair - retrieves max. 365 days' data
@@ -410,6 +399,9 @@ make_dates <- function(start_date, end_date, n_days) {
 #' @param to A currency code
 #' @param start_date A start date (of the form "2010-01-01")
 #' @param end_date An end date
+#'
+#'
+#'
 #'
 #'
 #' @return A data.frame containing exchange rate data for select currency pair
@@ -454,12 +446,6 @@ make_dates <- function(start_date, end_date, n_days) {
 
 retrieve_historical_rates <- function(from, to, start_date, end_date) {
 
-  #pcias begin
-  if(from=="USD" && to=="USD") {
-    from=to="EUR"
-  }
-  #pcias end
-
   # "http://api.exchangerate.host/timeframe?start_date=2015-01-01&end_date=2015-05-01&access_key=abcd1234"
   endpoint <- paste0("http://api.exchangerate.host/timeframe?start_date=",
                      start_date,
@@ -470,9 +456,8 @@ retrieve_historical_rates <- function(from, to, start_date, end_date) {
   ) %>% append_exchangeratehost_access_key
 
   dat <- endpoint %>%
-    m_fromJSON
+    fromJSON
 
-  #print(dat)
   col_name <- paste0("one_", from, "_equivalent_to_x_", to)
 
   num_rows <- dat[[8]] %>% length
@@ -487,33 +472,24 @@ retrieve_historical_rates <- function(from, to, start_date, end_date) {
   # 3. Convert between two non-USD currencies
 
   get_values <- function(response, index) {
-    #pcias begin
-    if(from!=to){
-    #pcias end
-        response[[8]] %>%
-        purrr::map_dbl( ~ {.x[[index]] }) %>% unname
-    }
-    #pcias begin
-    else {
-      response[[8]] %>% purrr::map_dbl(1) %>% unname
-    }
-    #pcias end
+    response[[8]] %>%
+      purrr::map_dbl( ~ {.x[[index]] }) %>% unname
   }
 
   values <- if (from == "USD") {
 
-  dat %>% get_values(1)
+    dat %>% get_values(1)
 
   } else if (to == "USD") {
 
-  dat %>% get_values(1) %>% `/`(1, .)
+    dat %>% get_values(1) %>% `/`(1, .)
 
   } else {
-  # 3. Concert between two non-USD currencies
+    # 3. Concert between two non-USD currencies
 
-  one_usd_is_x_cur1 <- get_values(dat, 1)
-  one_usd_is_x_cur2 <- get_values(dat, 2)
-  one_usd_is_x_cur2 / one_usd_is_x_cur1
+    one_usd_is_x_cur1 <- get_values(dat, 1)
+    one_usd_is_x_cur2 <- get_values(dat, 2)
+    one_usd_is_x_cur2 / one_usd_is_x_cur1
 
   }
 
@@ -521,6 +497,125 @@ retrieve_historical_rates <- function(from, to, start_date, end_date) {
 
   df <- df %>% `colnames<-`(c("date", col_name))
   df
+}
+
+
+
+
+
+
+
+
+#' Retrieve historical exchange rates
+#'
+#' Retrieves historical exchange rates between a currency pair - retrieves max. 365 days' data
+#' @name retrieve_historical_rates_nbp
+#'
+#' @usage retrieve_historical_rates(from, to, start_date, end_date)
+#'
+#' @param from A currency code (see currencies() for supported codes)
+#' @param to A currency code
+#' @param start_date A start date (of the form "2010-01-01")
+#' @param end_date An end date
+#'
+#'
+#'
+#'
+#'
+#' @return A data.frame containing exchange rate data for select currency pair
+#'
+#' @import dplyr purrr tidyquant tidyr
+#' @importFrom jsonlite fromJSON
+#' @importFrom utils stack
+#' @importFrom lubridate today
+#'
+#' @examples
+#' \dontrun{
+#' # Note date range >365 days', yet only 365 days' returned.
+#' # Use historical_exchange_rates() for > 365 days'.
+#'  priceR:::retrieve_historical_rates("USD", to = "AUD",
+#'                                     start_date = "2018-01-01",
+#'                                     end_date = "2020-06-30")
+#' }
+#'
+#'
+
+
+# # Some quick spot checks - recent data
+# start_date <- "2022-01-01"
+# end_date <- "2022-06-30"
+#
+# from = "AUD"
+# to = "EUR"
+#
+# from = "AUD"
+# to = "USD"
+#
+# from = "USD"
+# to = "AUD"
+
+# # Some quick spot checks old data (possibly missing data on weekends)
+# # This short date rate will include some nulls for AUD to USD
+# start_date <- "2010-01-01"
+# end_date <- "2010-01-06"
+#
+# from = "AUD"
+# to = "USD"
+
+
+retrieve_historical_rates_nbp <- function(from, to, start_date, end_date) {
+
+  if(start_date > lubridate::today())
+    stop("start_date cannot be in future")
+
+  #in case we have holiday today
+  if(start_date==lubridate::today())
+    start_date <- lubridate::today()-5
+
+  dates<-tidyquant::DATE_SEQUENCE(start_date, end_date)
+
+  if(from!="PLN") {
+    endpoint <- paste("http://api.nbp.pl/api/exchangerates/rates/A",
+                     from,
+                     start_date,
+                     end_date,"", sep="/")
+
+
+    dat_from <- endpoint %>%
+      fromJSON
+    dat_from$rates <- dat_from$rates %>% mutate(effectiveDate=as.Date(effectiveDate)) %>%
+      tidyr::complete(effectiveDate=dates) %>% tidyr::fill(mid)
+  }
+  else {
+    dat_from <- list(rates=data.frame(effectiveDate=dates, mid=1))
+  }
+
+  if(to!="PLN") {
+    endpoint <- paste("http://api.nbp.pl/api/exchangerates/rates/A",
+                     to,
+                     start_date,
+                     end_date,"", sep="/")
+
+    dat_to <- endpoint %>%
+      fromJSON
+    dat_to$rates <- dat_to$rates %>% mutate(effectiveDate=as.Date(effectiveDate)) %>%
+      tidyr::complete(effectiveDate=dates) %>% tidyr::fill(mid)
+  }
+  else {
+    dat_to <- list(rates=data.frame(effectiveDate=dates, mid=1))
+  }
+
+
+
+  #num_rows <- dat_from$rates %>% length
+  #df <- data.frame(date = as.Date(rep(NA, num_rows)), values = as.numeric(rep(NA, num_rows)))
+
+  df <- data.frame(date=as.Date(dat_from$rates$effectiveDate), nominator=dat_from$rates$mid, denominator=dat_to$rates$mid)
+  df <- df %>% mutate(ratio=nominator/denominator)
+
+
+  #df <- df %>% `colnames<-`(c("date", col_name))
+  df %>% select(date,ratio)
 }
 
 
@@ -627,7 +722,7 @@ historical_exchange_rates <- function(from, to, start_date, end_date) {
   api_time_splits <- make_dates(start_date, end_date, 365)
 
   # pmap*() variants map over rows of a data.frame
-  pmap_dfr(api_time_splits, retrieve_historical_rates, from = from, to = to)
+  pmap_dfr(api_time_splits, retrieve_historical_rates_nbp, from = from, to = to)
 
 
 }
