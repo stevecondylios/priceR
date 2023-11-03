@@ -568,9 +568,9 @@ retrieve_historical_rates_nbp <- function(from, to, start_date, end_date) {
   if(start_date > lubridate::today())
     stop("start_date cannot be in future")
 
-  #in case we have holiday today
-  if(start_date==lubridate::today())
-    start_date <- lubridate::today()-5
+  #in case we have holiday today on start date
+  #if(start_date==lubridate::today())
+    start_date <- start_date-5
 
   dates<-tidyquant::DATE_SEQUENCE(start_date, end_date)
 
