@@ -570,9 +570,9 @@ retrieve_historical_rates_nbp <- function(from, to, start_date, end_date) {
 
   #in case we have holiday today on start date
   #if(start_date==lubridate::today())
-    start_date <- start_date-5
+    new_start_date <- start_date-5
 
-  dates<-tidyquant::DATE_SEQUENCE(start_date, end_date)
+  dates<-tidyquant::DATE_SEQUENCE(new_start_date, end_date)
 
   if(from!="PLN") {
     endpoint <- paste("http://api.nbp.pl/api/exchangerates/rates/A",
@@ -615,7 +615,7 @@ retrieve_historical_rates_nbp <- function(from, to, start_date, end_date) {
 
 
   #df <- df %>% `colnames<-`(c("date", col_name))
-  df %>% select(date,ratio)
+  df %>% filter(date >= start_date & date <= end_date) %>% select(date,ratio)
 }
 
 
