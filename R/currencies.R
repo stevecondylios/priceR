@@ -719,7 +719,9 @@ historical_exchange_rates <- function(from, to, start_date, end_date) {
 
   display_api_info()
 
-  api_time_splits <- make_dates(start_date, end_date, 365)
+  #api_time_splits <- make_dates(start_date, end_date, 365)
+  api_time_splits <- make_dates(start_date, end_date, 300) #needed to reduce because retrieve_historical_rates_nbp adds -5 days margin so would break 365 API limit
+
 
   # pmap*() variants map over rows of a data.frame
   pmap_dfr(api_time_splits, retrieve_historical_rates_nbp, from = from, to = to)
