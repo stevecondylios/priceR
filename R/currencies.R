@@ -593,7 +593,7 @@ retrieve_historical_rates_nbp <- function(from, to, start_date, end_date) {
   if(to!="PLN") {
     endpoint <- paste("http://api.nbp.pl/api/exchangerates/rates/A",
                      to,
-                     start_date,
+                     new_start_date,
                      end_date,"", sep="/")
 
     dat_to <- endpoint %>%
