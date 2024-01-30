@@ -33,7 +33,7 @@ options(scipen = 100); options(digits = 6)
 
 ### Setup
 
-Set up only takes a minute and is free for 1000 requests per account per
+Set up only takes a minute and is free for 100 requests per account per
 calendar month.
 
 Go to <https://exchangerate.host/>, create a free account, and replace
