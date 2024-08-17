@@ -7,7 +7,7 @@
 #'
 #' @usage url_all_results(original_url)
 #'
-#' @param original_url A World Bank API URL. E.g. "http://api.worldbank.org/v2/country".
+#' @param original_url A World Bank API URL. E.g. "https://api.worldbank.org/v2/country".
 #'
 #' @return A character vector
 #'
@@ -20,10 +20,10 @@
 #' # Provide a World Bank API URL and `url_all_results` will convert it into one with all results
 #' # for that indicator
 #' \dontrun{
-#'   original_url <- "http://api.worldbank.org/v2/country" # Note: no ?format=json on url
+#'   original_url <- "https://api.worldbank.org/v2/country" # Note: no ?format=json on url
 #'   url_all_results(original_url)
 #' }
-#' # "http://api.worldbank.org/v2/country?format=json&per_page=304"
+#' # "https://api.worldbank.org/v2/country?format=json&per_page=304"
 #'
 #'
 #'
@@ -85,7 +85,7 @@ url_all_results <- function(original_url) {
 
 show_countries <- function() {
 
-  countries_url <- "http://api.worldbank.org/v2/country?format=json" %>% url_all_results(.)
+  countries_url <- "https://api.worldbank.org/v2/country?format=json" %>% url_all_results(.)
   countries <- countries_url %>% fromJSON(.)
 
   countries <- data.frame(countries[[2]]$iso2Code, countries[[2]]$name, stringsAsFactors = FALSE)
@@ -311,9 +311,9 @@ retrieve_inflation_data <- function(country, countries_dataframe) {
   cat("Retrieving inflation data for", country, "\n")
 
   # Works
-  # http://api.worldbank.org/v2/country/AU/indicator/FP.CPI.TOTL.ZG?format=json
+  # https://api.worldbank.org/v2/country/AU/indicator/FP.CPI.TOTL.ZG?format=json
 
-  inflation_url <- paste0("http://api.worldbank.org/v2/country/", country, "/indicator/FP.CPI.TOTL.ZG")
+  inflation_url <- paste0("https://api.worldbank.org/v2/country/", country, "/indicator/FP.CPI.TOTL.ZG")
 
   inflation_url <- inflation_url %>% url_all_results
 
