@@ -468,37 +468,58 @@ retrieve_historical_rates <- function(from, to, start_date, end_date) {
 
   col_name <- paste0("one_", from, "_equivalent_to_x_", to)
 
-  num_rows <- dat[[8]] %>% length
+  # Check for API errors
+  if (!is.null(dat$success) && !dat$success) {
+    error_msg <- if (!is.null(dat$error$info)) {
+      dat$error$info
+    } else {
+      "Unknown API error"
+    }
+    stop("API request failed: ", error_msg)
+  }
+  
+  # Check if the expected data exists
+  if (!"quotes" %in% names(dat)) {
+    stop("API response does not contain 'quotes' field. Response fields: ", 
+         paste(names(dat), collapse = ", "))
+  }
+  
+  quotes <- dat$quotes
+  num_rows <- length(quotes)
+  
+  if (num_rows == 0) {
+    # Return empty data frame with correct structure
+    return(data.frame(date = as.Date(character()), 
+                      setNames(list(numeric()), col_name)))
+  }
+  
   df <- data.frame(date = as.Date(rep(NA, num_rows)), values = as.numeric(rep(NA, num_rows)))
+  df$date <- names(quotes)
 
-
-  df$date <- dat[[8]] %>% names
-
-  # There are 3 possibilities to handle for
-  # 1. Convert from USD to a non-USD currency.
-  # 2. Convert from a non-USD currency to USD
-  # 3. Convert between two non-USD currencies
-
-  get_values <- function(response, index) {
-    response[[8]] %>%
-    purrr::map_dbl( ~ {.x[[index]] }) %>% unname
+  # Extract values based on the currency pair
+  # The API now returns data as "USDEUR" format
+  pair_from_usd_to_to <- paste0("USD", to)
+  pair_from_usd_to_from <- paste0("USD", from)
+  
+  get_rate_for_date <- function(date_quotes, pair) {
+    if (pair %in% names(date_quotes)) {
+      return(date_quotes[[pair]])
+    }
+    return(NA_real_)
   }
 
   values <- if (from == "USD") {
-
-  dat %>% get_values(1)
-
+    # 1. Convert from USD to another currency
+    sapply(quotes, function(q) get_rate_for_date(q, pair_from_usd_to_to))
   } else if (to == "USD") {
-
-  dat %>% get_values(1) %>% `/`(1, .)
-
+    # 2. Convert from another currency to USD
+    rates <- sapply(quotes, function(q) get_rate_for_date(q, pair_from_usd_to_from))
+    1 / rates
   } else {
-  # 3. Concert between two non-USD currencies
-
-  one_usd_is_x_cur1 <- get_values(dat, 1)
-  one_usd_is_x_cur2 <- get_values(dat, 2)
-  one_usd_is_x_cur2 / one_usd_is_x_cur1
-
+    # 3. Convert between two non-USD currencies
+    rates_usd_to_from <- sapply(quotes, function(q) get_rate_for_date(q, pair_from_usd_to_from))
+    rates_usd_to_to <- sapply(quotes, function(q) get_rate_for_date(q, pair_from_usd_to_to))
+    rates_usd_to_to / rates_usd_to_from
   }
 
   df$values <- values
