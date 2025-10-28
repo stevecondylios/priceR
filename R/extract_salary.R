@@ -143,7 +143,7 @@ extract_salary <- function(salary_text, exclude_below, exclude_above, salary_ran
   if(!salary_range_handling %in% c("average", "max", "min")) { stop("salary_range_handling parameter must be either \"average\", \"min\", or \"max\"") }
 
   # Clean
-  salary <- salary_text %>% gsub(",", "", .) %>% str_replace_all(., "\\d+\\.\\d+", function(x) { as.integer(x) }) %>%
+  salary <- salary_text %>% gsub(",", "", .) %>% str_replace_all(., "\\d+\\.\\d+", function(x) { as.character(as.integer(x)) }) %>%
     gsub("(\\d+)k", "\\1000", .)  %>% gsub("(\\d+)K", "\\1000", .) # Sub out commas, round decimals, and convert k to 000
 
 
