@@ -50,21 +50,21 @@ View the current exchange rates for 170 currencies (see them all by
 running `currencies()`):
 
 ``` r
-exchange_rate_latest("USD") %>% 
+exchange_rate_latest("USD") %>%
   head(10)
 ```
 
     ##    currency one_USD_is_equivalent_to
-    ## 1       AED                  3.67299
-    ## 2       AFN                 77.50220
-    ## 3       ALL                101.25030
-    ## 4       AMD                413.44991
-    ## 5       ANG                  1.80265
-    ## 6       AOA                829.00004
-    ## 7       ARS                350.01992
-    ## 8       AUD                  1.58582
-    ## 9       AWG                  1.80000
-    ## 10      AZN                  1.70231
+    ## 1       AED                  3.67250
+    ## 2       AFN                 65.49843
+    ## 3       ALL                 83.07496
+    ## 4       AMD                384.26342
+    ## 5       ANG                  1.78998
+    ## 6       AOA                916.99990
+    ## 7       ARS               1432.54310
+    ## 8       AUD                  1.52554
+    ## 9       AWG                  1.80250
+    ## 10      AZN                  1.70556
 
 ### Historical exchange rates
 
@@ -100,21 +100,21 @@ library(ggplot2)
 library(ggthemes)
 library(ggrepel)
 
-cur %>% 
+cur %>%
   rename(aud_to_usd = one_AUD_equivalent_to_x_USD,
-         aud_to_eur = one_AUD_equivalent_to_x_EUR) %>% 
-  pivot_longer(c("aud_to_usd", "aud_to_eur")) %>% 
-  mutate(date = as.Date(date)) %>% 
+         aud_to_eur = one_AUD_equivalent_to_x_EUR) %>%
+  pivot_longer(c("aud_to_usd", "aud_to_eur")) %>%
+  mutate(date = as.Date(date)) %>%
   ggplot(aes(x=date, y = value, colour=name)) +
-  geom_line(size=1) + 
+  geom_line(size=1) +
   scale_color_manual(
     breaks = c("aud_to_usd", "aud_to_eur"), # Sets order in legend
     labels = c( "AUD to USD", "AUD to EUR"), # Pretty names in legend
     values = c("#02506A", "#03A5DC") # Sets line/legend colours
-    ) + 
+    ) +
   scale_x_date(date_labels = "%b %Y", date_breaks = "6 month") +
   scale_y_continuous(
-    expand = c(0, 0), 
+    expand = c(0, 0),
     limits = c(0, 1.5)
     ) +
   labs(
@@ -122,7 +122,7 @@ cur %>%
     subtitle = "Plotting the Australian Dollar against the USD and Euro",
     y = "Exchange Rate"
     ) +
-  theme_economist() + 
+  theme_economist() +
   theme(
     plot.title = element_text(size = 18, margin=margin(0,0,8,0)),
     axis.title.x = element_blank(),
@@ -131,7 +131,7 @@ cur %>%
     axis.title.y = element_text(vjust = 3.5),
     legend.position="bottom",
     legend.title = element_blank()
-    ) 
+    )
 ```
 
     ## Warning: Using `size` aesthetic for lines was deprecated in ggplot2 3.4.0.
@@ -143,21 +143,21 @@ cur %>%
 ![](README_files/figure-gfm/unnamed-chunk-4-1.png)<!-- -->
 
 ``` r
-cur %>% 
-  tail(200) %>% 
+cur %>%
+  tail(200) %>%
   rename(aud_to_usd = one_AUD_equivalent_to_x_USD,
-         aud_to_eur = one_AUD_equivalent_to_x_EUR) %>%  
-  mutate(date = as.Date(date)) %>% 
+         aud_to_eur = one_AUD_equivalent_to_x_EUR) %>%
+  mutate(date = as.Date(date)) %>%
   ggplot(aes(x = date, y = aud_to_usd, group = 1)) +
   geom_line(colour = "#F15B40") +
-  geom_smooth(method = 'loess', colour="#03A5DC") + 
+  geom_smooth(method = 'loess', colour="#03A5DC") +
   scale_x_date(date_labels = "%b %Y", date_breaks = "1 month") +
   labs(
     title = "AUD to USD over last 200 days",
     subtitle = "AUD to USD Exchange Rate; Polynomial regression trendline",
     y = "Exchange Rate"
     ) +
-  theme_economist() + 
+  theme_economist() +
   theme(
     plot.title = element_text(size = 18, margin=margin(0,0,8,0)),
     axis.title.x = element_blank(),
@@ -166,29 +166,29 @@ cur %>%
     axis.title.y = element_text(vjust = 3.5),
     legend.position="bottom",
     legend.title = element_blank()
-    ) 
+    )
 ```
 
 ![](README_files/figure-gfm/unnamed-chunk-5-1.png)<!-- -->
 
 ``` r
-cur %>% 
-  tail(365 * 8) %>% 
+cur %>%
+  tail(365 * 8) %>%
   rename(aud_to_usd = one_AUD_equivalent_to_x_USD,
-         aud_to_eur = one_AUD_equivalent_to_x_EUR) %>% 
-  mutate(date = as.Date(date)) %>% 
+         aud_to_eur = one_AUD_equivalent_to_x_EUR) %>%
+  mutate(date = as.Date(date)) %>%
   ggplot(aes(x = date, y = aud_to_eur, group = 1)) +
   geom_line() +
-  geom_smooth(method = 'loess', se = TRUE) + 
+  geom_smooth(method = 'loess', se = TRUE) +
   geom_line(colour = "#02506A") +
-  geom_smooth(method = 'loess', colour="#03A5DC") + 
+  geom_smooth(method = 'loess', colour="#03A5DC") +
   scale_x_date(date_labels = "%Y", date_breaks = "1 year") +
   labs(
     title = "AUD to EUR over last 8 years",
     subtitle = "AUD to EUR Exchange Rate; Polynomial regression trendline",
     y = "Exchange Rate"
     ) +
-  theme_economist() + 
+  theme_economist() +
   theme(
     plot.title = element_text(size = 18, margin=margin(0,0,8,0)),
     axis.title.x = element_blank(),
@@ -197,7 +197,7 @@ cur %>%
     axis.title.y = element_text(vjust = 3.5),
     legend.position="bottom",
     legend.title = element_blank()
-    ) 
+    )
 ```
 
 ![](README_files/figure-gfm/unnamed-chunk-6-1.png)<!-- -->
@@ -221,9 +221,9 @@ df <- data.frame(years, nominal_prices)
 df$in_2008_dollars <- adjust_for_inflation(nominal_prices, years, "US", to_date = 2008)
 ```
 
-    ## Generating URL to request all 297 results
+    ## Generating URL to request all 296 results
     ## Retrieving inflation data for US 
-    ## Generating URL to request all 63 results
+    ## Generating URL to request all 65 results
 
 ``` r
 df
@@ -265,7 +265,7 @@ messy_salary_data <- c(
 )
 
 messy_salary_data %>%
-  extract_salary(include_periodicity = TRUE, 
+  extract_salary(include_periodicity = TRUE,
                  salary_range_handling = "average")
 ```
 
@@ -306,8 +306,8 @@ format_dollars(c("445.50", "199.99"), digits = 2)
 
 Curran-Groome, W., Hino, M., BenDor, T. and Salvesen, D., 2022.
 [*Complexities and costs of floodplain buyout
-implementation*](https://www.sciencedirect.com/science/article/abs/pii/S0264837722001557),
-Land Use Policy, Volume 118, July 2022.
+implementation*](https://doi.org/10.1016/j.landusepol.2022.106128), Land
+Use Policy, Volume 118, July 2022.
 
 Thomas, C., Shae, W., Koestler, D., DeFor, T., Bahr, N. and Alpern, J.,
 2022. [*Antifungal drug price increases in the United States
@@ -329,8 +329,8 @@ Thielen, F.W., Heine, R.J.S.D., Berg, S. van den, Ham, R.M.T. ten and
 Groot, C.A.U. (2022). [Towards sustainability and affordability of
 expensive cell and gene therapies? Applying a cost-based pricing model
 to estimate prices for Libmeldy and
-Zolgensma](https://www.sciencedirect.com/science/article/pii/S1465324922007861),
-Cytotherapy \[online\] <doi:10.1016/j.jcyt.2022.09.002>.
+Zolgensma](https://doi.org/10.1016/j.jcyt.2022.09.002), Cytotherapy
+\[online\] <doi:10.1016/j.jcyt.2022.09.002>.
 
 ### Guides and tutorials
 

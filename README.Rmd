@@ -3,7 +3,7 @@
 output: github_document
 ---
 
-  
+
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 ```
@@ -21,7 +21,7 @@ knitr::opts_chunk$set(echo = TRUE)
 - *Exchange Rates* - easily retrieve exchange rates for immediate use
 - *Inflation* - easily inflate past (nominal) values into present day (real) prices
 - *Regular Expressions* - easily extract common pricing patterns from free text
-- *Formatting* - easily handle currencies in written work, including Rmarkdown documents 
+- *Formatting* - easily handle currencies in written work, including Rmarkdown documents
 
 
 ### Installation
@@ -32,7 +32,7 @@ Installation via CRAN `install.packages("priceR")`
 library(priceR)
 library(tidyverse)
 options(scipen = 100); options(digits = 6)
-``` 
+```
 
 
 
@@ -43,7 +43,7 @@ options(scipen = 100); options(digits = 6)
 
 Set up only takes a minute and is free for 100 requests per account per calendar month.
 
-Go to https://exchangerate.host/, create a free account, and replace `7e5e3140140bd8e4f4650cc41fc772c0` with your API key in the following, and run once per R session. 
+Go to https://exchangerate.host/, create a free account, and replace `7e5e3140140bd8e4f4650cc41fc772c0` with your API key in the following, and run once per R session.
 
 ```r
 Sys.setenv("EXCHANGERATEHOST_ACCESS_KEY"="7e5e3140140bd8e4f4650cc41fc772c0")
@@ -57,7 +57,7 @@ View the current exchange rates for 170 currencies (see them all by running `cur
 
 ```{r message=FALSE}
 
-exchange_rate_latest("USD") %>% 
+exchange_rate_latest("USD") %>%
   head(10)
 
 ```
@@ -92,21 +92,21 @@ library(ggplot2)
 library(ggthemes)
 library(ggrepel)
 
-cur %>% 
+cur %>%
   rename(aud_to_usd = one_AUD_equivalent_to_x_USD,
-         aud_to_eur = one_AUD_equivalent_to_x_EUR) %>% 
-  pivot_longer(c("aud_to_usd", "aud_to_eur")) %>% 
-  mutate(date = as.Date(date)) %>% 
+         aud_to_eur = one_AUD_equivalent_to_x_EUR) %>%
+  pivot_longer(c("aud_to_usd", "aud_to_eur")) %>%
+  mutate(date = as.Date(date)) %>%
   ggplot(aes(x=date, y = value, colour=name)) +
-  geom_line(size=1) + 
+  geom_line(size=1) +
   scale_color_manual(
     breaks = c("aud_to_usd", "aud_to_eur"), # Sets order in legend
     labels = c( "AUD to USD", "AUD to EUR"), # Pretty names in legend
     values = c("#02506A", "#03A5DC") # Sets line/legend colours
-    ) + 
+    ) +
   scale_x_date(date_labels = "%b %Y", date_breaks = "6 month") +
   scale_y_continuous(
-    expand = c(0, 0), 
+    expand = c(0, 0),
     limits = c(0, 1.5)
     ) +
   labs(
@@ -114,7 +114,7 @@ cur %>%
     subtitle = "Plotting the Australian Dollar against the USD and Euro",
     y = "Exchange Rate"
     ) +
-  theme_economist() + 
+  theme_economist() +
   theme(
     plot.title = element_text(size = 18, margin=margin(0,0,8,0)),
     axis.title.x = element_blank(),
@@ -123,28 +123,28 @@ cur %>%
     axis.title.y = element_text(vjust = 3.5),
     legend.position="bottom",
     legend.title = element_blank()
-    ) 
+    )
 ```
 
 
 
 ```{r message=FALSE}
 
-cur %>% 
-  tail(200) %>% 
+cur %>%
+  tail(200) %>%
   rename(aud_to_usd = one_AUD_equivalent_to_x_USD,
-         aud_to_eur = one_AUD_equivalent_to_x_EUR) %>%  
-  mutate(date = as.Date(date)) %>% 
+         aud_to_eur = one_AUD_equivalent_to_x_EUR) %>%
+  mutate(date = as.Date(date)) %>%
   ggplot(aes(x = date, y = aud_to_usd, group = 1)) +
   geom_line(colour = "#F15B40") +
-  geom_smooth(method = 'loess', colour="#03A5DC") + 
+  geom_smooth(method = 'loess', colour="#03A5DC") +
   scale_x_date(date_labels = "%b %Y", date_breaks = "1 month") +
   labs(
     title = "AUD to USD over last 200 days",
     subtitle = "AUD to USD Exchange Rate; Polynomial regression trendline",
     y = "Exchange Rate"
     ) +
-  theme_economist() + 
+  theme_economist() +
   theme(
     plot.title = element_text(size = 18, margin=margin(0,0,8,0)),
     axis.title.x = element_blank(),
@@ -153,7 +153,7 @@ cur %>%
     axis.title.y = element_text(vjust = 3.5),
     legend.position="bottom",
     legend.title = element_blank()
-    ) 
+    )
 
 ```
 
@@ -161,23 +161,23 @@ cur %>%
 
 ```{r message=FALSE}
 
-cur %>% 
-  tail(365 * 8) %>% 
+cur %>%
+  tail(365 * 8) %>%
   rename(aud_to_usd = one_AUD_equivalent_to_x_USD,
-         aud_to_eur = one_AUD_equivalent_to_x_EUR) %>% 
-  mutate(date = as.Date(date)) %>% 
+         aud_to_eur = one_AUD_equivalent_to_x_EUR) %>%
+  mutate(date = as.Date(date)) %>%
   ggplot(aes(x = date, y = aud_to_eur, group = 1)) +
   geom_line() +
-  geom_smooth(method = 'loess', se = TRUE) + 
+  geom_smooth(method = 'loess', se = TRUE) +
   geom_line(colour = "#02506A") +
-  geom_smooth(method = 'loess', colour="#03A5DC") + 
+  geom_smooth(method = 'loess', colour="#03A5DC") +
   scale_x_date(date_labels = "%Y", date_breaks = "1 year") +
   labs(
     title = "AUD to EUR over last 8 years",
     subtitle = "AUD to EUR Exchange Rate; Polynomial regression trendline",
     y = "Exchange Rate"
     ) +
-  theme_economist() + 
+  theme_economist() +
   theme(
     plot.title = element_text(size = 18, margin=margin(0,0,8,0)),
     axis.title.x = element_blank(),
@@ -186,7 +186,7 @@ cur %>%
     axis.title.y = element_text(vjust = 3.5),
     legend.position="bottom",
     legend.title = element_blank()
-    ) 
+    )
 
 ```
 
@@ -200,7 +200,7 @@ cur %>%
 `adjust_for_inflation()` automatically converts between nominal and real dollars,
 or in/deflates prices from one year's prices to another's.
 
-It works for 304 countries / areas (see them with all by running `show_countries()`). 
+It works for 304 countries / areas (see them with all by running `show_countries()`).
 
 ```{r message=FALSE}
 
@@ -218,7 +218,7 @@ df
 
 # Extraction helpers
 
-These helpers let you extract useful *numeric* data from messy free text (character) data. 
+These helpers let you extract useful *numeric* data from messy free text (character) data.
 
 ### Extract salary from free text
 
@@ -239,7 +239,7 @@ messy_salary_data <- c(
 )
 
 messy_salary_data %>%
-  extract_salary(include_periodicity = TRUE, 
+  extract_salary(include_periodicity = TRUE,
                  salary_range_handling = "average")
 
 ```
@@ -269,7 +269,7 @@ format_dollars(c("445.50", "199.99"), digits = 2)
 ### Research and academia
 
 
-Curran-Groome, W., Hino, M., BenDor, T. and Salvesen, D., 2022. [*Complexities and costs of floodplain buyout implementation*](https://www.sciencedirect.com/science/article/abs/pii/S0264837722001557), Land Use Policy, Volume 118, July 2022.
+Curran-Groome, W., Hino, M., BenDor, T. and Salvesen, D., 2022. [*Complexities and costs of floodplain buyout implementation*](https://doi.org/10.1016/j.landusepol.2022.106128), Land Use Policy, Volume 118, July 2022.
 
 
 
@@ -285,7 +285,7 @@ Widdicombe, J., Basáñez, M., Entezami, M., Jackson, D., Larrieu, E. and Prada,
 
 
 
-Thielen, F.W., Heine, R.J.S.D., Berg, S. van den, Ham, R.M.T. ten and Groot, C.A.U. (2022). [Towards sustainability and affordability of expensive cell and gene therapies? Applying a cost-based pricing model to estimate prices for Libmeldy and Zolgensma](https://www.sciencedirect.com/science/article/pii/S1465324922007861), Cytotherapy [online] doi:10.1016/j.jcyt.2022.09.002.
+Thielen, F.W., Heine, R.J.S.D., Berg, S. van den, Ham, R.M.T. ten and Groot, C.A.U. (2022). [Towards sustainability and affordability of expensive cell and gene therapies? Applying a cost-based pricing model to estimate prices for Libmeldy and Zolgensma](https://doi.org/10.1016/j.jcyt.2022.09.002), Cytotherapy [online] doi:10.1016/j.jcyt.2022.09.002.
 
 
 
@@ -296,7 +296,7 @@ How to [*Convert Between Currencies Using priceR*](https://www.bryanshalloway.co
 
 ### Contributing to priceR
 
-If your research, guide or tutorial uses priceR, please contact the priceR maintainer (or create an [issue](https://github.com/stevecondylios/priceR/issues)) so your work can be included here. 
+If your research, guide or tutorial uses priceR, please contact the priceR maintainer (or create an [issue](https://github.com/stevecondylios/priceR/issues)) so your work can be included here.
 
 
 **Issues and Feature Requests**
@@ -315,7 +315,7 @@ For feature requests, raise an issue with the following:
 
 **Pull Requests**
 
-Pull requests are welcomed. Before doing so, please create an issue or email me with your idea.  
+Pull requests are welcomed. Before doing so, please create an issue or email me with your idea.
 
 Any new functions should follow the conventions established by the the package's existing functions. Please ensure
 
