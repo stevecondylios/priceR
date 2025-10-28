@@ -19,7 +19,7 @@ Description: Functions to aid in micro and macro economic analysis and handling 
     and historical end of day exchange rates for 171 currencies from the European Central Bank
     Statistical Data Warehouse (2020).
 Encoding: UTF-8
-RoxygenNote: 7.2.3
+RoxygenNote: 7.3.3
 Suggests:
     testthat
 LazyData: true
