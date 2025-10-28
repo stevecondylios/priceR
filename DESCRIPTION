@@ -3,10 +3,10 @@ Type: Package
 Title: Economics and Pricing Tools
 Version: 1.0.3
 Imports: dplyr, gsubfn, stringr, purrr, jsonlite, stats, lubridate, stringi, tidyr
-Authors@R: c(person(given="Steve", family="Condylios", 
-    role=c("aut", "cre"), email="steve.condylios@gmail.com", 
+Authors@R: c(person(given="Steve", family="Condylios",
+    role=c("aut", "cre"), email="steve.condylios@gmail.com",
     comment("https://orcid.org/0000-0003-0599-844X")),
-    person(given="Bruno", family="Mioto", role="ctb", email="brunomioto97@gmail.com"), 
+    person(given="Bruno", family="Mioto", role="ctb", email="brunomioto97@gmail.com"),
     person(given = "Bryan", family = "Shalloway", role = "ctb", email = "brshallodev@gmail.com"))
 Maintainer: Steve Condylios <steve.condylios@gmail.com>
 BugReports: https://github.com/stevecondylios/priceR/issues
@@ -17,9 +17,9 @@ Description: Functions to aid in micro and macro economic analysis and handling 
     API, data cleaning/parsing, and standardisation. Inflation adjustment
     calculations as found in Principles of Macroeconomics by Gregory Mankiw et al (2014). Current
     and historical end of day exchange rates for 171 currencies from the European Central Bank
-    Statistical Data Warehouse (2020) <https://sdw.ecb.europa.eu/curConverter.do>.
+    Statistical Data Warehouse (2020).
 Encoding: UTF-8
 RoxygenNote: 7.2.3
-Suggests: 
+Suggests:
     testthat
 LazyData: true
